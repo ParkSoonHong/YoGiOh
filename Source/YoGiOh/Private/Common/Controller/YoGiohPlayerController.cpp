@@ -1,0 +1,54 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Common/Controller/YoGiohPlayerController.h"
+#include "Common/Manager/UiPopUpManager.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputAction.h"
+#include "InputMappingContext.h"
+
+void AYoGiohPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (ULocalPlayer* LP = GetLocalPlayer())
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
+			LP->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+		{
+			Subsystem->AddMappingContext(IMC_Default, 0);
+		}
+	}
+}
+
+void AYoGiohPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	UEnhancedInputComponent* EnhancedIC =
+		Cast<UEnhancedInputComponent>(InputComponent);
+
+	if (!EnhancedIC)
+	{
+		UE_LOG(LogTemp, Error, TEXT("EnhancedInputComponent missing"));
+		return;
+	}
+
+	EnhancedIC->BindAction(
+		IA_Back,
+		ETriggerEvent::Triggered,
+		this,
+		&AYoGiohPlayerController::OnBackPressed
+	);
+
+}
+
+void AYoGiohPlayerController::OnBackPressed()
+{
+	if (UUiPopUpManager* UIManager =
+		GetWorld()->GetSubsystem<UUiPopUpManager>())
+	{
+		UIManager->BackInput();
+	}
+}
