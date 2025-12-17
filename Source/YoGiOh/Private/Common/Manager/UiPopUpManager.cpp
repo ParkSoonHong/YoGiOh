@@ -4,38 +4,114 @@
 #include "Common/Manager/UiPopUpManager.h"
 #include "Common/Base/UiPopUpBase.h"
 #include "Common/Base/UIPopUpType.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "TierList/UI/DeckDetailUI.h"
+#include "TierList/UI/TierListUI.h"
+#include "Title/UI/TitleUI.h"
+
+
+UUiPopUpManager::UUiPopUpManager()
+{
+	UE_LOG(LogTemp, Warning, TEXT("UiPopUpManager Constructor"));
+	
+	static ConstructorHelpers::FClassFinder<UTitleUI> 
+	TitleUIBP(TEXT("/Game/BluePrints/Ui/WBP_Title"));
+	
+	if (TitleUIBP.Succeeded())
+	{
+		PopupClassMap.Add(EUIPopUpType::Title, TitleUIBP.Class);
+		UE_LOG(LogTemp, Warning, TEXT("TitleUI BP load OK"));
+	}
+	
+	static ConstructorHelpers::FClassFinder<UTierListUI> 
+	TierListUIBP(TEXT("/Game/BluePrints/Ui/WBP_TierList"));
+	
+	if (TierListUIBP.Succeeded())
+	{
+		PopupClassMap.Add(EUIPopUpType::TierList, TierListUIBP.Class);
+		UE_LOG(LogTemp, Warning, TEXT("TierListUIBP load OK"));
+	}
+	
+	static ConstructorHelpers::FClassFinder<UDeckDetailUI> 
+	TierListDetailUIBP(TEXT("/Game/BluePrints/Ui/WBP_CardDetailView"));
+	
+	if (TierListDetailUIBP.Succeeded())
+	{
+		PopupClassMap.Add(EUIPopUpType::TierListDetail, TierListDetailUIBP.Class);
+		UE_LOG(LogTemp, Warning, TEXT("TierListDetailUIBP load OK"));
+	}
+}
 
 void UUiPopUpManager::BackInput()
 {
-	// PopupÀÌ ÀÖÀ¸¸é PopupºÎÅÍ
-	if (PopupStack.Num() > 0)
+	if (PopupStack.Num() > 1)
 	{
 		PopPopup();
 		return;
 	}
-
-	// 2Popup ¾ø°í Screen¸¸ ÀÖÀ¸¸é
-	if (CurrentScreen)
+	else if (PopupStack.Num() == 0)
 	{
-		CurrentScreen->OnCloseRequest.Broadcast();
-		return;
+		if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+		{
+			UKismetSystemLibrary::QuitGame
+			(
+				GetWorld(),
+				PC,
+				EQuitPreference::Quit,
+				false
+			);
+		}
 	}
 }
 
-void UUiPopUpManager::ShowScreen(EUIPopUpType Type)
+void UUiPopUpManager::PushPopup(EUIPopUpType Type)
 {
+	UUiPopUpBase* Popup = CreatePopup(Type);
+	if (!Popup)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not Create POPUP"));
+		return;
+	}
 
-}
-
-void UUiPopUpManager::PushPopup(TSubclassOf<UUiPopUpBase> PopupClass)
-{
-
+	// Pop ìš”ì²­ ë°”ì¸ë”©
+	Popup->OnRequestPop.AddUObject(this, &UUiPopUpManager::PopPopup);
+	Popup->OnRequestPush.AddUObject(this, &UUiPopUpManager::PushPopup);
+	
+	UE_LOG(LogTemp, Warning, TEXT("AddToViewport POPUP"));
+	Popup->AddToViewport();
+	PopupStack.Push(Popup);
 }
 
 void UUiPopUpManager::PopPopup()
 {
-	if (PopupStack.Num() == 0) return;
+	if (PopupStack.Num() == 0)
+	{
+		return;
+	}
+	
+	UUiPopUpBase* Top = PopupStack.Pop();
+	Top->RemoveFromParent();
+}
 
-	UUiPopUpBase* Popup = PopupStack.Pop();
-	Popup->RemoveFromParent();
+UUiPopUpBase* UUiPopUpManager::CreatePopup(EUIPopUpType Type)
+{
+	if (!PopupClassMap.Contains(Type))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Popup class not registered"));
+		return nullptr;
+	}
+
+	TSubclassOf<UUiPopUpBase> PopupClass = PopupClassMap[Type];
+	
+	if (!PopupClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Popup class nullptr"));
+		return nullptr;
+	}
+
+	return CreateWidget<UUiPopUpBase>
+	(
+		GetWorld(),
+		PopupClass
+	);
 }

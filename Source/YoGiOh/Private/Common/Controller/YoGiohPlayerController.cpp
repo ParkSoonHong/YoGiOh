@@ -7,11 +7,11 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
 #include "InputMappingContext.h"
+#include "Blueprint/UserWidget.h"
 
 void AYoGiohPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
 	if (ULocalPlayer* LP = GetLocalPlayer())
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
@@ -20,6 +20,10 @@ void AYoGiohPlayerController::BeginPlay()
 			Subsystem->AddMappingContext(IMC_Default, 0);
 		}
 	}
+
+
+	bShowMouseCursor = true;
+
 }
 
 void AYoGiohPlayerController::SetupInputComponent()

@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "Common/Base/UiPopUpBase.h"
 #include "TierListUI.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class YOGIOH_API UTierListUI : public UUserWidget
+class YOGIOH_API UTierListUI : public UUiPopUpBase
 {
 	GENERATED_BODY()
 	

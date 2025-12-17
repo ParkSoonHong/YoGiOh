@@ -16,10 +16,9 @@ class YOGIOH_API UUiPopUpBase : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPopupChangeRequest, EUIPopUpType);
-	FOnPopupChangeRequest OnPopupChangeRequest;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRequestPush, EUIPopUpType);
+	FOnRequestPush OnRequestPush;
 
-	// 현재 화면 종료 (Back / Close)
-	DECLARE_MULTICAST_DELEGATE(FOnCloseRequest);
-	FOnCloseRequest OnCloseRequest;
+	DECLARE_MULTICAST_DELEGATE(FOnRequestPop);
+	FOnRequestPop OnRequestPop;
 };

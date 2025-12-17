@@ -18,20 +18,20 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_DeckList;
-	// 전방선언과 이 앞에 class 부르는것의 차이 알아보기.
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* Button_Dual;
+	class UButton* Button_Calculator;
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* Button_Roll;
+	class UButton* Button_RollManual;
 
 	UFUNCTION()
 	void OnDeckListButtonClicked();
 
 	UFUNCTION()
-	void OnDualButtonClicked();
+	void OnCalculatorButtonClicked();
 
 	UFUNCTION()
-	void OnRollButtonClicked();
+	void OnRollManualButtonClicked();
+
 };

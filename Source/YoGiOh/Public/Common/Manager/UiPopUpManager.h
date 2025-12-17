@@ -12,24 +12,27 @@ class UUiPopUpBase;
 UCLASS()
 class YOGIOH_API UUiPopUpManager : public UWorldSubsystem
 {
+	
 	GENERATED_BODY()
 
 public:
+	UUiPopUpManager();
+	
 	void BackInput();
 
-	// Screen
-	void ShowScreen(EUIPopUpType Type);
-
 	// Popup
-	void PushPopup(TSubclassOf<UUiPopUpBase> PopupClass);
+	void PushPopup(EUIPopUpType Type);
 	void PopPopup();
 
 private:
-	UPROPERTY()
-	UUiPopUpBase* CurrentScreen;
-
+	UUiPopUpBase* CreatePopup(EUIPopUpType Type);
+	
+private: 
+	
 	UPROPERTY()
 	TArray<UUiPopUpBase*> PopupStack;
 
+	UPROPERTY()
+	TMap<EUIPopUpType, TSubclassOf<UUiPopUpBase>> PopupClassMap;
 
 };

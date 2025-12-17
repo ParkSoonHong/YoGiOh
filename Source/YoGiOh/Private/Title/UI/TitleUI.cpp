@@ -11,28 +11,29 @@ void UTitleUI::NativeConstruct()
 		Button_DeckList->OnClicked.AddDynamic(this, &UTitleUI::OnDeckListButtonClicked);
 	}
 
-	if (Button_Dual)
+	if (Button_Calculator)
 	{
-		Button_Dual->OnClicked.AddDynamic(this, &UTitleUI::OnDualButtonClicked);
+		Button_Calculator->OnClicked.AddDynamic(this, &UTitleUI::OnCalculatorButtonClicked);
 	}
 
-	if (Button_Roll)
+	if (Button_RollManual)
 	{
-		Button_Roll->OnClicked.AddDynamic(this, &UTitleUI::OnRollButtonClicked);
+		Button_RollManual->OnClicked.AddDynamic(this, &UTitleUI::OnRollManualButtonClicked);
 	}
 }
 
 void UTitleUI::OnDeckListButtonClicked()
 {
-	// 팝업 매니저에게 덱 리스트 팝업을 열라고 요청
+	OnRequestPush.Broadcast(EUIPopUpType::TierList);
+	UE_LOG(LogTemp,Warning,TEXT("Broadcast TierList"));
 }
 
-void UTitleUI::OnDualButtonClicked()
+void UTitleUI::OnCalculatorButtonClicked()
 {
-	// 팝업 매니저에게 듀얼 팝업을 열라고 요청
+	OnRequestPush.Broadcast(EUIPopUpType::Calculator);
 }
 
-void UTitleUI::OnRollButtonClicked()
+void UTitleUI::OnRollManualButtonClicked()
 {
-	// 팝업 매니저에게 롤 팝업을 열라고 요청
+	OnRequestPush.Broadcast(EUIPopUpType::Manual);
 }

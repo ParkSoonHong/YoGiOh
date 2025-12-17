@@ -10,6 +10,6 @@ public class YoGiOhEditorTarget : TargetRules
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V6;
 
-		ExtraModuleNames.AddRange( new string[] { "YoGiOh" } );
+        ExtraModuleNames.AddRange( new string[] { "YoGiOh" } );
 	}
 }

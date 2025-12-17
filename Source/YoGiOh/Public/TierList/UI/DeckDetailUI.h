@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "Common/Base/UiPopUpBase.h"
 #include "DeckDetailUI.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class YOGIOH_API UDeckDetailUI : public UUserWidget
+class YOGIOH_API UDeckDetailUI : public UUiPopUpBase
 {
 	GENERATED_BODY()
 	
