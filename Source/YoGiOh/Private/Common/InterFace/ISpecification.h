@@ -3,15 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/Object.h"
-#include "Deck.generated.h"
 
 /**
  * 
  */
-UCLASS()
-class YOGIOH_API UDeck : public UObject
+class ISpecification
 {
-	GENERATED_BODY()
-	
+public:
+	ISpecification();
+	~ISpecification();
 };
