@@ -51,7 +51,7 @@ void AYoGiohPlayerController::SetupInputComponent()
 void AYoGiohPlayerController::OnBackPressed()
 {
 	if (UUiPopUpManager* UIManager =
-		GetWorld()->GetSubsystem<UUiPopUpManager>())
+		GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
 	{
 		UIManager->BackInput();
 	}

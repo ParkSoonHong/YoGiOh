@@ -14,10 +14,22 @@ UCLASS()
 class YOGIOH_API UDeckManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
-	bool CreateAndSaveDeck(const FDeckSaveData& InputData, FString& OutError);
-	bool LoadDeck(const FString& FilePath, FDeckSaveData& OutData);
 public:
-	bool SaveDeck( FString& FilePath, const FDeckSaveData& InData);
+	bool CreateAndSaveDeck(const FDeckSaveData& InputData, FString& OutError);
+	bool SaveDeck(FString& OutError, const FDeckSaveData& Data);
+	bool LoadDeck(const FString& FilePath, FDeckSaveData& OutData);
 	
-	FString GetSaveFilePath() const;
+	FString GetDeckDir() const;
+	
+	FString GetDeckFilePath(const FString& DeckID) const;
+	
+	bool LoadAllDecks(TArray<FDeckSaveData>& OutDecks);
+         
+	bool DeleteDeck(const FString& DeckID, FString& OutError);
+	
+	void NotifyDeckListChanged();
+	
+	DECLARE_MULTICAST_DELEGATE(FOnDeckListChanged);
+
+	FOnDeckListChanged OnDeckListChanged;
 };

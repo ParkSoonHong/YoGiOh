@@ -2,7 +2,6 @@
 
 
 #include "Common/Base/YoGiOhGameModeBase.h"
-
 #include "Common/Base/UIPopUpType.h"
 #include "Common/Manager/UiPopUpManager.h"
 
@@ -10,7 +9,7 @@ void AYoGiOhGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	UUiPopUpManager * UiPopUpManager = GetWorld()->GetSubsystem<UUiPopUpManager>();
+	UUiPopUpManager * UiPopUpManager = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>();
 	
 	if (UiPopUpManager == nullptr)
 	{

@@ -27,6 +27,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSet<EPlayablePlayer> PlayablePlayers;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString DeckID;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", ClampMax = "10"))
 	uint8 Deployment = 0; // 전개
 

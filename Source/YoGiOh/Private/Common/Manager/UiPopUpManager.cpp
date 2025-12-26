@@ -42,6 +42,16 @@ UUiPopUpManager::UUiPopUpManager()
 	}
 }
 
+void UUiPopUpManager::Initialize(FSubsystemCollectionBase& collection)
+{
+	Super::Initialize(collection);
+}
+
+void UUiPopUpManager::Deinitialize()
+{
+	Super::Deinitialize();
+}
+
 void UUiPopUpManager::BackInput()
 {
 	if (PopupStack.Num() > 1)
@@ -91,6 +101,22 @@ void UUiPopUpManager::PopPopup()
 	
 	UUiPopUpBase* Top = PopupStack.Pop();
 	Top->RemoveFromParent();
+}
+
+void UUiPopUpManager::PushDeckDetailPopup(const FDeckSaveData& Data)
+{
+	PushPopup(EUIPopUpType::TierListDetail);
+
+	UUiPopUpBase* Top = PopupStack.Last();
+	if (UDeckDetailUI* Detail = Cast<UDeckDetailUI>(Top))
+	{
+		if (!DeckManager)
+		{
+			DeckManager = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>();
+		}
+
+		Detail->InitializeDetail(DeckManager, Data);
+	}
 }
 
 UUiPopUpBase* UUiPopUpManager::CreatePopup(EUIPopUpType Type)

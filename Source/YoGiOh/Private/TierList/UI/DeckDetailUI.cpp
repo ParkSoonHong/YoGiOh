@@ -3,30 +3,41 @@
 
 #include "TierList/UI/DeckDetailUI.h"
 #include "Common/Base/EDeckOwner.h"
+#include "Common/Manager/UiPopUpManager.h"
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 #include "Components/EditableText.h"
 #include "Components/Slider.h"
 #include "Components/TextBlock.h"
+#include "Deck/Manager/DeckManager.h"
+#include "TierList/UI/TierListUI.h"
+#include "Deck/Manager/DeckManagerHelper.h"
 
 void UDeckDetailUI::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	if (!DeckHelper)
+	{
+		DeckHelper = MakeUnique<DeckManagerHelper>();
+	}
+	
+	if (Button_SaveButton)
+	{
+		Button_SaveButton->OnClicked.AddDynamic(this,&UDeckDetailUI::OnSave);
+	}
 	
 	InitializeDeckOwnerComboBox();
-	
-	DeckHelper = MakeUnique<DeckManagerHelper>();
-
-	// 예시: 기존 덱 데이터
-	//FDeckSaveData LoadedData = /* DeckManager에서 가져오기 */;
-	//UDeckManager* DeckManager = /* GetGameInstance or Subsystem */;
-
-	//DeckHelper->Initialize(DeckManager, LoadedData);
-
 	BindUIEvents();
+}
+
+void UDeckDetailUI::InitializeDetail(UDeckManager* Manager, const FDeckSaveData& Data)
+{
+	if (!DeckHelper || !Manager) return;
+	
+	DeckHelper->Initialize(Manager, Data);
 	RefreshUI();
-
-
+	
 }
 
 void UDeckDetailUI::OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type SelectionType)
@@ -156,7 +167,17 @@ void UDeckDetailUI::OnSave()
 	if (!DeckHelper->Save(Error))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%s"), *Error);
+		return;
 	}
+	UWorld * world =  GetWorld();
+		
+	UGameInstance * instance =  world->GetGameInstance();
+		
+	UDeckManager * deckManager = instance->GetSubsystem<UDeckManager>();
+	deckManager->NotifyDeckListChanged();
+		
+	UUiPopUpManager * popupManager = instance->GetSubsystem<UUiPopUpManager>();
+	popupManager->PopPopup();	
 }
 
 

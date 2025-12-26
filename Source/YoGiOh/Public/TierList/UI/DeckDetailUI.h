@@ -23,6 +23,10 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:	
+	
+	
+	void InitializeDetail(UDeckManager* Manager, const FDeckSaveData& Data);
+
 	UPROPERTY(meta=(BindWidget))
 	UButton* Button_SaveButton;
 	

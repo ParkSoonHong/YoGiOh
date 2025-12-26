@@ -25,7 +25,6 @@ void UTitleUI::NativeConstruct()
 void UTitleUI::OnDeckListButtonClicked()
 {
 	OnRequestPush.Broadcast(EUIPopUpType::TierList);
-	UE_LOG(LogTemp,Warning,TEXT("Broadcast TierList"));
 }
 
 void UTitleUI::OnCalculatorButtonClicked()

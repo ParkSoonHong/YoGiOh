@@ -7,24 +7,53 @@
 
 bool UDeckManager::CreateAndSaveDeck(const FDeckSaveData& InputData, FString& OutError)
 {
-	DeckDomain Domain(InputData);
+	FDeckSaveData Data = InputData;
 
+	if (Data.DeckID.IsEmpty())
+	{
+		Data.DeckID = FGuid::NewGuid().ToString(EGuidFormats::Digits);
+	}
+	
+	DeckDomain Domain(InputData);
 	if (!Domain.IsValid(OutError))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Deck validation failed: %s"), *OutError);
 		return false;
 	}
 
-	const FString FilePath =
-		FPaths::ProjectSavedDir() / TEXT("Decks/Deck.json");
-
+	const FString DeckDir = GetDeckDir();
+	IFileManager::Get().MakeDirectory(*DeckDir, true);
+	
+	const FString FilePath = GetDeckFilePath(Data.DeckID);
 	if (!DeckRepository::SaveToJson(FilePath, Domain.ToSaveData()))
 	{
 		OutError = TEXT("덱 저장 실패");
 		return false;
 	}
-
+	
+	NotifyDeckListChanged();
 	UE_LOG(LogTemp, Log, TEXT("Deck saved successfully: %s"), *FilePath);
+	return true;
+}
+
+bool UDeckManager::SaveDeck(FString& OutError, const FDeckSaveData& Data)
+{
+	FDeckSaveData SaveData = Data;
+
+	if (SaveData.DeckID.IsEmpty())
+	{
+		SaveData.DeckID = FGuid::NewGuid().ToString();
+	}
+
+	const FString Path = GetDeckFilePath(SaveData.DeckID);
+
+	if (!DeckRepository::SaveToJson(Path, SaveData))
+	{
+		OutError = TEXT("덱 저장 실패");
+		return false;
+	}
+
+	//OnDeckListChanged.Broadcast();
 	return true;
 }
 
@@ -46,51 +75,69 @@ bool UDeckManager::LoadDeck(const FString& FilePath, FDeckSaveData& OutData)
 	return true;
 }
 
-bool UDeckManager::SaveDeck(FString& OutError, const FDeckSaveData& Data)
+bool UDeckManager::LoadAllDecks(TArray<FDeckSaveData>& OutDecks)
 {
-	// 1. JSON Object 생성
-	TSharedPtr<FJsonObject> Root = MakeShared<FJsonObject>();
-
-	Root->SetNumberField(TEXT("Deployment"), Data.Deployment);
-	Root->SetNumberField(TEXT("Breakthrough"), Data.Breakthrough);
-	Root->SetNumberField(TEXT("Retention"), Data.Retention);
-	Root->SetNumberField(TEXT("Recovery"), Data.Recovery);
-	Root->SetNumberField(TEXT("Control"), Data.Control);
-	Root->SetNumberField(TEXT("Flexibility"), Data.Flexibility);
-	Root->SetNumberField(TEXT("BasePower"), Data.BasePower);
-	Root->SetNumberField(TEXT("RelativeA"), Data.RelativeA);
-	Root->SetNumberField(TEXT("RelativeB"), Data.RelativeB);
-	Root->SetNumberField(TEXT("TotalScore"), Data.TotalScore);
-
-	Root->SetStringField(TEXT("Comment"), Data.Comment);
-	Root->SetStringField(TEXT("ThumbnailImagePath"), Data.ThumbnailImagePath);
-
-	// 2. JSON → String
-	FString Output;
-	TSharedRef<TJsonWriter<>> Writer =
-		TJsonWriterFactory<>::Create(&Output);
-
-	if (!FJsonSerializer::Serialize(Root.ToSharedRef(), Writer))
+	OutDecks.Reset();
+	
+	const FString Dir = GetDeckDir();
+    
+	if (!IFileManager::Get().DirectoryExists(*Dir))
 	{
-		OutError = TEXT("JSON 직렬화 실패");
+		return true;
+	}
+	
+    	TArray<FString> Files;
+    	IFileManager::Get().FindFiles(Files, *Dir, TEXT("*.json"));
+    
+    	for (const FString& File : Files)
+    	{
+    		FDeckSaveData Data;
+    		if (LoadDeck(Dir / File, Data))
+    		{
+    			OutDecks.Add(Data);
+    		}
+    	}
+    
+    	return true;
+}
+
+bool UDeckManager::DeleteDeck(const FString& DeckID, FString& OutError)
+{
+	if (DeckID.IsEmpty())
+	{
+		OutError = TEXT("DeckID가 비어 있습니다");
+		return false;
+	}
+	
+	const FString FilePath = GetDeckFilePath(DeckID);
+
+	if (!IFileManager::Get().FileExists(*FilePath))
+	{
+		OutError = TEXT("덱 파일이 존재하지 않습니다");
 		return false;
 	}
 
-	// 3. 디렉토리 생성
-	const FString SavePath = GetSaveFilePath();
-	IFileManager::Get().MakeDirectory(*FPaths::GetPath(SavePath), true);
-
-	// 4. 파일 저장
-	if (!FFileHelper::SaveStringToFile(Output, *SavePath))
+	if (!IFileManager::Get().Delete(*FilePath))
 	{
-		OutError = TEXT("파일 저장 실패");
+		OutError = TEXT("덱 삭제 실패");
 		return false;
 	}
 
+	NotifyDeckListChanged();
 	return true;
 }
 
-FString UDeckManager::GetSaveFilePath() const
+FString UDeckManager::GetDeckDir() const
 {
-	return FPaths::ProjectSavedDir() / TEXT("Deck/deck_data.json");
+	return FPaths::ProjectSavedDir() / TEXT("Decks");
+}
+
+FString UDeckManager::GetDeckFilePath(const FString& DeckID) const
+{
+	return GetDeckDir() / FString::Printf(TEXT("%s.json"), *DeckID);
+}
+
+void UDeckManager::NotifyDeckListChanged()
+{
+	OnDeckListChanged.Broadcast();
 }

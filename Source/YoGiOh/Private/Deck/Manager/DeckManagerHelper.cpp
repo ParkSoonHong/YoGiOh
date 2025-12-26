@@ -134,9 +134,14 @@ bool DeckManagerHelper::Save(FString& OutError)
 
 		const FString DestPath = Dir / FileName;
 
-		if (!IFileManager::Get().Copy(*DestPath, *PendingExternalImagePath))
+		const uint32 Result = IFileManager::Get().Copy(
+		*DestPath,
+		*PendingExternalImagePath
+		);
+
+		if (Result != COPY_OK)
 		{
-			OutError = TEXT("이미지 복사 실패");
+			OutError = FString::Printf(TEXT("이미지 복사 실패 (Code: %u)"), Result);
 			return false;
 		}
 
@@ -149,18 +154,16 @@ bool DeckManagerHelper::Save(FString& OutError)
 
 void DeckManagerHelper::Recalculate()
 {
-	WorkingData.TotalScore =
-	WorkingData.Deployment+
-	WorkingData.Breakthrough +
-	WorkingData.Retention +
-	WorkingData.Recovery +
-	WorkingData.Control +
-	WorkingData.Flexibility +
-	WorkingData.BasePower +
-	WorkingData.RelativeA +
-	WorkingData.RelativeB;
-	
-	WorkingData.TotalScore /= 9; 
+	WorkingData.TotalScore 
+	= WorkingData.Deployment 
+	+ WorkingData.Breakthrough 
+	+ WorkingData.Retention
+	+ WorkingData.Recovery 
+	+ WorkingData.Control 
+	+ WorkingData.Flexibility 
+	+ WorkingData.BasePower 
+	+ WorkingData.RelativeA 
+	+ WorkingData.RelativeB;
 }
 
 UTexture2D* DeckManagerHelper::LoadTextureFromFile(const FString& FilePath)

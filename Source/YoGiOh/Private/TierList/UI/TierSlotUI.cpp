@@ -3,6 +3,8 @@
 
 #include "TierList/UI/TierSlotUI.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
+#include "Deck/Manager/DeckManagerHelper.h"
 
 void UTierSlotUI::NativeConstruct()
 {
@@ -10,18 +12,38 @@ void UTierSlotUI::NativeConstruct()
 	
 	UE_LOG(LogTemp, Warning, TEXT("UTierSlotUI NativeConstruct"));
 
-	if (Button_Detail)
+	
+	if (Button_Select)
 	{
-		Button_Detail->OnClicked.AddDynamic(this, &UTierSlotUI::OnDetailButtonClicked);
+		Button_Select->OnClicked.AddDynamic(this, &UTierSlotUI::HandleClicked);
 	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Button_Detail is NULL"));
-	}
+	
+	
 }
 
-void UTierSlotUI::OnDetailButtonClicked()
-{	
-	OnRequestPush.Broadcast(EUIPopUpType::TierListDetail);
-	UE_LOG(LogTemp, Warning, TEXT("BroadCast Detail"));
+void UTierSlotUI::SetData(const FDeckSaveData& Data)
+{
+ /*
+	if (UTexture2D* Tex = LoadThumbnail(InData)) // Manager or Helper 통해
+	{
+		FButtonStyle Style = Button_Select->WidgetStyle;
+
+		FSlateBrush Brush;
+		Brush.SetResourceObject(Tex);
+		Brush.ImageSize = FVector2D(256, 256);
+
+		Style.SetNormal(Brush);
+		Style.SetHovered(Brush);
+		Style.SetPressed(Brush);
+
+		Button_Select->SetStyle(Style);
+	}
+	*/
+	DeckData = Data;
+	Text_DeckName->SetText(FText::FromString(Data.DeckName));
+}
+
+void UTierSlotUI::HandleClicked()
+{
+	OnClicked.ExecuteIfBound(DeckData);
 }
