@@ -6,10 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "YoGiohPlayerController.generated.h"
 
-
 class UInputAction;
 class UUserWidget;
-
 UCLASS()
 class YOGIOH_API AYoGiohPlayerController : public APlayerController
 {
@@ -28,4 +26,6 @@ public:
 	class UInputMappingContext* IMC_Default;
 
 	void OnBackPressed();
+
+	
 };

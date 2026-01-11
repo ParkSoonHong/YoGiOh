@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Common/Base/UiPopUpBase.h"
+//#include "System/Popup/UiPopUpBase.h"
 #include "TitleUI.generated.h"
 
 UCLASS()
-class YOGIOH_API UTitleUI : public UUiPopUpBase
+class YOGIOH_API UTitleUI : public UUserWidget
 {
 	GENERATED_BODY()
 

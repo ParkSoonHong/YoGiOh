@@ -1,13 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Common/Base/YoGiOhGameModeBase.h"
-#include "Common/Base/UIPopUpType.h"
-#include "Common/Manager/UiPopUpManager.h"
+#include "System/GameModeBase/YoGiOhGameModeBase.h"
+#include "System/Popup/Manager/UiPopUpManager.h"
+#include "System/Popup/UIPopUpType.h"
 
 void AYoGiOhGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	
 	UUiPopUpManager * UiPopUpManager = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>();
 	
@@ -21,4 +22,5 @@ void AYoGiOhGameModeBase::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("Open UI POPUP"));
 	}
 	UiPopUpManager->PushPopup(EUIPopUpType::Title);
+
 }

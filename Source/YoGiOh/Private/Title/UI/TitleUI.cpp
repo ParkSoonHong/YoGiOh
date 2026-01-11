@@ -24,15 +24,15 @@ void UTitleUI::NativeConstruct()
 
 void UTitleUI::OnDeckListButtonClicked()
 {
-	OnRequestPush.Broadcast(EUIPopUpType::TierList);
+	//OnRequestPush.Broadcast(EUIPopUpType::TierList);
 }
 
 void UTitleUI::OnCalculatorButtonClicked()
 {
-	OnRequestPush.Broadcast(EUIPopUpType::Calculator);
+	//OnRequestPush.Broadcast(EUIPopUpType::Calculator);
 }
 
 void UTitleUI::OnRollManualButtonClicked()
 {
-	OnRequestPush.Broadcast(EUIPopUpType::Manual);
+	//OnRequestPush.Broadcast(EUIPopUpType::Manual);
 }

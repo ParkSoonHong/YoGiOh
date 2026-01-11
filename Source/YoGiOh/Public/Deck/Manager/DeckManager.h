@@ -7,6 +7,7 @@
 #include "Deck/Domain/DeckSaveData.h"
 #include "DeckManager.generated.h"
 
+class DeckManagerHelper;
 /**
  * 
  */
@@ -23,13 +24,18 @@ public:
 	
 	FString GetDeckFilePath(const FString& DeckID) const;
 	
-	bool LoadAllDecks(TArray<FDeckSaveData>& OutDecks);
+	bool LoadAllDecks();
          
 	bool DeleteDeck(const FString& DeckID, FString& OutError);
 	
 	void NotifyDeckListChanged();
 	
+	TArray<FDeckSaveData> GetDecks ();
+	
 	DECLARE_MULTICAST_DELEGATE(FOnDeckListChanged);
 
 	FOnDeckListChanged OnDeckListChanged;
+private:
+	TUniquePtr<DeckManagerHelper> DeckHelper;
+	TArray<FDeckSaveData> Decks;
 };

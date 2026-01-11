@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Common/Base/UiPopUpBase.h"
+#include "System/Popup/UiPopUpBase.h"
 #include "Deck/Domain/DeckSaveData.h"
 #include "TierListUI.generated.h"
 
@@ -13,6 +13,7 @@ class UTierLineUI;
 class UDeckSlotUI;
 class UVerticalBox;
 class UButton;
+
 UCLASS()
 class YOGIOH_API UTierListUI : public UUiPopUpBase
 {
@@ -31,14 +32,20 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="UI")
 	TSubclassOf<UUserWidget> SlotClass;
 	
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	TSubclassOf<UUserWidget> LineClass;
+	
 	FDeckSaveData PendingDetailData;
 
 private:
-	UDeckManager* DeckManager;
+	UDeckManager* DeckManager;	
 
+	void BuildTierMap(const TArray<FDeckSaveData>& Decks);
 	void RefreshList();
 
 	void HandleSlotClicked(const FDeckSaveData& Data);
+private:
+	//TMap<EDeckTier,TArray<FDeckSaveData>> tierMap;
 public:
 	
 	UFUNCTION()

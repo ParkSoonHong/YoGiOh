@@ -1,13 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Common/Controller/YoGiohPlayerController.h"
-#include "Common/Manager/UiPopUpManager.h"
+#include "System/Controller/YoGiohPlayerController.h"
+#include "System/Popup/Manager/UiPopUpManager.h"
+
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
-#include "InputMappingContext.h"
-#include "Blueprint/UserWidget.h"
 
 void AYoGiohPlayerController::BeginPlay()
 {

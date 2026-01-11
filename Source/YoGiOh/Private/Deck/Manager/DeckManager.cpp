@@ -36,6 +36,7 @@ bool UDeckManager::CreateAndSaveDeck(const FDeckSaveData& InputData, FString& Ou
 	return true;
 }
 
+
 bool UDeckManager::SaveDeck(FString& OutError, const FDeckSaveData& Data)
 {
 	FDeckSaveData SaveData = Data;
@@ -53,7 +54,7 @@ bool UDeckManager::SaveDeck(FString& OutError, const FDeckSaveData& Data)
 		return false;
 	}
 
-	//OnDeckListChanged.Broadcast();
+	OnDeckListChanged.Broadcast();
 	return true;
 }
 
@@ -64,28 +65,24 @@ bool UDeckManager::LoadDeck(const FString& FilePath, FDeckSaveData& OutData)
 		UE_LOG(LogTemp, Error, TEXT("Failed to load deck from %s"), *FilePath);
 		return false;
 	}
-
 	DeckDomain Domain(OutData);
 	FString Error;
 	if (!Domain.IsValid(Error))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Loaded deck invalid: %s"), *Error);
 	}
-
 	return true;
 }
 
-bool UDeckManager::LoadAllDecks(TArray<FDeckSaveData>& OutDecks)
+// 전체 불러오기
+bool UDeckManager::LoadAllDecks()
 {
-	OutDecks.Reset();
-	
 	const FString Dir = GetDeckDir();
     
 	if (!IFileManager::Get().DirectoryExists(*Dir))
 	{
 		return true;
 	}
-	
     	TArray<FString> Files;
     	IFileManager::Get().FindFiles(Files, *Dir, TEXT("*.json"));
     
@@ -94,10 +91,9 @@ bool UDeckManager::LoadAllDecks(TArray<FDeckSaveData>& OutDecks)
     		FDeckSaveData Data;
     		if (LoadDeck(Dir / File, Data))
     		{
-    			OutDecks.Add(Data);
+    			Decks.Add(Data);
     		}
     	}
-    
     	return true;
 }
 
@@ -105,7 +101,7 @@ bool UDeckManager::DeleteDeck(const FString& DeckID, FString& OutError)
 {
 	if (DeckID.IsEmpty())
 	{
-		OutError = TEXT("DeckID가 비어 있습니다");
+		OutError = TEXT("DeckID가 비어있습니다.");
 		return false;
 	}
 	
@@ -140,4 +136,9 @@ FString UDeckManager::GetDeckFilePath(const FString& DeckID) const
 void UDeckManager::NotifyDeckListChanged()
 {
 	OnDeckListChanged.Broadcast();
+}
+
+TArray<FDeckSaveData> UDeckManager::GetDecks()
+{
+	return  Decks;
 }

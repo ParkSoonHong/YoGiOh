@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Common/Manager/UiPopUpManager.h"
-#include "Common/Base/UiPopUpBase.h"
-#include "Common/Base/UIPopUpType.h"
+#include "System/Popup/Manager/UiPopUpManager.h"
+#include "System/Popup/UiPopUpBase.h"
+#include "System/Popup/UIPopUpType.h"
+
 #include "Kismet/KismetSystemLibrary.h"
 #include "TierList/UI/DeckDetailUI.h"
 #include "TierList/UI/TierListUI.h"
@@ -12,6 +13,7 @@
 
 UUiPopUpManager::UUiPopUpManager()
 {
+	/*
 	UE_LOG(LogTemp, Warning, TEXT("UiPopUpManager Constructor"));
 	
 	static ConstructorHelpers::FClassFinder<UTitleUI> 
@@ -40,6 +42,7 @@ UUiPopUpManager::UUiPopUpManager()
 		PopupClassMap.Add(EUIPopUpType::TierListDetail, TierListDetailUIBP.Class);
 		UE_LOG(LogTemp, Warning, TEXT("TierListDetailUIBP load OK"));
 	}
+	*/
 }
 
 void UUiPopUpManager::Initialize(FSubsystemCollectionBase& collection)
@@ -105,7 +108,7 @@ void UUiPopUpManager::PopPopup()
 
 void UUiPopUpManager::PushDeckDetailPopup(const FDeckSaveData& Data)
 {
-	PushPopup(EUIPopUpType::TierListDetail);
+	//PushPopup(EUIPopUpType::TierListDetail);
 
 	UUiPopUpBase* Top = PopupStack.Last();
 	if (UDeckDetailUI* Detail = Cast<UDeckDetailUI>(Top))

@@ -3,18 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Common/Base/UIPopUpType.h" 
+#include "System/Popup/UIPopUpType.h" 
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UiPopUpManager.generated.h"
+
+/**
+ */
 
 class UUiPopUpBase;
 
 UCLASS()
 class YOGIOH_API UUiPopUpManager : public UGameInstanceSubsystem
 {
-	
 	GENERATED_BODY()
-
+	
 public:
 	
 	UUiPopUpManager();
@@ -44,5 +46,6 @@ private:
 
 	UPROPERTY()
 	TMap<EUIPopUpType, TSubclassOf<UUiPopUpBase>> PopupClassMap;
+
 
 };

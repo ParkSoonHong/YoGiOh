@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Common/Base/UiPopUpBase.h"
-#include "Common/Base/EDeckOwner.h"
+#include "System/Popup/UiPopUpBase.h"
+#include "Deck/Type/EDeckOwner.h"
 #include "Deck/Manager/DeckManagerHelper.h"
 #include "DeckDetailUI.generated.h"
 
@@ -90,8 +90,7 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UEditableText* Editable_Comment;
 private:
-	
-	TUniquePtr<DeckManagerHelper> DeckHelper;
+	UDeckManager * DeckManager = nullptr;
 	
 	UFUNCTION()
 	void OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type SelectionType);

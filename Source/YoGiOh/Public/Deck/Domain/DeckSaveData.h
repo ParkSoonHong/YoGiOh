@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Common/Base/EDeckOwner.h"
-#include "Common/Base/EPlayablePlayer.h"
+#include "Deck/Type/EDeckOwner.h"
+#include "Deck/Type/EPlayablePlayer.h"
 #include "DeckSaveData.generated.h"
 
 USTRUCT(BlueprintType)

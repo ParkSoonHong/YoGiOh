@@ -7,7 +7,7 @@ public class YoGiOh : ModuleRules
 	public YoGiOh(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
+		
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine","UMG","Slate",
 			"SlateCore", "InputCore", "EnhancedInput", "Json",
 			"JsonUtilities"});

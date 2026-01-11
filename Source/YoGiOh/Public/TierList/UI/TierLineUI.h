@@ -14,14 +14,15 @@ class YOGIOH_API UTierLineUI : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	void InitializeLine(const FString& InTierName);
+	
+	virtual void NativeConstruct() override;
+	//void InitializeLine(EDeckTier tier);
 
-	void AddSlot(UTierSlotUI* SlotWidget);
-
-protected:
-	UPROPERTY(meta = (BindWidget))
+	void AddSlot(UTierSlotUI* tierSlot);
+	
+	UPROPERTY()
 	UTextBlock* Text_TierName;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY()
 	UVerticalBox* Box_Slots;	
 };

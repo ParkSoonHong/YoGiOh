@@ -2,8 +2,8 @@
 
 
 #include "TierList/UI/DeckDetailUI.h"
-#include "Common/Base/EDeckOwner.h"
-#include "Common/Manager/UiPopUpManager.h"
+#include "Deck/Type//EDeckOwner.h"
+//#include "System/Popup/UiPopUpManager.h"
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 #include "Components/EditableText.h"
@@ -17,15 +17,12 @@ void UDeckDetailUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (!DeckHelper)
-	{
-		DeckHelper = MakeUnique<DeckManagerHelper>();
-	}
 	
 	if (Button_SaveButton)
 	{
 		Button_SaveButton->OnClicked.AddDynamic(this,&UDeckDetailUI::OnSave);
 	}
+//	DeckManager = GetWorld()->GetSubsystem<UDeckManager>();
 	
 	InitializeDeckOwnerComboBox();
 	BindUIEvents();
@@ -33,10 +30,7 @@ void UDeckDetailUI::NativeConstruct()
 
 void UDeckDetailUI::InitializeDetail(UDeckManager* Manager, const FDeckSaveData& Data)
 {
-	if (!DeckHelper || !Manager) return;
 	
-	DeckHelper->Initialize(Manager, Data);
-	RefreshUI();
 	
 }
 
@@ -46,7 +40,6 @@ void UDeckDetailUI::OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type
 	if (StringToEnumMap.Contains(SelectedItem))
 	{
 		SelectedDeckOwner = StringToEnumMap[SelectedItem];
-		DeckHelper->SetOwner(SelectedDeckOwner); // ⭐ 이 함수만 추가
 		UE_LOG(LogTemp, Warning, TEXT("Selected DeckOwner: %s"), *SelectedItem);
 	}
 }
@@ -141,10 +134,9 @@ void UDeckDetailUI::BindUIEvents()
 // 이미지 변경
 void UDeckDetailUI::OnChangeImage()
 {
-	DeckHelper->RequestChangeThumbnail();
 	
 	FButtonStyle btrStyle;
-	FSlateBrush normal = DeckHelper->GetThumbnailBrush();
+	FSlateBrush normal;
 	FSlateBrush hover = normal;
 	FSlateBrush pressed = normal;
 
@@ -164,11 +156,13 @@ void UDeckDetailUI::OnChangeImage()
 void UDeckDetailUI::OnSave()
 {
 	FString Error;
+	/*
 	if (!DeckHelper->Save(Error))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%s"), *Error);
 		return;
 	}
+	*/
 	UWorld * world =  GetWorld();
 		
 	UGameInstance * instance =  world->GetGameInstance();
@@ -176,8 +170,8 @@ void UDeckDetailUI::OnSave()
 	UDeckManager * deckManager = instance->GetSubsystem<UDeckManager>();
 	deckManager->NotifyDeckListChanged();
 		
-	UUiPopUpManager * popupManager = instance->GetSubsystem<UUiPopUpManager>();
-	popupManager->PopPopup();	
+	//UUiPopUpManager * popupManager = instance->GetSubsystem<UUiPopUpManager>();
+	//popupManager->PopPopup();	
 }
 
 
@@ -188,7 +182,7 @@ void UDeckDetailUI::RefreshUI()
 	if (Button_DeckImage == nullptr) return;;
 	
 	FButtonStyle btrStyle;
-	FSlateBrush normal = DeckHelper->GetThumbnailBrush();
+	FSlateBrush normal;// = DeckHelper->GetThumbnailBrush();
 	FSlateBrush hover = normal;
 	FSlateBrush pressed = normal;
 
@@ -207,10 +201,9 @@ void UDeckDetailUI::RefreshUI()
 
 void UDeckDetailUI::RefreshScore()
 {
-	Text_TotalScore->SetText(DeckHelper->GetTotalScoreText());
+	//Text_TotalScore->SetText(DeckHelper->GetTotalScoreText());
 
-	const FDeckSaveData& Data = DeckHelper->GetData();
-	
+	/*
 	Slider_Deployment->SetValue(Data.Deployment / 10.f);
 	Text_Deployment->SetText(FText::AsNumber(Data.Deployment));
 	
@@ -237,72 +230,73 @@ void UDeckDetailUI::RefreshScore()
 	
 	Slider_RelativeB->SetValue(Data.RelativeB / 10.f);
 	Text_RelativeB->SetText(FText::AsNumber(Data.RelativeB));
+	*/
 }
 
 void UDeckDetailUI::OnCommentCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	if (!DeckHelper) return;
+	//if (!DeckHelper) return;
 
-	DeckHelper->SetText(Text.ToString(),EEditableTextType::Comment);
+	//DeckHelper->SetText(Text.ToString(),EEditableTextType::Comment);
 }
 
 void UDeckDetailUI::OnDeckNameCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	if (!DeckHelper) return;
+	//if (!DeckHelper) return;
 
-	DeckHelper->SetText(Text.ToString(),EEditableTextType::DeckName);
+	//DeckHelper->SetText(Text.ToString(),EEditableTextType::DeckName);
 }
 
 void UDeckDetailUI::OnDeploymentSliderChanged(float Value)
 {
-	DeckHelper->SetStatBySlider(EDeckStatType::Deployment, Value);
+	//DeckHelper->SetStatBySlider(EDeckStatType::Deployment, Value);
 	RefreshScore();
 }
 
 void UDeckDetailUI::OnBreakthroughSliderChanged(float Value)
 {
-	DeckHelper->SetStatBySlider(EDeckStatType::Breakthrough, Value);
+//	DeckHelper->SetStatBySlider(EDeckStatType::Breakthrough, Value);
 	RefreshScore();
 }
 
 void UDeckDetailUI::OnRetentionSliderChanged(float Value)
 {
-	DeckHelper->SetStatBySlider(EDeckStatType::Retention, Value);
+//	DeckHelper->SetStatBySlider(EDeckStatType::Retention, Value);
 	RefreshScore();
 }
 
 void UDeckDetailUI::OnRecoverySliderChanged(float Value)
 {
-	DeckHelper->SetStatBySlider(EDeckStatType::Recovery, Value);
+//	DeckHelper->SetStatBySlider(EDeckStatType::Recovery, Value);
 	RefreshScore();
 }
 
 void UDeckDetailUI::OnControlSliderChanged(float Value)
 {
-	DeckHelper->SetStatBySlider(EDeckStatType::Control, Value);
+	//DeckHelper->SetStatBySlider(EDeckStatType::Control, Value);
 	RefreshScore();
 }
 
 void UDeckDetailUI::OnFlexibilitySliderChanged(float Value)
 {
-	DeckHelper->SetStatBySlider(EDeckStatType::Flexibility, Value);
+	//DeckHelper->SetStatBySlider(EDeckStatType::Flexibility, Value);
 	RefreshScore();
 }
 
 void UDeckDetailUI::OnBasePowerSliderChanged(float Value)
 {
-	DeckHelper->SetStatBySlider(EDeckStatType::BasePower, Value);
+	//DeckHelper->SetStatBySlider(EDeckStatType::BasePower, Value);
 	RefreshScore();
 }
 
 void UDeckDetailUI::OnRelativeASliderChanged(float Value)
 {
-	DeckHelper->SetStatBySlider(EDeckStatType::RelativeA, Value);
+	//DeckHelper->SetStatBySlider(EDeckStatType::RelativeA, Value);
 	RefreshScore();
 }
 
 void UDeckDetailUI::OnRelativeBSliderChanged(float Value)
 {
-	DeckHelper->SetStatBySlider(EDeckStatType::RelativeB, Value);
+	//DeckHelper->SetStatBySlider(EDeckStatType::RelativeB, Value);
 	RefreshScore();
 }

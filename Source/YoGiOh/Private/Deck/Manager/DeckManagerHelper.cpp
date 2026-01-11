@@ -8,18 +8,16 @@
 
 #include "IImageWrapper.h"
 #include "IImageWrapperModule.h"
-#include "Common/Base/EEditableTextType.h"
+#include "UI/Type/EEditableTextType.h"
 #include "Modules/ModuleManager.h"
 #include "Misc/FileHelper.h"
 
 
-void DeckManagerHelper::Initialize(class UDeckManager* InManager, const FDeckSaveData& InData)
+void DeckManagerHelper::Initialize(class UDeckManager* InManager)
 {
 	Manager = InManager;
-	WorkingData = InData;
 	PendingExternalImagePath.Empty();
 	CachedBrush.Reset();
-	Recalculate();
 }
 
 void DeckManagerHelper::RequestChangeThumbnail()
@@ -43,7 +41,7 @@ void DeckManagerHelper::RequestChangeThumbnail()
 	}
 }
 
-void DeckManagerHelper::SetStatBySlider(EDeckStatType Type, float SliderValue)
+void DeckManagerHelper::SetStatBySlider(EDeckStatType Type, float SliderValue, FDeckSaveData& WorkingData)
 {
 	uint8 Value = FMath::RoundToInt(SliderValue * 10.f);
 
@@ -60,12 +58,11 @@ void DeckManagerHelper::SetStatBySlider(EDeckStatType Type, float SliderValue)
 	case EDeckStatType::RelativeB:     WorkingData.RelativeB = FMath::Clamp(Value, 0, 5); break;
 	}
 
-	Recalculate();
+	Recalculate(WorkingData);
 }
 
-void DeckManagerHelper::SetText(const FString& Text, const EEditableTextType TextType)
+void DeckManagerHelper::SetText(const FString& Text, const EEditableTextType TextType,  FDeckSaveData& WorkingData)
 {
-
 	switch (TextType)
 	{
 	case  EEditableTextType::Comment:  WorkingData.Comment = Text; break;
@@ -73,14 +70,9 @@ void DeckManagerHelper::SetText(const FString& Text, const EEditableTextType Tex
 	}
 }
 
-void DeckManagerHelper::SetOwner(EDeckOwner Owner)
+void DeckManagerHelper::SetOwner(EDeckOwner Owner,  FDeckSaveData& WorkingData)
 {
 	WorkingData.Owner = Owner;
-}
-
-const FDeckSaveData& DeckManagerHelper::GetData() const
-{
-	return WorkingData;
 }
 
 FSlateBrush DeckManagerHelper::GetThumbnailBrush() const
@@ -106,16 +98,19 @@ FSlateBrush DeckManagerHelper::GetThumbnailBrush() const
 
 	return *CachedBrush;
 }
-
-FText DeckManagerHelper::GetTotalScoreText() const
+/*
+EDeckTier DeckManagerHelper::CalculateTier(uint8 TotalScore)
 {
-	return FText::Format(
-		NSLOCTEXT("Deck", "Score", "{0} / 100"),
-		FText::AsNumber(WorkingData.TotalScore)
-	);
+	if (TotalScore >= 90) return EDeckTier::S;
+	if (TotalScore >= 80) return EDeckTier::A;
+	if (TotalScore >= 70) return EDeckTier::B;
+	if (TotalScore >= 60) return EDeckTier::C;
+	if (TotalScore >= 50) return EDeckTier::D;
+	if (TotalScore >= 40) return EDeckTier::E;
+	return EDeckTier::F;
 }
-
-bool DeckManagerHelper::Save(FString& OutError)
+*/
+bool DeckManagerHelper::SaveImageConvert(FString& OutError, FDeckSaveData& WorkingData)
 {
 	if (!Manager)
 	{
@@ -148,11 +143,11 @@ bool DeckManagerHelper::Save(FString& OutError)
 		WorkingData.ThumbnailImagePath = TEXT("DeckImages/") + FileName;
 		PendingExternalImagePath.Empty();
 	}
-
-	return Manager->SaveDeck(OutError, WorkingData);
+	return  true;
+	//return Manager->SaveDeck(OutError, WorkingData);
 }
 
-void DeckManagerHelper::Recalculate()
+void DeckManagerHelper::Recalculate(FDeckSaveData& WorkingData)
 {
 	WorkingData.TotalScore 
 	= WorkingData.Deployment 
@@ -228,11 +223,11 @@ FString DeckManagerHelper::GetPreviewImagePath() const
 	{
 		return PendingExternalImagePath;        // 아직 저장 안 된 외부 이미지
 	}
-
+/*
 	if (!WorkingData.ThumbnailImagePath.IsEmpty())
 	{
 		return FPaths::ProjectSavedDir() / WorkingData.ThumbnailImagePath;
 	}
-
+*/
 	return FString();
 }
