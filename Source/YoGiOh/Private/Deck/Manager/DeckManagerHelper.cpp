@@ -72,7 +72,7 @@ void DeckManagerHelper::SetText(const FString& Text, const EEditableTextType Tex
 
 void DeckManagerHelper::SetOwner(EDeckOwner Owner,  FDeckSaveData& WorkingData)
 {
-	WorkingData.Owner = Owner;
+	WorkingData.DeckOwner = Owner;
 }
 
 FSlateBrush DeckManagerHelper::GetThumbnailBrush() const
@@ -140,7 +140,7 @@ bool DeckManagerHelper::SaveImageConvert(FString& OutError, FDeckSaveData& Worki
 			return false;
 		}
 
-		WorkingData.ThumbnailImagePath = TEXT("DeckImages/") + FileName;
+		WorkingData.ImagePath = TEXT("DeckImages/") + FileName;
 		PendingExternalImagePath.Empty();
 	}
 	return  true;

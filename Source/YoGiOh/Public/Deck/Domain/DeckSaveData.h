@@ -16,13 +16,13 @@ public:
 
 	/** 대표 이미지 경로 (PNG/JPG) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString ThumbnailImagePath;
+	FString ImagePath;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString DeckName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EDeckOwner Owner;
+	EDeckOwner DeckOwner;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSet<EPlayablePlayer> PlayablePlayers;

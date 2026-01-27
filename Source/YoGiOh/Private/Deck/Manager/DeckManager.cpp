@@ -25,12 +25,13 @@ bool UDeckManager::CreateAndSaveDeck(const FDeckSaveData& InputData, FString& Ou
 	IFileManager::Get().MakeDirectory(*DeckDir, true);
 	
 	const FString FilePath = GetDeckFilePath(Data.DeckID);
+	/*
 	if (!DeckRepository::SaveToJson(FilePath, Domain.ToSaveData()))
 	{
 		OutError = TEXT("덱 저장 실패");
 		return false;
 	}
-	
+	*/
 	NotifyDeckListChanged();
 	UE_LOG(LogTemp, Log, TEXT("Deck saved successfully: %s"), *FilePath);
 	return true;
@@ -48,23 +49,26 @@ bool UDeckManager::SaveDeck(FString& OutError, const FDeckSaveData& Data)
 
 	const FString Path = GetDeckFilePath(SaveData.DeckID);
 
+	/*
 	if (!DeckRepository::SaveToJson(Path, SaveData))
 	{
 		OutError = TEXT("덱 저장 실패");
 		return false;
 	}
-
+*/
 	OnDeckListChanged.Broadcast();
 	return true;
 }
 
 bool UDeckManager::LoadDeck(const FString& FilePath, FDeckSaveData& OutData)
 {
+	/*
 	if (!DeckRepository::LoadFromJson(FilePath, OutData))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to load deck from %s"), *FilePath);
 		return false;
 	}
+	*/
 	DeckDomain Domain(OutData);
 	FString Error;
 	if (!Domain.IsValid(Error))

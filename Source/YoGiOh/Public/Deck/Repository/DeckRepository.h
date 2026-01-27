@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Deck/Domain/DeckSaveData.h"
+#include "Deck/Data/DeckData.h"
 
 /**
  * 
  */
-class YOGIOH_API DeckRepository
+class YOGIOH_API FDeckRepository
 {
 public:
-	static bool SaveToJson(const FString& FilePath, const FDeckSaveData& Data);
-	static bool LoadFromJson(const FString& FilePath, FDeckSaveData& OutData);
+	static bool SaveToJson(const FString& filePath, const FDeckData& data);
+	static bool LoadFromJson(const FString& filePath, FDeckData& outData);
 };

@@ -4,10 +4,11 @@
 #include "Deck/Domain/DeckDomain.h"
 #include "Deck/Domain/Specification/DeckNameSpecification.h"
 
-DeckDomain::DeckDomain(const FDeckSaveData& InData) :Data((InData))
+DeckDomain::DeckDomain(const FDeckSaveData& InData) : Data(InData)
 {
 	RecalculateScore();
 }
+
 bool DeckDomain::Rename(const FString& NewName, FString& OutError)
 {
 	DeckNameSpecification Spec;
