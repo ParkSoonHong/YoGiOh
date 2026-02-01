@@ -91,33 +91,6 @@ void UDeckDetailUI::BindUIEvents()
 	if (ComboBox_DeckOwner== nullptr) return;
 	ComboBox_DeckOwner->OnSelectionChanged.AddDynamic(this, &UDeckDetailUI::OnDeckOwnerSelected);
 	
-	if (Slider_Deployment == nullptr) return;
-	Slider_Deployment->OnValueChanged.AddDynamic(this,&UDeckDetailUI::OnDeploymentSliderChanged);
-	
-	if ( Slider_Breakthrough== nullptr) return;
-	Slider_Breakthrough->OnValueChanged.AddDynamic(this,&UDeckDetailUI::OnBreakthroughSliderChanged);
-	
-	if (Slider_Retention == nullptr) return;
-	Slider_Retention->OnValueChanged.AddDynamic(this,&UDeckDetailUI::OnRetentionSliderChanged);
-	
-	if (Slider_Recovery == nullptr) return;
-	Slider_Recovery->OnValueChanged.AddDynamic(this,&UDeckDetailUI::OnRecoverySliderChanged);
-	
-	if (Slider_Control == nullptr) return;
-	Slider_Control->OnValueChanged.AddDynamic(this,&UDeckDetailUI::OnControlSliderChanged);
-	
-	if (Slider_Flexibility == nullptr) return;
-	Slider_Flexibility->OnValueChanged.AddDynamic(this,&UDeckDetailUI::OnFlexibilitySliderChanged);
-	
-	if (Slider_BasePower == nullptr) return;
-	Slider_BasePower->OnValueChanged.AddDynamic(this,&UDeckDetailUI::OnBasePowerSliderChanged);
-	
-	if (Slider_RelativeA == nullptr) return;
-	Slider_RelativeA->OnValueChanged.AddDynamic(this,&UDeckDetailUI::OnRelativeASliderChanged);
-	
-	if (Slider_RelativeB == nullptr) return;
-	Slider_RelativeB->OnValueChanged.AddDynamic(this,&UDeckDetailUI::OnRelativeBSliderChanged);
-
 	if (Button_DeckImage == nullptr) return;
 	Button_DeckImage->OnClicked.AddDynamic(this, &UDeckDetailUI::OnChangeImage);
 	
@@ -245,58 +218,4 @@ void UDeckDetailUI::OnDeckNameCommitted(const FText& Text, ETextCommit::Type Com
 	//if (!DeckHelper) return;
 
 	//DeckHelper->SetText(Text.ToString(),EEditableTextType::DeckName);
-}
-
-void UDeckDetailUI::OnDeploymentSliderChanged(float Value)
-{
-	//DeckHelper->SetStatBySlider(EDeckStatType::Deployment, Value);
-	RefreshScore();
-}
-
-void UDeckDetailUI::OnBreakthroughSliderChanged(float Value)
-{
-//	DeckHelper->SetStatBySlider(EDeckStatType::Breakthrough, Value);
-	RefreshScore();
-}
-
-void UDeckDetailUI::OnRetentionSliderChanged(float Value)
-{
-//	DeckHelper->SetStatBySlider(EDeckStatType::Retention, Value);
-	RefreshScore();
-}
-
-void UDeckDetailUI::OnRecoverySliderChanged(float Value)
-{
-//	DeckHelper->SetStatBySlider(EDeckStatType::Recovery, Value);
-	RefreshScore();
-}
-
-void UDeckDetailUI::OnControlSliderChanged(float Value)
-{
-	//DeckHelper->SetStatBySlider(EDeckStatType::Control, Value);
-	RefreshScore();
-}
-
-void UDeckDetailUI::OnFlexibilitySliderChanged(float Value)
-{
-	//DeckHelper->SetStatBySlider(EDeckStatType::Flexibility, Value);
-	RefreshScore();
-}
-
-void UDeckDetailUI::OnBasePowerSliderChanged(float Value)
-{
-	//DeckHelper->SetStatBySlider(EDeckStatType::BasePower, Value);
-	RefreshScore();
-}
-
-void UDeckDetailUI::OnRelativeASliderChanged(float Value)
-{
-	//DeckHelper->SetStatBySlider(EDeckStatType::RelativeA, Value);
-	RefreshScore();
-}
-
-void UDeckDetailUI::OnRelativeBSliderChanged(float Value)
-{
-	//DeckHelper->SetStatBySlider(EDeckStatType::RelativeB, Value);
-	RefreshScore();
 }
