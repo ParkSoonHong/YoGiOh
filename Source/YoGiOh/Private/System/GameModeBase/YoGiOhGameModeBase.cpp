@@ -8,19 +8,4 @@
 void AYoGiOhGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
-	UUiPopUpManager * UiPopUpManager = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>();
-	
-	if (UiPopUpManager == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Not UI POPUP"));
-		return;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Open UI POPUP"));
-	}
-	UiPopUpManager->PushPopup(EUIPopUpType::Title);
-
 }

@@ -1,6 +1,10 @@
 
 #include "Title/UI/TitleUI.h"
+
+#include "System/Popup/Manager/UiPopUpManager.h"
+
 #include "Components/Button.h"
+
 
 void UTitleUI::NativeConstruct()
 {
@@ -24,15 +28,27 @@ void UTitleUI::NativeConstruct()
 
 void UTitleUI::OnDeckListButtonClicked()
 {
-	//OnRequestPush.Broadcast(EUIPopUpType::TierList);
+	if (UUiPopUpManager* PopupManager = GetWorld()->
+	   GetGameInstance()->GetSubsystem<UUiPopUpManager>())
+	{
+		PopupManager->PushPopup(EUIPopUpType::TierList);
+	}
 }
 
 void UTitleUI::OnCalculatorButtonClicked()
 {
-	//OnRequestPush.Broadcast(EUIPopUpType::Calculator);
+	if (UUiPopUpManager* PopupManager = GetWorld()->
+	   GetGameInstance()->GetSubsystem<UUiPopUpManager>())
+	{
+		PopupManager->PushPopup(EUIPopUpType::Calculator);
+	}
 }
 
 void UTitleUI::OnRollManualButtonClicked()
 {
-	//OnRequestPush.Broadcast(EUIPopUpType::Manual);
+	if (UUiPopUpManager* PopupManager = GetWorld()->
+	   GetGameInstance()->GetSubsystem<UUiPopUpManager>())
+	{
+		PopupManager->PushPopup(EUIPopUpType::Manual);
+	}
 }

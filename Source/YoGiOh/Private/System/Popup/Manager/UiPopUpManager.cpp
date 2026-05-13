@@ -5,33 +5,26 @@
 #include "System/Popup/UiPopUpBase.h"
 #include "System/Popup/UIPopUpType.h"
 
-#include "Kismet/KismetSystemLibrary.h"
+#include "Deck/Manager/DeckManager.h"
+
 #include "TierList/UI/DeckDetailUI.h"
 #include "TierList/UI/TierListUI.h"
-#include "Title/UI/TitleUI.h"
 
+#include "Kismet/KismetSystemLibrary.h"
 
 UUiPopUpManager::UUiPopUpManager()
 {
-	/*
-	UE_LOG(LogTemp, Warning, TEXT("UiPopUpManager Constructor"));
-	
-	static ConstructorHelpers::FClassFinder<UTitleUI> 
-	TitleUIBP(TEXT("/Game/BluePrints/Ui/WBP_Title"));
-	
-	if (TitleUIBP.Succeeded())
-	{
-		PopupClassMap.Add(EUIPopUpType::Title, TitleUIBP.Class);
-		UE_LOG(LogTemp, Warning, TEXT("TitleUI BP load OK"));
-	}
-	
 	static ConstructorHelpers::FClassFinder<UTierListUI> 
 	TierListUIBP(TEXT("/Game/BluePrints/Ui/WBP_TierList"));
 	
 	if (TierListUIBP.Succeeded())
 	{
 		PopupClassMap.Add(EUIPopUpType::TierList, TierListUIBP.Class);
-		UE_LOG(LogTemp, Warning, TEXT("TierListUIBP load OK"));
+		UE_LOG(LogTemp, Warning, TEXT("WBP_TierList load OK"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WBP_TierList Null"));
 	}
 	
 	static ConstructorHelpers::FClassFinder<UDeckDetailUI> 
@@ -40,9 +33,13 @@ UUiPopUpManager::UUiPopUpManager()
 	if (TierListDetailUIBP.Succeeded())
 	{
 		PopupClassMap.Add(EUIPopUpType::TierListDetail, TierListDetailUIBP.Class);
-		UE_LOG(LogTemp, Warning, TEXT("TierListDetailUIBP load OK"));
+		UE_LOG(LogTemp, Warning, TEXT("WBP_TierListDetail load OK"));
 	}
-	*/
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WBP_TierListDetail Null"));
+	}
+	
 }
 
 void UUiPopUpManager::Initialize(FSubsystemCollectionBase& collection)
@@ -62,6 +59,7 @@ void UUiPopUpManager::BackInput()
 		PopPopup();
 		return;
 	}
+	/*
 	else if (PopupStack.Num() == 0)
 	{
 		if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
@@ -75,23 +73,26 @@ void UUiPopUpManager::BackInput()
 			);
 		}
 	}
+	*/
 }
 
 void UUiPopUpManager::PushPopup(EUIPopUpType Type)
 {
 	UUiPopUpBase* Popup = CreatePopup(Type);
+	
 	if (!Popup)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Not Create POPUP"));
 		return;
 	}
-
-	// Pop 요청 바인딩
-	Popup->OnRequestPop.AddUObject(this, &UUiPopUpManager::PopPopup);
-	Popup->OnRequestPush.AddUObject(this, &UUiPopUpManager::PushPopup);
 	
-	UE_LOG(LogTemp, Warning, TEXT("AddToViewport POPUP"));
-	Popup->AddToViewport();
+	// 혹시모를 중복 push 방지 
+	if (PopupStack.Contains(Popup))
+	{
+		return;
+	}
+	
+	Popup->SetVisibility(ESlateVisibility::Visible);
 	PopupStack.Push(Popup);
 }
 
@@ -103,7 +104,7 @@ void UUiPopUpManager::PopPopup()
 	}
 	
 	UUiPopUpBase* Top = PopupStack.Pop();
-	Top->RemoveFromParent();
+	Top->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UUiPopUpManager::PushDeckDetailPopup(const FDeckSaveData& Data)
@@ -124,6 +125,13 @@ void UUiPopUpManager::PushDeckDetailPopup(const FDeckSaveData& Data)
 
 UUiPopUpBase* UUiPopUpManager::CreatePopup(EUIPopUpType Type)
 {
+	// 이미 생성되어있으면 반환
+	if (PopupInstanceMap.Contains(Type))
+	{
+		UE_LOG(LogTemp,Verbose, TEXT("Popup already exists"));
+		return PopupInstanceMap[Type];
+	}
+	
 	if (!PopupClassMap.Contains(Type))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Popup class not registered"));
@@ -137,10 +145,23 @@ UUiPopUpBase* UUiPopUpManager::CreatePopup(EUIPopUpType Type)
 		UE_LOG(LogTemp, Error, TEXT("Popup class nullptr"));
 		return nullptr;
 	}
+	
+	UUiPopUpBase* NewPopup = CreateWidget<UUiPopUpBase>(GetWorld(), PopupClass);
 
-	return CreateWidget<UUiPopUpBase>
-	(
-		GetWorld(),
-		PopupClass
-	);
+	if (!NewPopup)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Not Create Popup"));
+		return nullptr;
+	}
+	
+	NewPopup->AddToViewport();
+	NewPopup->SetVisibility(ESlateVisibility::Collapsed);
+	
+	// 옵저버 패턴 요청 등록 
+	NewPopup->OnRequestPop.AddUObject(this, &UUiPopUpManager::PopPopup);
+	NewPopup->OnRequestPush.AddUObject(this, &UUiPopUpManager::PushPopup);
+	
+	PopupInstanceMap.Add(Type, NewPopup);
+	
+	return NewPopup;
 }

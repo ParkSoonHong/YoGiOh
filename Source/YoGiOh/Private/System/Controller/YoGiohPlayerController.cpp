@@ -7,10 +7,14 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
+#include "Blueprint/UserWidget.h"
 
 void AYoGiohPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	Initialize();
+	
 	if (ULocalPlayer* LP = GetLocalPlayer())
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
@@ -19,10 +23,13 @@ void AYoGiohPlayerController::BeginPlay()
 			Subsystem->AddMappingContext(IMC_Default, 0);
 		}
 	}
-
-
-	bShowMouseCursor = true;
-
+	
+	UUserWidget* TitleWidget = CreateWidget<UUserWidget>(GetWorld(), Ui_Title);
+	
+	if (TitleWidget)
+	{
+		TitleWidget->AddToViewport();
+	}
 }
 
 void AYoGiohPlayerController::SetupInputComponent()
@@ -54,4 +61,9 @@ void AYoGiohPlayerController::OnBackPressed()
 	{
 		UIManager->BackInput();
 	}
+}
+
+void AYoGiohPlayerController::Initialize()
+{
+	bShowMouseCursor = true;
 }

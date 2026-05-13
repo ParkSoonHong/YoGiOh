@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 //#include "System/Popup/UiPopUpBase.h"
+#include "Blueprint/UserWidget.h"
 #include "TitleUI.generated.h"
 
 UCLASS()

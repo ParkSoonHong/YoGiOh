@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "System/Popup/UIPopUpType.h" 
+#include "Deck/Domain/DeckSaveData.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UiPopUpManager.generated.h"
 
@@ -11,6 +12,7 @@
  */
 
 class UUiPopUpBase;
+class UDeckManager;
 
 UCLASS()
 class YOGIOH_API UUiPopUpManager : public UGameInstanceSubsystem
@@ -35,17 +37,17 @@ public:
 
 
 private:
-	UUiPopUpBase* CreatePopup(EUIPopUpType Type);
+	 UUiPopUpBase* CreatePopup(EUIPopUpType Type);
 
 	UPROPERTY()
 	UDeckManager* DeckManager;
-private: 
 	
 	UPROPERTY()
-	TArray<UUiPopUpBase*> PopupStack;
+	TArray< UUiPopUpBase*> PopupStack;
 
 	UPROPERTY()
 	TMap<EUIPopUpType, TSubclassOf<UUiPopUpBase>> PopupClassMap;
 
-
+	UPROPERTY()
+	TMap<EUIPopUpType, UUiPopUpBase*> PopupInstanceMap;
 };

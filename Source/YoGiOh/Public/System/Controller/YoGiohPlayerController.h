@@ -19,6 +19,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<UUserWidget> Ui_Title;
+	
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* IA_Back;
 
@@ -27,5 +29,6 @@ public:
 
 	void OnBackPressed();
 
-	
+private:
+	void Initialize();
 };
