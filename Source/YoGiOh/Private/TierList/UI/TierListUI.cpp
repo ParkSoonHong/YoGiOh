@@ -5,13 +5,10 @@
 #include "Deck/Domain/DeckSaveData.h"
 //#include "System/Popup/UiPopUpManager.h"
 #include "Components/Button.h"
-#include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
+#include "System/Popup/Manager/UiPopUpManager.h"
 #include "Deck/Manager/DeckManager.h"
-#include "Deck/Manager/DeckManagerHelper.h"
-#include "TierList/UI/DeckDetailUI.h"
 #include "TierList/UI/TierLineUI.h"
-#include "TierList/UI/TierSlotUI.h"
 
 
 void UTierListUI::NativeConstruct()
@@ -31,6 +28,11 @@ void UTierListUI::NativeConstruct()
 	if (Button_DataAdd)
 	{
 		Button_DataAdd->OnClicked.AddDynamic(this,&UTierListUI::OnClickedDataAddButton);
+	}
+	
+	if (Button_Back)
+	{
+		Button_Back->OnClicked.AddDynamic(this,&UTierListUI::OnClickedBackButton);
 	}
 }
 
@@ -114,13 +116,18 @@ void UTierListUI::HandleSlotClicked(const FDeckSaveData& Data)
 
 void UTierListUI::OnClickedDataAddButton()
 {
-	/*
 	if (UUiPopUpManager* PopupMgr =
 				GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
 	{
-		FDeckSaveData Data;
-		PopupMgr->PushDeckDetailPopup(Data);
-		UE_LOG(LogTemp,Warning, TEXT("TierListUI ClickedDataAddButton"));
+		PopupMgr->PushPopup(EUIPopUpType::TierListDetail);
 	}
-	*/
+}
+
+void UTierListUI::OnClickedBackButton()
+{
+	if (UUiPopUpManager* PopupMgr =
+				GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
+	{
+		PopupMgr->PopPopup();
+	}
 }

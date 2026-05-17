@@ -27,6 +27,9 @@ public:
 	
 	UPROPERTY(meta = (BindWidget))
 	UButton * Button_DataAdd;
+	
+	UPROPERTY(meta = (BindWidget))
+	UButton * Button_Back;
 protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category="UI")
@@ -50,4 +53,6 @@ public:
 	
 	UFUNCTION()
 	void OnClickedDataAddButton();
+	UFUNCTION()
+	void OnClickedBackButton();
 };

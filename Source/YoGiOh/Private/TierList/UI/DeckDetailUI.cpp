@@ -24,8 +24,10 @@ void UDeckDetailUI::NativeConstruct()
 	}
 //	DeckManager = GetWorld()->GetSubsystem<UDeckManager>();
 	
+	/*
 	InitializeDeckOwnerComboBox();
 	BindUIEvents();
+	*/
 }
 
 void UDeckDetailUI::InitializeDetail(UDeckManager* Manager, const FDeckSaveData& Data)
@@ -46,6 +48,7 @@ void UDeckDetailUI::OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type
 
 void UDeckDetailUI::InitializeDeckOwnerComboBox()
 {
+	
 	if (!ComboBox_DeckOwner)
 		return;
 
@@ -73,6 +76,7 @@ void UDeckDetailUI::InitializeDeckOwnerComboBox()
 	// 기본값 설정
 	SelectedDeckOwner = EDeckOwner::PlayerA;
 	ComboBox_DeckOwner->SetSelectedOption(EnumToStringMap[EDeckOwner::PlayerA]);
+	
 }
 
 void UDeckDetailUI::SetSelectedDeckOwner(EDeckOwner NewOwner)

@@ -13,6 +13,7 @@ class UButton;
 class UComboBoxString;
 class UEditableText;
 class UTextBlock;
+class UImage;
 
 UCLASS()
 class YOGIOH_API UDeckDetailUI : public UUiPopUpBase
@@ -29,7 +30,13 @@ public:
 	UButton* Button_SaveButton;
 	
 	UPROPERTY(meta=(BindWidget))
+	UButton* Button_BackButton;
+	
+	UPROPERTY(meta=(BindWidget))
 	UButton* Button_DeckImage;
+	
+	UPROPERTY(meta=(BindWidget))
+	UImage* Image_Player;
 	
 	UPROPERTY(meta = (BindWidget))
 	UComboBoxString* ComboBox_DeckOwner;
@@ -39,33 +46,54 @@ public:
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock * Text_Deployment;
+	UPROPERTY(meta = (BindWidget))
+	UEditableText* Editable_Deployment;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock * Text_Breakthrough;
+	UPROPERTY(meta = (BindWidget))
+	UEditableText* Editable_Breakthrough;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock * Text_Retention;
+	UPROPERTY(meta = (BindWidget))
+	UEditableText* Editable_Retention;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock * Text_Recovery;
+	UPROPERTY(meta = (BindWidget))
+	UEditableText* Editable_Recovery;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock * Text_Control;
+	UPROPERTY(meta = (BindWidget))
+	UEditableText* Editable_Control;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock * Text_Flexibility;
+	UPROPERTY(meta = (BindWidget))
+	UEditableText* Editable_Flexibility;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock * Text_BasePower;
+	UPROPERTY(meta = (BindWidget))
+	UEditableText* Editable_BasePower;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock * Text_RelativeA;
+	UPROPERTY(meta = (BindWidget))
+	UEditableText* Editable_RelativeA;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock * Text_RelativeB;
+	UPROPERTY(meta = (BindWidget))
+	UEditableText* Editable_RelativeB;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock * Text_TotalScore;
+	
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock * Text_Rank;
 	
 	UPROPERTY(meta = (BindWidget))
 	UEditableText* Editable_Comment;
