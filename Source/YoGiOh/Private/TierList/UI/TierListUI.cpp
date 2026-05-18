@@ -55,14 +55,14 @@ void UTierListUI::RefreshList()
 		UE_LOG(LogTemp, Warning, TEXT("DeckManager LoadAllDecks Failed"));
 		return;
 	}
-	TArray<FDeckData> Decks = DeckManager->GetDecks();
+	TArray<DeckDomain> Decks = DeckManager->GetDecks();
 
 	if (Decks.IsEmpty())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("DeckManager GetDecks Failed"));
 		return;
 	}
-	BuildTierMap(Decks);
+	//BuildTierMap(Decks);
 /*
 	// 원하는 티어 순서 명시
 	static const EDeckTier TierOrder[] =
@@ -115,9 +115,14 @@ void UTierListUI::HandleSlotClicked(const FDeckData& Data)
 
 void UTierListUI::OnClickedDataAddButton()
 {
-	if (UUiPopUpManager* PopupMgr = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
+	if (UUiPopUpManager* popupMgr = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
 	{
-		PopupMgr->PushPopup(EUIPopUpType::TierListDetail);
+		popupMgr->PushPopup(EUIPopUpType::TierListDetail);
+	}
+	
+	if (UDeckManager* deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+	{
+		deckMgr->createDeck();
 	}
 }
 

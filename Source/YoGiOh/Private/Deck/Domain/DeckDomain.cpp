@@ -4,27 +4,32 @@
 #include "Deck/Domain/DeckDomain.h"
 #include "Deck/Domain/Specification/DeckNameSpecification.h"
 
-DeckDomain::DeckDomain(const FDeckData& InData) : Data(InData)
+DeckDomain::DeckDomain(const FDeckData& inData) : data(inData)
 {
-	RecalculateScore();
+	//RecalculateScore();
 }
 
-bool DeckDomain::Rename(const FString& NewName, FString& OutError)
+DeckDomain::DeckDomain() 
+{
+	
+}
+
+bool DeckDomain::Rename(const FString& newName, FString& outError)
 {
 	DeckNameSpecification Spec;
-	if (!Spec.IsSatisfiedBy(NewName, OutError))
+	if (!Spec.IsSatisfiedBy(newName, outError))
 	{
 		return false;
 	}
 
-	Data.DeckName = NewName;
+	data.deckName = newName;
 	return true;
 }
 
-bool DeckDomain::IsValid(FString& OutError) const
+bool DeckDomain::IsValid(FString& outError) const
 {
-	DeckNameSpecification NameSpec;
-	if (!NameSpec.IsSatisfiedBy(Data.DeckName, OutError))
+	DeckNameSpecification nameSpec;
+	if (!nameSpec.IsSatisfiedBy(data.deckName, outError))
 	{
 		return false;
 	}
@@ -34,19 +39,19 @@ bool DeckDomain::IsValid(FString& OutError) const
 
 void DeckDomain::RecalculateScore()
 {
-	Data.TotalScore =
-		Data.Deployment +
-		Data.Breakthrough +
-		Data.Retention +
-		Data.Recovery +
-		Data.Control +
-		Data.Flexibility +
-		Data.BasePower +
-		Data.RelativeA +
-		Data.RelativeB;
+	data.totalScore =
+		data.deployment +
+		data.breakthrough +
+		data.retention +
+		data.recovery +
+		data.control +
+		data.flexibility +
+		data.basePower +
+		data.relativeA +
+		data.relativeB;
 }
 
 FDeckData DeckDomain::ToSaveData() const
 {
-	return Data;
+	return data;
 }

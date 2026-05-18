@@ -6,6 +6,7 @@
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 #include "Components/EditableText.h"
+#include "Deck/Calculation/FDeckScoreCalculator.h"
 #include "Deck/Manager/DeckManager.h"
 
 #include "System/Popup/Manager/UiPopUpManager.h"
@@ -19,7 +20,6 @@ void UDeckDetailUI::NativeConstruct()
 	{
 		Button_SaveButton->OnClicked.AddDynamic(this,&UDeckDetailUI::OnClickedSaveButton);
 	}
-//	DeckManager = GetWorld()->GetSubsystem<UDeckManager>();
 	
 	/*
 	InitializeDeckOwnerComboBox();
@@ -70,8 +70,8 @@ void UDeckDetailUI::InitializeDeckOwnerComboBox()
 	}
 
 	// 기본값 설정
-	SelectedDeckOwner = EDeckOwner::PlayerA;
-	ComboBox_DeckOwner->SetSelectedOption(EnumToStringMap[EDeckOwner::PlayerA]);
+	SelectedDeckOwner = EDeckOwner::PLAYERA;
+	ComboBox_DeckOwner->SetSelectedOption(EnumToStringMap[EDeckOwner::PLAYERA]);
 	
 }
 
@@ -88,9 +88,11 @@ void UDeckDetailUI::SetSelectedDeckOwner(EDeckOwner NewOwner)
 // 바인딩
 void UDeckDetailUI::BindUIEvents()
 {
+	//콤보박스들
 	if (ComboBox_DeckOwner== nullptr) return;
 	ComboBox_DeckOwner->OnSelectionChanged.AddDynamic(this, &UDeckDetailUI::OnDeckOwnerSelected);
 	
+	//버튼들
 	if (Button_DeckImage == nullptr) return;
 	Button_DeckImage->OnClicked.AddDynamic(this, &UDeckDetailUI::OnChangeImage);
 	
@@ -100,17 +102,44 @@ void UDeckDetailUI::BindUIEvents()
 	if (Button_BackButton == nullptr) return;
 	Button_BackButton->OnClicked.AddDynamic(this, &UDeckDetailUI::OnClickedBackButton);
 	
+	//편집박스들
 	if (Editable_Comment == nullptr) return;
 	Editable_Comment->OnTextCommitted.AddDynamic(this, &UDeckDetailUI::OnCommentCommitted);
 	
 	if (Editable_DeckName == nullptr) return;
 	Editable_DeckName->OnTextCommitted.AddDynamic(this, &UDeckDetailUI::OnDeckNameCommitted);
+	
+	if (Editable_Deployment == nullptr) return;
+	Editable_Deployment->OnTextCommitted.AddDynamic(this, &UDeckDetailUI::OnDeploymentValueCommitted);
+	
+	if (Editable_Breakthrough == nullptr) return;
+	Editable_Breakthrough->OnTextCommitted.AddDynamic(this, &UDeckDetailUI::OnBreakthroughValueCommitted);
+	
+	if (Editable_Retention == nullptr) return;
+	Editable_Retention->OnTextCommitted.AddDynamic(this, &UDeckDetailUI::OnRetentionValueCommitted);
+	
+	if (Editable_Recovery == nullptr) return;
+	Editable_Recovery->OnTextCommitted.AddDynamic(this, &UDeckDetailUI::OnRecoveryValueCommitted);
+	
+	if (Editable_Control == nullptr) return;
+	Editable_Control->OnTextCommitted.AddDynamic(this, &UDeckDetailUI::OnControlValueCommitted);
+	
+	if (Editable_Flexibility == nullptr) return;
+	Editable_Flexibility->OnTextCommitted.AddDynamic(this, &UDeckDetailUI::OnFlexibilityValueCommitted);
+	
+	if (Editable_BasePower == nullptr) return;
+	Editable_BasePower->OnTextCommitted.AddDynamic(this, &UDeckDetailUI::OnBasePowerValueCommitted);
+	
+	if (Editable_RelativeA == nullptr) return;
+	Editable_RelativeA->OnTextCommitted.AddDynamic(this, &UDeckDetailUI::OnRelativeAValueCommitted);
+
+	if (Editable_RelativeB == nullptr) return;
+	Editable_RelativeB->OnTextCommitted.AddDynamic(this, &UDeckDetailUI::OnRelativeBValueCommitted);
 }
 
 // 이미지 변경
 void UDeckDetailUI::OnChangeImage()
 {
-	
 	FButtonStyle btrStyle;
 	FSlateBrush normal;
 	FSlateBrush hover = normal;
@@ -140,7 +169,6 @@ void UDeckDetailUI::OnClickedSaveButton()
 	}
 	*/
 	
-	
 	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 	{
 		deckMgr->NotifyDeckListChanged();
@@ -150,6 +178,18 @@ void UDeckDetailUI::OnClickedSaveButton()
 		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
 	}
 	
+	if (UUiPopUpManager* PopupMgr = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
+	{
+		PopupMgr->PopPopup();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
+	}
+}
+
+void UDeckDetailUI::OnClickedBackButton()
+{
 	if (UUiPopUpManager* PopupMgr = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
 	{
 		PopupMgr->PopPopup();
@@ -219,6 +259,18 @@ void UDeckDetailUI::RefreshScore()
 	*/
 }
 
+void UDeckDetailUI::RefreshTotalScore(EDeckStatType statType, float statScore)
+{
+	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+	{
+		FDeckScoreCalculator::TotalScroeCalculation(deckMgr->GetCurrentDeck(),statType,statScore);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
+	}
+}
+
 void UDeckDetailUI::OnCommentCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	//if (!DeckHelper) return;
@@ -233,14 +285,44 @@ void UDeckDetailUI::OnDeckNameCommitted(const FText& Text, ETextCommit::Type Com
 	//DeckHelper->SetText(Text.ToString(),EEditableTextType::DeckName);
 }
 
-void UDeckDetailUI::OnClickedBackButton()
+void UDeckDetailUI::OnDeploymentValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	if (UUiPopUpManager* PopupMgr = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
-	{
-		PopupMgr->PopPopup();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
-	}
+	FText Deployment =  Editable_Deployment->GetText();
+	float Deploymentvalue =  FCString::Atof(*Deployment.ToString());
 }
+
+void UDeckDetailUI::OnBreakthroughValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+}
+
+void UDeckDetailUI::OnRetentionValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+}
+
+void UDeckDetailUI::OnRecoveryValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+}
+
+void UDeckDetailUI::OnControlValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+}
+
+void UDeckDetailUI::OnFlexibilityValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+}
+
+void UDeckDetailUI::OnBasePowerValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	
+}
+
+void UDeckDetailUI::OnRelativeAValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	
+}
+
+void UDeckDetailUI::OnRelativeBValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	
+}
+

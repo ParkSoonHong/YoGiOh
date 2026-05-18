@@ -47,15 +47,15 @@ void DeckManagerHelper::SetStatBySlider(EDeckStatType Type, float SliderValue, F
 
 	switch (Type)
 	{
-	case EDeckStatType::Deployment:    WorkingData.Deployment = Value; break;
-	case EDeckStatType::Breakthrough:  WorkingData.Breakthrough = Value; break;
-	case EDeckStatType::Retention:     WorkingData.Retention = Value; break;
-	case EDeckStatType::Recovery:      WorkingData.Recovery = Value; break;
-	case EDeckStatType::Control:       WorkingData.Control = Value; break;
-	case EDeckStatType::Flexibility:   WorkingData.Flexibility = Value; break;
-	case EDeckStatType::BasePower:     WorkingData.BasePower = FMath::Clamp(Value, 0, 30); break;
-	case EDeckStatType::RelativeA:     WorkingData.RelativeA = FMath::Clamp(Value, 0, 5); break;
-	case EDeckStatType::RelativeB:     WorkingData.RelativeB = FMath::Clamp(Value, 0, 5); break;
+	case EDeckStatType::DEPLOYMENT:    WorkingData.deployment = Value; break;
+	case EDeckStatType::BREAKTHROUGH:  WorkingData.breakthrough = Value; break;
+	case EDeckStatType::RETENTION:     WorkingData.retention = Value; break;
+	case EDeckStatType::RECOVERY:      WorkingData.recovery = Value; break;
+	case EDeckStatType::CONTROL:       WorkingData.control = Value; break;
+	case EDeckStatType::FLEXIBILITY:   WorkingData.flexibility = Value; break;
+	case EDeckStatType::BASEPOWER:     WorkingData.basePower = FMath::Clamp(Value, 0, 30); break;
+	case EDeckStatType::RELATIVEA:     WorkingData.relativeA = FMath::Clamp(Value, 0, 5); break;
+	case EDeckStatType::RELATIVEB:     WorkingData.relativeB = FMath::Clamp(Value, 0, 5); break;
 	}
 
 	Recalculate(WorkingData);
@@ -65,14 +65,14 @@ void DeckManagerHelper::SetText(const FString& Text, const EEditableTextType Tex
 {
 	switch (TextType)
 	{
-	case  EEditableTextType::Comment:  WorkingData.Comment = Text; break;
-	case  EEditableTextType::DeckName: WorkingData.DeckName = Text; break;
+	case  EEditableTextType::Comment:  WorkingData.comment = Text; break;
+	case  EEditableTextType::DeckName: WorkingData.deckName = Text; break;
 	}
 }
 
 void DeckManagerHelper::SetOwner(EDeckOwner Owner,  FDeckData& WorkingData)
 {
-	WorkingData.DeckOwner = Owner;
+	WorkingData.deckOwner = Owner;
 }
 
 FSlateBrush DeckManagerHelper::GetThumbnailBrush() const
@@ -140,7 +140,7 @@ bool DeckManagerHelper::SaveImageConvert(FString& OutError, FDeckData& WorkingDa
 			return false;
 		}
 
-		WorkingData.ImagePath = TEXT("DeckImages/") + FileName;
+		WorkingData.imagePath = TEXT("DeckImages/") + FileName;
 		PendingExternalImagePath.Empty();
 	}
 	return  true;
@@ -149,16 +149,16 @@ bool DeckManagerHelper::SaveImageConvert(FString& OutError, FDeckData& WorkingDa
 
 void DeckManagerHelper::Recalculate(FDeckData& WorkingData)
 {
-	WorkingData.TotalScore 
-	= WorkingData.Deployment 
-	+ WorkingData.Breakthrough 
-	+ WorkingData.Retention
-	+ WorkingData.Recovery 
-	+ WorkingData.Control 
-	+ WorkingData.Flexibility 
-	+ WorkingData.BasePower 
-	+ WorkingData.RelativeA 
-	+ WorkingData.RelativeB;
+	WorkingData.totalScore 
+	= WorkingData.deployment 
+	+ WorkingData.breakthrough 
+	+ WorkingData.retention
+	+ WorkingData.recovery 
+	+ WorkingData.control 
+	+ WorkingData.flexibility 
+	+ WorkingData.basePower 
+	+ WorkingData.relativeA 
+	+ WorkingData.relativeB;
 }
 
 UTexture2D* DeckManagerHelper::LoadTextureFromFile(const FString& FilePath)

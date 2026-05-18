@@ -11,11 +11,13 @@
 class YOGIOH_API DeckDomain
 {
 public:
-	explicit DeckDomain(const FDeckData& InData);
+	explicit DeckDomain(const FDeckData& inData);
+	
+	explicit DeckDomain();
 
 	// ----- Query -----
-	const FString& GetName() const { return Data.DeckName; }
-	int32 GetTotalScore() const { return Data.TotalScore; }
+	const FString& GetName() const { return data.deckName; }
+	int32 GetTotalScore() const { return data.totalScore; }
 
 	// ----- Command -----
 	bool Rename(const FString& NewName, FString& OutError);
@@ -28,5 +30,5 @@ public:
 	FDeckData ToSaveData() const;
 
 private:
-	FDeckData Data;
+	FDeckData data;
 };

@@ -14,50 +14,50 @@ struct FDeckData
 public:
 	
 	UPROPERTY()
-	FString ImagePath; // 대표 이미지 경로 (PNG/JPG)
+	FString imagePath; // 대표 이미지 경로 (PNG/JPG)
 	
 	UPROPERTY()
-	FString DeckID; // 덱 아이디
+	FString deckID; // 덱 아이디
 
 	UPROPERTY()
-	FString DeckName; // 덱 이름
+	FString deckName; // 덱 이름
 
 	UPROPERTY()
-	EDeckOwner DeckOwner; // 덱 주인
+	EDeckOwner deckOwner; // 덱 주인
 
 	UPROPERTY()
-	TSet<EPlayablePlayer> PlayablePlayers; // 플레이 가능한 플레이어
+	TSet<EPlayablePlayer> playablePlayers; // 플레이 가능한 플레이어
 	
 	UPROPERTY()
-	float Deployment = 0; // 전개
+	float deployment = 0; // 전개
 
 	UPROPERTY()
-	float Breakthrough = 0; // 돌파
+	float breakthrough = 0; // 돌파
 
 	UPROPERTY()
-	float Retention = 0; // 유지력
+	float retention = 0; // 유지력
 
 	UPROPERTY()
-	float Recovery = 0; // 복구
+	float recovery = 0; // 복구
 
 	UPROPERTY()
-	float Control = 0; // 억제
+	float control = 0; // 억제
 
 	UPROPERTY()
-	float Flexibility = 0; // 유연
+	float flexibility = 0; // 유연
 
 	UPROPERTY()
-	float BasePower = 0; // 태생
+	float basePower = 0; // 태생
 
 	UPROPERTY()
-	float RelativeA = 0; // 상대평가1
+	float relativeA = 0; // 상대평가1
 
 	UPROPERTY()
-	float RelativeB = 0; // 상대평가2
+	float relativeB = 0; // 상대평가2
 
 	UPROPERTY()
-	float TotalScore = 0; // 종합점수
+	float totalScore = 0; // 종합점수
 
 	UPROPERTY()
-	FString Comment; // 종합평
+	FString comment; // 종합평
 };

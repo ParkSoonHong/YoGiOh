@@ -3,13 +3,13 @@
 UENUM(BlueprintType)
 enum class EDeckStatType : uint8
 {
-	Deployment,
-	Breakthrough,
-	Retention,
-	Recovery,
-	Control,
-	Flexibility,
-	BasePower,
-	RelativeA,
-	RelativeB
+	DEPLOYMENT,
+	BREAKTHROUGH,
+	RETENTION,
+	RECOVERY,
+	CONTROL,
+	FLEXIBILITY,
+	BASEPOWER,
+	RELATIVEA,
+	RELATIVEB
 };

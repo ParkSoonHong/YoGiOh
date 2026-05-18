@@ -5,13 +5,19 @@
 #include "Deck/Domain/DeckDomain.h"
 #include "Deck/Repository/DeckRepository.h"
 
+void UDeckManager::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+	
+}
+
 bool UDeckManager::CreateAndSaveDeck(const FDeckData& InputData, FString& OutError)
 {
 	FDeckData Data = InputData;
 
-	if (Data.DeckID.IsEmpty())
+	if (Data.deckID.IsEmpty())
 	{
-		Data.DeckID = FGuid::NewGuid().ToString(EGuidFormats::Digits);
+		Data.deckID = FGuid::NewGuid().ToString(EGuidFormats::Digits);
 	}
 	
 	DeckDomain Domain(InputData);
@@ -24,7 +30,7 @@ bool UDeckManager::CreateAndSaveDeck(const FDeckData& InputData, FString& OutErr
 	const FString DeckDir = GetDeckDir();
 	IFileManager::Get().MakeDirectory(*DeckDir, true);
 	
-	const FString FilePath = GetDeckFilePath(Data.DeckID);
+	const FString FilePath = GetDeckFilePath(Data.deckID);
 	/*
 	if (!DeckRepository::SaveToJson(FilePath, Domain.ToSaveData()))
 	{
@@ -42,12 +48,12 @@ bool UDeckManager::SaveDeck(FString& OutError, const FDeckData& Data)
 {
 	FDeckData SaveData = Data;
 
-	if (SaveData.DeckID.IsEmpty())
+	if (SaveData.deckID.IsEmpty())
 	{
-		SaveData.DeckID = FGuid::NewGuid().ToString();
+		SaveData.deckID = FGuid::NewGuid().ToString();
 	}
 
-	const FString Path = GetDeckFilePath(SaveData.DeckID);
+	const FString Path = GetDeckFilePath(SaveData.deckID);
 
 	/*
 	if (!DeckRepository::SaveToJson(Path, SaveData))
@@ -95,7 +101,7 @@ bool UDeckManager::LoadAllDecks()
     		FDeckData Data;
     		if (LoadDeck(Dir / File, Data))
     		{
-    			Decks.Add(Data);
+    			//Decks.Add(Data);
     		}
     	}
     	return true;
@@ -142,9 +148,28 @@ void UDeckManager::NotifyDeckListChanged()
 	OnDeckListChanged.Broadcast();
 }
 
-TArray<FDeckData> UDeckManager::GetDecks()
+TArray<DeckDomain> UDeckManager::GetDecks()
 {
 	return  Decks;
+}
+
+DeckDomain UDeckManager::GetCurrentDeck()const
+{
+	return currentDeck;
+}
+
+void UDeckManager::CurrentBackDeck() 
+{
+}
+
+void UDeckManager::createDeck()
+{
+	currentDeck = DeckDomain();
+}
+
+void UDeckManager::EditDeck(const FString& DeckId)
+{
+	
 }
 
 

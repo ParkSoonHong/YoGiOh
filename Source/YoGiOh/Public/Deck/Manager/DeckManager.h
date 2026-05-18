@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Deck/Data/DeckData.h"
+#include "Deck/Domain/DeckDomain.h"
 #include "DeckManager.generated.h"
 
 class DeckManagerHelper;
@@ -16,6 +17,8 @@ class YOGIOH_API UDeckManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 public:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	
 	bool CreateAndSaveDeck(const FDeckData& InputData, FString& OutError);
 	bool SaveDeck(FString& OutError, const FDeckData& Data);
 	bool LoadDeck(const FString& FilePath, FDeckData& OutData);
@@ -30,13 +33,22 @@ public:
 	
 	void NotifyDeckListChanged();
 	
-	TArray<FDeckData> GetDecks ();
+	TArray<DeckDomain> GetDecks ();
 	
 	DECLARE_MULTICAST_DELEGATE(FOnDeckListChanged);
 
 	FOnDeckListChanged OnDeckListChanged;
 	
+	DeckDomain  GetCurrentDeck() const;
+	
+	void CurrentBackDeck();
+	
+	void createDeck();
+	
+	void EditDeck(const FString& DeckId);
+	
 private:
 	TUniquePtr<DeckManagerHelper> DeckHelper;
-	TArray<FDeckData> Decks;
+	TArray<DeckDomain> Decks;
+	DeckDomain  currentDeck;
 };

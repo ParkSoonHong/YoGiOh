@@ -99,7 +99,6 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UEditableText* Editable_Comment;
 private:
-	UDeckManager * DeckManager = nullptr;
 	
 	UFUNCTION()
 	void OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type SelectionType);
@@ -133,18 +132,40 @@ private:
 	
 	void RefreshScore();
 
+	void RefreshTotalScore(EDeckStatType statType, float statScore);
 	// 바인딩 함수들
 	UFUNCTION()
 	void OnChangeImage();
 	
 	UFUNCTION()
 	void OnClickedSaveButton();
+	UFUNCTION()
+	void OnClickedBackButton();
 
 	UFUNCTION()
 	void OnCommentCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 	UFUNCTION()
 	void OnDeckNameCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+	
+	// values 조정
 	UFUNCTION()
-	void OnClickedBackButton();
+	void OnDeploymentValueCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+	UFUNCTION()
+	void OnBreakthroughValueCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+	UFUNCTION()
+	void OnRetentionValueCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+	UFUNCTION()
+	void OnRecoveryValueCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+	UFUNCTION()
+	void OnControlValueCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+	UFUNCTION()
+	void OnFlexibilityValueCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+	UFUNCTION()
+	void OnBasePowerValueCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+	UFUNCTION()
+	void OnRelativeAValueCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+	UFUNCTION()
+	void OnRelativeBValueCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
 	
 };
