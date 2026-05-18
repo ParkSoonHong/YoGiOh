@@ -4,9 +4,6 @@
 
 #include "CoreMinimal.h"
 
-/**
- * 
- */
 class YOGIOH_API DeckNameSpecification
 {
 public:

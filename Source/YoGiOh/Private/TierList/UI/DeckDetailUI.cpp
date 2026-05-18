@@ -3,15 +3,12 @@
 
 #include "TierList/UI/DeckDetailUI.h"
 #include "Deck/Type//EDeckOwner.h"
-//#include "System/Popup/UiPopUpManager.h"
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 #include "Components/EditableText.h"
-#include "Components/Slider.h"
-#include "Components/TextBlock.h"
 #include "Deck/Manager/DeckManager.h"
-#include "TierList/UI/TierListUI.h"
-#include "Deck/Manager/DeckManagerHelper.h"
+
+#include "System/Popup/Manager/UiPopUpManager.h"
 
 void UDeckDetailUI::NativeConstruct()
 {
@@ -20,7 +17,7 @@ void UDeckDetailUI::NativeConstruct()
 	
 	if (Button_SaveButton)
 	{
-		Button_SaveButton->OnClicked.AddDynamic(this,&UDeckDetailUI::OnSave);
+		Button_SaveButton->OnClicked.AddDynamic(this,&UDeckDetailUI::OnClickedSaveButton);
 	}
 //	DeckManager = GetWorld()->GetSubsystem<UDeckManager>();
 	
@@ -30,7 +27,7 @@ void UDeckDetailUI::NativeConstruct()
 	*/
 }
 
-void UDeckDetailUI::InitializeDetail(UDeckManager* Manager, const FDeckSaveData& Data)
+void UDeckDetailUI::InitializeDetail(UDeckManager* Manager, const FDeckData& Data)
 {
 	
 	
@@ -48,14 +45,13 @@ void UDeckDetailUI::OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type
 
 void UDeckDetailUI::InitializeDeckOwnerComboBox()
 {
-	
 	if (!ComboBox_DeckOwner)
 		return;
 
 	// ComboBox 초기화
 	ComboBox_DeckOwner->ClearOptions();
 
-	// Enum의 모든 값을 순회하며 추가
+	// Enum의 모든 값을 순회하며 추가 -> 데이터베이스 플레이어 로 추후 변경
 	const UEnum* EnumPtr = StaticEnum<EDeckOwner>();
     
 	for (int32 i = 0; i < EnumPtr->NumEnums() - 1; ++i)  // -1은 MAX 값 제외
@@ -99,7 +95,10 @@ void UDeckDetailUI::BindUIEvents()
 	Button_DeckImage->OnClicked.AddDynamic(this, &UDeckDetailUI::OnChangeImage);
 	
 	if (Button_SaveButton == nullptr) return;
-	Button_SaveButton->OnClicked.AddDynamic(this, &UDeckDetailUI::OnSave);
+	Button_SaveButton->OnClicked.AddDynamic(this, &UDeckDetailUI::OnClickedSaveButton);
+	
+	if (Button_BackButton == nullptr) return;
+	Button_BackButton->OnClicked.AddDynamic(this, &UDeckDetailUI::OnClickedBackButton);
 	
 	if (Editable_Comment == nullptr) return;
 	Editable_Comment->OnTextCommitted.AddDynamic(this, &UDeckDetailUI::OnCommentCommitted);
@@ -130,7 +129,7 @@ void UDeckDetailUI::OnChangeImage()
 	Button_DeckImage->SetStyle(btrStyle);
 }
 
-void UDeckDetailUI::OnSave()
+void UDeckDetailUI::OnClickedSaveButton()
 {
 	FString Error;
 	/*
@@ -140,15 +139,25 @@ void UDeckDetailUI::OnSave()
 		return;
 	}
 	*/
-	UWorld * world =  GetWorld();
-		
-	UGameInstance * instance =  world->GetGameInstance();
-		
-	UDeckManager * deckManager = instance->GetSubsystem<UDeckManager>();
-	deckManager->NotifyDeckListChanged();
-		
-	//UUiPopUpManager * popupManager = instance->GetSubsystem<UUiPopUpManager>();
-	//popupManager->PopPopup();	
+	
+	
+	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+	{
+		deckMgr->NotifyDeckListChanged();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
+	}
+	
+	if (UUiPopUpManager* PopupMgr = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
+	{
+		PopupMgr->PopPopup();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
+	}
 }
 
 
@@ -222,4 +231,16 @@ void UDeckDetailUI::OnDeckNameCommitted(const FText& Text, ETextCommit::Type Com
 	//if (!DeckHelper) return;
 
 	//DeckHelper->SetText(Text.ToString(),EEditableTextType::DeckName);
+}
+
+void UDeckDetailUI::OnClickedBackButton()
+{
+	if (UUiPopUpManager* PopupMgr = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
+	{
+		PopupMgr->PopPopup();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
+	}
 }

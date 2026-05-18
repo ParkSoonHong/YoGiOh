@@ -5,9 +5,9 @@
 #include "Deck/Domain/DeckDomain.h"
 #include "Deck/Repository/DeckRepository.h"
 
-bool UDeckManager::CreateAndSaveDeck(const FDeckSaveData& InputData, FString& OutError)
+bool UDeckManager::CreateAndSaveDeck(const FDeckData& InputData, FString& OutError)
 {
-	FDeckSaveData Data = InputData;
+	FDeckData Data = InputData;
 
 	if (Data.DeckID.IsEmpty())
 	{
@@ -38,9 +38,9 @@ bool UDeckManager::CreateAndSaveDeck(const FDeckSaveData& InputData, FString& Ou
 }
 
 
-bool UDeckManager::SaveDeck(FString& OutError, const FDeckSaveData& Data)
+bool UDeckManager::SaveDeck(FString& OutError, const FDeckData& Data)
 {
-	FDeckSaveData SaveData = Data;
+	FDeckData SaveData = Data;
 
 	if (SaveData.DeckID.IsEmpty())
 	{
@@ -60,7 +60,7 @@ bool UDeckManager::SaveDeck(FString& OutError, const FDeckSaveData& Data)
 	return true;
 }
 
-bool UDeckManager::LoadDeck(const FString& FilePath, FDeckSaveData& OutData)
+bool UDeckManager::LoadDeck(const FString& FilePath, FDeckData& OutData)
 {
 	/*
 	if (!DeckRepository::LoadFromJson(FilePath, OutData))
@@ -92,7 +92,7 @@ bool UDeckManager::LoadAllDecks()
     
     	for (const FString& File : Files)
     	{
-    		FDeckSaveData Data;
+    		FDeckData Data;
     		if (LoadDeck(Dir / File, Data))
     		{
     			Decks.Add(Data);
@@ -142,7 +142,9 @@ void UDeckManager::NotifyDeckListChanged()
 	OnDeckListChanged.Broadcast();
 }
 
-TArray<FDeckSaveData> UDeckManager::GetDecks()
+TArray<FDeckData> UDeckManager::GetDecks()
 {
 	return  Decks;
 }
+
+

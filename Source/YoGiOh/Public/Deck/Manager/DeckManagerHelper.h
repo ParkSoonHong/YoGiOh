@@ -1,9 +1,9 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "Deck/Data/DeckData.h"
 #include "Deck/Type/EDeckOwner.h"
 #include "UI/Type/EEditableTextType.h"
-#include "Deck/Domain/DeckSaveData.h"
 #include "Deck/Type/EDeckStatType.h"
 #include "Styling/SlateBrush.h"
 
@@ -16,19 +16,19 @@ public:
 	/* ===== Input ===== */
 
 	void RequestChangeThumbnail();
-	static void SetStatBySlider(EDeckStatType Type, float SliderValue,  FDeckSaveData& WorkingData);
-	static void SetText(const FString& Text, const EEditableTextType TextType,  FDeckSaveData& WorkingData);
-	void SetOwner(EDeckOwner Owner,  FDeckSaveData& WorkingData);
+	static void SetStatBySlider(EDeckStatType Type, float SliderValue,  FDeckData& WorkingData);
+	static void SetText(const FString& Text, const EEditableTextType TextType,  FDeckData& WorkingData);
+	void SetOwner(EDeckOwner Owner,  FDeckData& WorkingData);
 	
 	/* ===== Output ===== */
 
-	static void Recalculate(FDeckSaveData& WorkingData);
+	static void Recalculate(FDeckData& WorkingData);
 	FSlateBrush GetThumbnailBrush() const;
 	//static EDeckTier CalculateTier(uint8 TotalScore);
 
 	/* ===== Save ===== */
 
-	bool SaveImageConvert(FString& OutError, FDeckSaveData& WorkingData);
+	bool SaveImageConvert(FString& OutError, FDeckData& WorkingData);
 	
 private:
 	// 추후 전용 유틸 클래스로 분리 

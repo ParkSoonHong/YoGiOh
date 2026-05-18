@@ -4,7 +4,7 @@
 #include "Deck/Domain/DeckDomain.h"
 #include "Deck/Domain/Specification/DeckNameSpecification.h"
 
-DeckDomain::DeckDomain(const FDeckSaveData& InData) : Data(InData)
+DeckDomain::DeckDomain(const FDeckData& InData) : Data(InData)
 {
 	RecalculateScore();
 }
@@ -46,7 +46,7 @@ void DeckDomain::RecalculateScore()
 		Data.RelativeB;
 }
 
-FDeckSaveData DeckDomain::ToSaveData() const
+FDeckData DeckDomain::ToSaveData() const
 {
 	return Data;
 }

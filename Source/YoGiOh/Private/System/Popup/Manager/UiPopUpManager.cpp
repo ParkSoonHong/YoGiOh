@@ -107,7 +107,7 @@ void UUiPopUpManager::PopPopup()
 	Top->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void UUiPopUpManager::PushDeckDetailPopup(const FDeckSaveData& Data)
+void UUiPopUpManager::PushDeckDetailPopup(const FDeckData& Data)
 {
 	//PushPopup(EUIPopUpType::TierListDetail);
 

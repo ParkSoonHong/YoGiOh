@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Deck/Domain/DeckSaveData.h"
+#include "Deck/Data/DeckData.h"
 #include "TierSlotUI.generated.h"
 
 
-DECLARE_DELEGATE_OneParam(FOnDeckSlotClicked, const FDeckSaveData&);
+DECLARE_DELEGATE_OneParam(FOnDeckSlotClicked, const FDeckData&);
 
 class UButton;
 class UTextBlock;

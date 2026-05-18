@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "System/Popup/UiPopUpBase.h"
 #include "Deck/Type/EDeckOwner.h"
+#include "Deck/Data/DeckData.h"
 #include "Deck/Manager/DeckManagerHelper.h"
 #include "DeckDetailUI.generated.h"
 
@@ -24,7 +25,7 @@ protected:
 
 public:	
 	
-	void InitializeDetail(UDeckManager* Manager, const FDeckSaveData& Data);
+	void InitializeDetail(UDeckManager* Manager, const FDeckData& Data);
 
 	UPROPERTY(meta=(BindWidget))
 	UButton* Button_SaveButton;
@@ -137,12 +138,13 @@ private:
 	void OnChangeImage();
 	
 	UFUNCTION()
-	void OnSave();
+	void OnClickedSaveButton();
 
 	UFUNCTION()
 	void OnCommentCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 	UFUNCTION()
 	void OnDeckNameCommitted(const FText& Text, ETextCommit::Type CommitMethod);
-	
+	UFUNCTION()
+	void OnClickedBackButton();
 	
 };

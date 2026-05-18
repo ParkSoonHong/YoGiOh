@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DeckSaveData.h"
+#include "Deck/Data/DeckData.h"
 
 /**
  * 
@@ -11,7 +11,7 @@
 class YOGIOH_API DeckDomain
 {
 public:
-	explicit DeckDomain(const FDeckSaveData& InData);
+	explicit DeckDomain(const FDeckData& InData);
 
 	// ----- Query -----
 	const FString& GetName() const { return Data.DeckName; }
@@ -25,8 +25,8 @@ public:
 	bool IsValid(FString& OutError) const;
 
 	// ----- Convert -----
-	FDeckSaveData ToSaveData() const;
+	FDeckData ToSaveData() const;
 
 private:
-	FDeckSaveData Data;
+	FDeckData Data;
 };

@@ -2,7 +2,6 @@
 
 
 #include "TierList/UI/TierListUI.h"
-#include "Deck/Domain/DeckSaveData.h"
 //#include "System/Popup/UiPopUpManager.h"
 #include "Components/Button.h"
 #include "Components/VerticalBox.h"
@@ -36,11 +35,11 @@ void UTierListUI::NativeConstruct()
 	}
 }
 
-void UTierListUI::BuildTierMap(const TArray<FDeckSaveData>& Decks)
+void UTierListUI::BuildTierMap(const TArray<FDeckData>& Decks)
 {
 //	tierMap.Reset();
 
-	for (const FDeckSaveData& Deck : Decks)
+	for (const FDeckData& Deck : Decks)
 	{
 //		const EDeckTier Tier = DeckManagerHelper::CalculateTier(Deck.TotalScore);
 //		tierMap.FindOrAdd(Tier).Add(Deck);
@@ -56,7 +55,7 @@ void UTierListUI::RefreshList()
 		UE_LOG(LogTemp, Warning, TEXT("DeckManager LoadAllDecks Failed"));
 		return;
 	}
-	TArray<FDeckSaveData> Decks = DeckManager->GetDecks();
+	TArray<FDeckData> Decks = DeckManager->GetDecks();
 
 	if (Decks.IsEmpty())
 	{
@@ -103,7 +102,7 @@ void UTierListUI::RefreshList()
 	}
 	*/
 }
-void UTierListUI::HandleSlotClicked(const FDeckSaveData& Data)
+void UTierListUI::HandleSlotClicked(const FDeckData& Data)
 {
 	/*
 	if (UUiPopUpManager* PopupMgr =
@@ -116,8 +115,7 @@ void UTierListUI::HandleSlotClicked(const FDeckSaveData& Data)
 
 void UTierListUI::OnClickedDataAddButton()
 {
-	if (UUiPopUpManager* PopupMgr =
-				GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
+	if (UUiPopUpManager* PopupMgr = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
 	{
 		PopupMgr->PushPopup(EUIPopUpType::TierListDetail);
 	}
@@ -125,9 +123,12 @@ void UTierListUI::OnClickedDataAddButton()
 
 void UTierListUI::OnClickedBackButton()
 {
-	if (UUiPopUpManager* PopupMgr =
-				GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
+	if (UUiPopUpManager* PopupMgr = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
 	{
 		PopupMgr->PopPopup();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
 	}
 }

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "System/Popup/UiPopUpBase.h"
-#include "Deck/Domain/DeckSaveData.h"
+#include "Deck/Data/DeckData.h"
 #include "TierListUI.generated.h"
 
 class UDeckManager;
@@ -38,21 +38,22 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="UI")
 	TSubclassOf<UUserWidget> LineClass;
 	
-	FDeckSaveData PendingDetailData;
+	FDeckData PendingDetailData;
 
 private:
 	UDeckManager* DeckManager;	
 
-	void BuildTierMap(const TArray<FDeckSaveData>& Decks);
+	void BuildTierMap(const TArray<FDeckData>& Decks);
 	void RefreshList();
 
-	void HandleSlotClicked(const FDeckSaveData& Data);
+	void HandleSlotClicked(const FDeckData& Data);
 private:
 	//TMap<EDeckTier,TArray<FDeckSaveData>> tierMap;
 public:
 	
 	UFUNCTION()
 	void OnClickedDataAddButton();
+	
 	UFUNCTION()
 	void OnClickedBackButton();
 };

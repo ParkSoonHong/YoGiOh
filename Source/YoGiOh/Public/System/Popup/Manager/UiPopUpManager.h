@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "System/Popup/UIPopUpType.h" 
-#include "Deck/Domain/DeckSaveData.h"
+#include "Deck/Data/DeckData.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UiPopUpManager.generated.h"
 
@@ -33,7 +33,7 @@ public:
 	void PopPopup();
 	
 	// ⭐ 추가
-	void PushDeckDetailPopup(const FDeckSaveData& Data);
+	void PushDeckDetailPopup(const FDeckData& Data);
 
 
 private:

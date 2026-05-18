@@ -41,7 +41,7 @@ void DeckManagerHelper::RequestChangeThumbnail()
 	}
 }
 
-void DeckManagerHelper::SetStatBySlider(EDeckStatType Type, float SliderValue, FDeckSaveData& WorkingData)
+void DeckManagerHelper::SetStatBySlider(EDeckStatType Type, float SliderValue, FDeckData& WorkingData)
 {
 	uint8 Value = FMath::RoundToInt(SliderValue * 10.f);
 
@@ -61,7 +61,7 @@ void DeckManagerHelper::SetStatBySlider(EDeckStatType Type, float SliderValue, F
 	Recalculate(WorkingData);
 }
 
-void DeckManagerHelper::SetText(const FString& Text, const EEditableTextType TextType,  FDeckSaveData& WorkingData)
+void DeckManagerHelper::SetText(const FString& Text, const EEditableTextType TextType,  FDeckData& WorkingData)
 {
 	switch (TextType)
 	{
@@ -70,7 +70,7 @@ void DeckManagerHelper::SetText(const FString& Text, const EEditableTextType Tex
 	}
 }
 
-void DeckManagerHelper::SetOwner(EDeckOwner Owner,  FDeckSaveData& WorkingData)
+void DeckManagerHelper::SetOwner(EDeckOwner Owner,  FDeckData& WorkingData)
 {
 	WorkingData.DeckOwner = Owner;
 }
@@ -110,7 +110,7 @@ EDeckTier DeckManagerHelper::CalculateTier(uint8 TotalScore)
 	return EDeckTier::F;
 }
 */
-bool DeckManagerHelper::SaveImageConvert(FString& OutError, FDeckSaveData& WorkingData)
+bool DeckManagerHelper::SaveImageConvert(FString& OutError, FDeckData& WorkingData)
 {
 	if (!Manager)
 	{
@@ -147,7 +147,7 @@ bool DeckManagerHelper::SaveImageConvert(FString& OutError, FDeckSaveData& Worki
 	//return Manager->SaveDeck(OutError, WorkingData);
 }
 
-void DeckManagerHelper::Recalculate(FDeckSaveData& WorkingData)
+void DeckManagerHelper::Recalculate(FDeckData& WorkingData)
 {
 	WorkingData.TotalScore 
 	= WorkingData.Deployment 
