@@ -49,9 +49,11 @@ public:
 	
 	void UpdateStatCurrentDeck(EDeckStatType StatType,float StatScore);
 	
-	void UpdateTextCurrentDeck(EDeckFieldType FieldType,const FString& Text);
+	void UpdateFieldCurrentDeck(EDeckFieldType FieldType,const FString& Field);
 	
 	void EditDeck(const FString& deckId);
+	
+	void TestSave();
 	
 private:
 	void NotifyDeckListChanged();

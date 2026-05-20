@@ -180,8 +180,13 @@ void UDeckManager::UpdateStatCurrentDeck(EDeckStatType StatType, float StatScore
 	OnDeckUpdate.Broadcast();
 }
 
-void UDeckManager::UpdateTextCurrentDeck(EDeckFieldType FieldType, const FString& Text)
+void UDeckManager::UpdateFieldCurrentDeck(EDeckFieldType FieldType, const FString& Field)
 {
+	if (!currentDeck.SetField(FieldType,Field))
+	{
+		UE_LOG(LogTemp,Error, 
+			TEXT("Failed to update Field. Type: %s"),*Field);
+	}
 	
 }
 
@@ -189,6 +194,52 @@ void UDeckManager::UpdateTextCurrentDeck(EDeckFieldType FieldType, const FString
 void UDeckManager::EditDeck(const FString& deckId)
 {
 	
+}
+
+void UDeckManager::TestSave()
+{	
+	UE_LOG(LogTemp, Warning, TEXT("===== Current Deck ====="));
+
+	UE_LOG(LogTemp, Warning, TEXT("DeckName : %s"),
+		*currentDeck.GetField(EDeckFieldType::DECKNAME));
+	
+	UE_LOG(LogTemp, Warning, TEXT("DeckOwner : %s"),
+		 *currentDeck.GetField(EDeckFieldType::OWNER));
+
+	UE_LOG(LogTemp, Warning, TEXT("Comment : %s"),
+		*currentDeck.GetField(EDeckFieldType::COMMENT));
+
+	UE_LOG(LogTemp, Warning, TEXT("Deployment : %.2f"),
+		currentDeck.GetStatScore(EDeckStatType::DEPLOYMENT));
+
+	UE_LOG(LogTemp, Warning, TEXT("Breakthrough : %.2f"),
+		currentDeck.GetStatScore(EDeckStatType::BREAKTHROUGH));
+
+	UE_LOG(LogTemp, Warning, TEXT("Retention : %.2f"),
+		currentDeck.GetStatScore(EDeckStatType::RETENTION));
+
+	UE_LOG(LogTemp, Warning, TEXT("Recovery : %.2f"),
+		currentDeck.GetStatScore(EDeckStatType::RECOVERY));
+
+	UE_LOG(LogTemp, Warning, TEXT("Control : %.2f"),
+		currentDeck.GetStatScore(EDeckStatType::CONTROL));
+
+	UE_LOG(LogTemp, Warning, TEXT("Flexibility : %.2f"),
+		currentDeck.GetStatScore(EDeckStatType::FLEXIBILITY));
+
+	UE_LOG(LogTemp, Warning, TEXT("BasePower : %.2f"),
+		currentDeck.GetStatScore(EDeckStatType::BASEPOWER));
+
+	UE_LOG(LogTemp, Warning, TEXT("RelativeA : %.2f"),
+		currentDeck.GetStatScore(EDeckStatType::RELATIVEA));
+
+	UE_LOG(LogTemp, Warning, TEXT("RelativeB : %.2f"),
+		currentDeck.GetStatScore(EDeckStatType::RELATIVEB));
+
+	UE_LOG(LogTemp, Warning, TEXT("TotalScore : %.2f"),
+		currentDeck.GetTotalScore());
+
+	UE_LOG(LogTemp, Warning, TEXT("========================"));
 }
 
 

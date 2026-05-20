@@ -39,6 +39,28 @@ float FDeckDomain::GetStatScore(EDeckStatType StatType) const
 	}
 }
 
+FString FDeckDomain::GetField(EDeckFieldType FieldType) const
+{
+	FString Error;
+	switch (FieldType)
+	{
+	case EDeckFieldType::OWNER : return data.deckOwner; 
+	case EDeckFieldType::DECKNAME : return data.deckName;
+	case EDeckFieldType::COMMENT : return data.comment;
+	default:
+		{
+			UE_LOG(LogTemp,Error,TEXT("DeckDomain::GetField: Unknown deck Field type"))
+		}
+	}
+	return Error;
+}
+
+/*
+const FDeckData& FDeckDomain::GetDeckData() const
+{
+	return data;
+}
+*/
 bool FDeckDomain::SetStatScore(EDeckStatType StatType, float NewScore)
 {
 	if (!FDeckStatRule::IsValid(StatType,NewScore))
@@ -58,13 +80,30 @@ bool FDeckDomain::SetStatScore(EDeckStatType StatType, float NewScore)
 	case EDeckStatType::RELATIVEB:  data.relativeB = NewScore;break;
 	default:
 		{
-			UE_LOG(LogTemp,Error,TEXT("DeckDomain::GetStatScore: Unknown deck stat type"))
+			UE_LOG(LogTemp,Error,TEXT("DeckDomain::SetStatScore: Unknown deck stat type"))
 			return false;
 		}
 	}
 	data.totalScore = FDeckScoreCalculator::TotalScoreCalculation(data);
 	
 	return true;
+}
+
+bool FDeckDomain::SetField(EDeckFieldType FieldType, const FString& Field)
+{
+	switch (FieldType)
+	{
+		case EDeckFieldType::OWNER : data.deckOwner = Field; break;
+		case EDeckFieldType::DECKNAME : data.deckName = Field; break;
+		case EDeckFieldType::COMMENT : data.comment = Field; break;
+		default:
+			{
+				UE_LOG(LogTemp,Error,TEXT("DeckDomain::SetField: Unknown deck Field type"))
+				return false;
+			}
+	}
+	
+	return  true;
 }
 
 bool FDeckDomain::Rename(const FString& newName, FString& outError)

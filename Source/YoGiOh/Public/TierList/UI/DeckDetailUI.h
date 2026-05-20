@@ -10,6 +10,7 @@
 #include "DeckDetailUI.generated.h"
 
 
+enum class EDeckFieldType : uint8;
 class UButton;
 class UComboBoxString;
 class UEditableText;
@@ -110,10 +111,11 @@ private:
 	void BindUIEvents();
 	
 	void RefreshUI();
+	void RefreshTotalScore();
 	
 	void UpdateStat(EDeckStatType StatType,float StatScore);
 
-	void RefreshTotalScore();
+	void UpdateField(EDeckFieldType FieldType,const FString & FieldText);
 	// 바인딩 함수들
 	UFUNCTION()
 	void OnChangeImage();

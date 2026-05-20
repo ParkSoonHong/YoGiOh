@@ -34,6 +34,84 @@ void UDeckDetailUI::InitializeDetail(UDeckManager* Manager, const FDeckData& Dat
 	
 }
 
+void UDeckDetailUI::InitializeDeckOwnerComboBox()
+{
+	if (!ComboBox_DeckOwner)
+		return;
+
+	// ComboBox 초기화
+	ComboBox_DeckOwner->ClearOptions();
+
+	// Enum의 모든 값을 순회하며 추가 -> 데이터베이스 플레이어 로 추후 변경
+	const UEnum* EnumPtr = StaticEnum<EDeckOwner>();
+    
+	for (int32 i = 0; i < EnumPtr->NumEnums() - 1; ++i)  // -1은 MAX 값 제외
+	{
+		EDeckOwner EnumValue = static_cast<EDeckOwner>(EnumPtr->GetValueByIndex(i));
+        
+		// DisplayName 가져오기
+		FString DisplayName = EnumPtr->GetDisplayNameTextByIndex(i).ToString();
+        
+		// ComboBox에 추가
+		ComboBox_DeckOwner->AddOption(DisplayName);
+	}
+}
+
+void UDeckDetailUI::UpdateStat(EDeckStatType StatType,float StatScore)
+{
+	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+	{
+		deckMgr->UpdateStatCurrentDeck(StatType,StatScore);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
+	}
+}
+
+void UDeckDetailUI::UpdateField(EDeckFieldType FieldType, const FString& FieldText)
+{
+	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+	{
+		deckMgr->UpdateFieldCurrentDeck(FieldType,FieldText);
+	}
+}
+
+void UDeckDetailUI::RefreshUI()
+{
+	if (Button_DeckImage == nullptr) return;;
+	
+	FButtonStyle btrStyle;
+	FSlateBrush normal;// = DeckHelper->GetThumbnailBrush();
+	FSlateBrush hover = normal;
+	FSlateBrush pressed = normal;
+
+	
+	normal.ImageSize = FVector2D(695, 545);
+	normal.TintColor = FSlateColor(FLinearColor::White);
+
+	hover.ImageSize = FVector2D(695, 545);
+	hover.TintColor = FSlateColor(FLinearColor(0.8f,0.8f,0.8f,1.0f));
+	
+	pressed.ImageSize = FVector2D(695, 545);
+	pressed.TintColor = FSlateColor(FLinearColor(0.4f,0.4f,0.4f,1.0f));
+	
+	Button_DeckImage->SetStyle(btrStyle);
+}
+
+void UDeckDetailUI::RefreshTotalScore()
+{
+	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+	{
+		float totalScore = deckMgr->GetCurrentDeck().GetTotalScore();
+		FString strFloat = FString::Printf(TEXT("%.2f"), totalScore);
+		Text_TotalScore->SetText(FText::FromString(strFloat));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
+	}
+}
 // 바인딩
 void UDeckDetailUI::BindUIEvents()
 {
@@ -88,34 +166,7 @@ void UDeckDetailUI::BindUIEvents()
 
 void UDeckDetailUI::OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type SelectionType)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Selected DeckOwner: %s"), *SelectedItem);
-	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
-	{
-		deckMgr->OnDeckUpdate.AddUObject(this, &UDeckDetailUI::RefreshTotalScore);
-	}
-}
-
-void UDeckDetailUI::InitializeDeckOwnerComboBox()
-{
-	if (!ComboBox_DeckOwner)
-		return;
-
-	// ComboBox 초기화
-	ComboBox_DeckOwner->ClearOptions();
-
-	// Enum의 모든 값을 순회하며 추가 -> 데이터베이스 플레이어 로 추후 변경
-	const UEnum* EnumPtr = StaticEnum<EDeckOwner>();
-    
-	for (int32 i = 0; i < EnumPtr->NumEnums() - 1; ++i)  // -1은 MAX 값 제외
-	{
-		EDeckOwner EnumValue = static_cast<EDeckOwner>(EnumPtr->GetValueByIndex(i));
-        
-		// DisplayName 가져오기
-		FString DisplayName = EnumPtr->GetDisplayNameTextByIndex(i).ToString();
-        
-		// ComboBox에 추가
-		ComboBox_DeckOwner->AddOption(DisplayName);
-	}
+	UpdateField(EDeckFieldType::OWNER,SelectedItem);
 }
 
 
@@ -144,9 +195,9 @@ void UDeckDetailUI::OnClickedSaveButton()
 {
 	FString Error;
 	
-	FText Deployment =  Editable_Deployment->GetText();
 	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 	{
+		deckMgr->TestSave();
 		//deckMgr->NotifyDeckListChanged();
 	}
 	else
@@ -176,67 +227,14 @@ void UDeckDetailUI::OnClickedBackButton()
 	}
 }
 
-
-void UDeckDetailUI::RefreshUI()
-{
-	if (Button_DeckImage == nullptr) return;;
-	
-	FButtonStyle btrStyle;
-	FSlateBrush normal;// = DeckHelper->GetThumbnailBrush();
-	FSlateBrush hover = normal;
-	FSlateBrush pressed = normal;
-
-	
-	normal.ImageSize = FVector2D(695, 545);
-	normal.TintColor = FSlateColor(FLinearColor::White);
-
-	hover.ImageSize = FVector2D(695, 545);
-	hover.TintColor = FSlateColor(FLinearColor(0.8f,0.8f,0.8f,1.0f));
-	
-	pressed.ImageSize = FVector2D(695, 545);
-	pressed.TintColor = FSlateColor(FLinearColor(0.4f,0.4f,0.4f,1.0f));
-	
-	Button_DeckImage->SetStyle(btrStyle);
-}
-
-void UDeckDetailUI::UpdateStat(EDeckStatType StatType,float StatScore)
-{
-	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
-	{
-		deckMgr->UpdateStatCurrentDeck(StatType,StatScore);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
-	}
-}
-
-void UDeckDetailUI::RefreshTotalScore()
-{
-	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
-	{
-		float totalScore = deckMgr->GetCurrentDeck().GetTotalScore();
-		FString strFloat = FString::Printf(TEXT("%.2f"), totalScore);
-		Text_TotalScore->SetText(FText::FromString(strFloat));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
-	}
-}
-
 void UDeckDetailUI::OnCommentCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	//if (!DeckHelper) return;
-
-	//DeckHelper->SetText(Text.ToString(),EEditableTextType::Comment);
+	UpdateField(EDeckFieldType::COMMENT,Text.ToString());
 }
 
 void UDeckDetailUI::OnDeckNameCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	//if (!DeckHelper) return;
-
-	//DeckHelper->SetText(Text.ToString(),EEditableTextType::DeckName);
+	UpdateField(EDeckFieldType::DECKNAME,Text.ToString());
 }
 
 void UDeckDetailUI::OnDeploymentValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)

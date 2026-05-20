@@ -23,7 +23,7 @@ public:
 	FString deckName; // 덱 이름
 
 	UPROPERTY()
-	EDeckOwner deckOwner; // 덱 주인
+	FString deckOwner; // 덱 주인
 
 	UPROPERTY()
 	TSet<EPlayablePlayer> playablePlayers; // 플레이 가능한 플레이어

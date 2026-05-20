@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Deck/Data/FDeckData.h"
+#include "Deck/Type/EDeckFieldType.h"
 #include "Deck/Type/EDeckStatType.h"
 
 /**
@@ -20,9 +21,12 @@ public:
 	const FString& GetName() const { return data.deckName; }
 	float GetTotalScore() const { return data.totalScore; }
 	float GetStatScore(EDeckStatType StatType) const;
+	FString GetField(EDeckFieldType FieldType) const;
+	//const FDeckData& GetDeckData() const;
 	
 	// ----- Set -----
 	bool SetStatScore(EDeckStatType StatType, float NewScore);
+	bool SetField(EDeckFieldType FieldType, const FString& Field);
 	
 	// ----- Command -----
 	bool Rename(const FString& NewName, FString& OutError);

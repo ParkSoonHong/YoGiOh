@@ -72,7 +72,7 @@ void DeckManagerHelper::SetText(const FString& Text, const EEditableTextType Tex
 
 void DeckManagerHelper::SetOwner(EDeckOwner Owner,  FDeckData& WorkingData)
 {
-	WorkingData.deckOwner = Owner;
+	//WorkingData.deckOwner = Owner;
 }
 
 FSlateBrush DeckManagerHelper::GetThumbnailBrush() const

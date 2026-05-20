@@ -13,8 +13,8 @@ bool FDeckJsonSerializer::TrySerialize(const FDeckData& data, FString& outJson)
 
 	jsonObject->SetStringField(TEXT("DeckName"), data.deckName);
 	jsonObject->SetStringField(TEXT("ImagePath"), data.imagePath);
-	jsonObject->SetStringField(TEXT("Owner"),
-	StaticEnum<EDeckOwner>()->GetNameStringByValue((int64)data.deckOwner));
+	jsonObject->SetStringField(TEXT("Owner"),data.deckOwner);
+	//jsonObject->SetStringField(TEXT("Owner"), StaticEnum<EDeckOwner>()->GetNameStringByValue((int64)data.deckOwner));
 
 	// Stats
 	jsonObject->SetStringField(TEXT("DeckID"), data.deckID);
@@ -61,7 +61,9 @@ bool FDeckJsonSerializer::TryDeserialize(const FString& json, FDeckData& outData
     jsonObject->TryGetStringField(TEXT("ImagePath"), outData.imagePath);
     jsonObject->TryGetStringField(TEXT("DeckID"), outData.deckID);
     jsonObject->TryGetStringField(TEXT("Comment"), outData.comment);
+    jsonObject->TryGetStringField(TEXT("Owner"), outData.deckOwner);
 
+	/*
 	FString ownerStr;
 	if (jsonObject->TryGetStringField(TEXT("Owner"), ownerStr))
 	{
@@ -71,6 +73,7 @@ bool FDeckJsonSerializer::TryDeserialize(const FString& json, FDeckData& outData
 			outData.deckOwner = static_cast<EDeckOwner>(enumValue);
 		}
 	}
+	*/
 	
 	// json은 내부적으로 double
 	// 암묵적으로 float캐스팅
