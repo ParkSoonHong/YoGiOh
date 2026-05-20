@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Deck/Data/DeckData.h"
+#include "Deck/Data/FDeckData.h"
 
 /**
  * 

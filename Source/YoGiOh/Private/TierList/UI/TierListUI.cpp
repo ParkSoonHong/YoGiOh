@@ -55,7 +55,7 @@ void UTierListUI::RefreshList()
 		UE_LOG(LogTemp, Warning, TEXT("DeckManager LoadAllDecks Failed"));
 		return;
 	}
-	TArray<DeckDomain> Decks = DeckManager->GetDecks();
+	TArray<FDeckDomain> Decks = DeckManager->GetDecks();
 
 	if (Decks.IsEmpty())
 	{
@@ -122,7 +122,7 @@ void UTierListUI::OnClickedDataAddButton()
 	
 	if (UDeckManager* deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 	{
-		deckMgr->createDeck();
+		deckMgr->CreateDeck();
 	}
 }
 

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "System/Popup/UiPopUpBase.h"
 #include "Deck/Type/EDeckOwner.h"
-#include "Deck/Data/DeckData.h"
+#include "Deck/Data/FDeckData.h"
 #include "Deck/Manager/DeckManagerHelper.h"
 #include "DeckDetailUI.generated.h"
 
@@ -103,7 +103,6 @@ private:
 	UFUNCTION()
 	void OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type SelectionType);
 	
-private:
 	// 선택된 Enum 값 저장
 	EDeckOwner SelectedDeckOwner;
 
@@ -130,9 +129,9 @@ private:
 	
 	void RefreshUI();
 	
-	void RefreshScore();
+	void UpdateStat(EDeckStatType StatType,float StatScore);
 
-	void RefreshTotalScore(EDeckStatType statType, float statScore);
+	void RefreshTotalScore();
 	// 바인딩 함수들
 	UFUNCTION()
 	void OnChangeImage();

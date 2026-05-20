@@ -7,7 +7,7 @@
 /**
  * 
  */
-class YOGIOH_API DeckRules
+class YOGIOH_API FDeckRules
 {
 
 };

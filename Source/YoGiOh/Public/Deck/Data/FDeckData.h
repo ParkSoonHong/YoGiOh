@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Deck/Type/EDeckOwner.h"
 #include "Deck/Type/EPlayablePlayer.h"
-#include "DeckData.generated.h"
+#include "FDeckData.generated.h"
 
 USTRUCT(BlueprintType)
 struct FDeckData

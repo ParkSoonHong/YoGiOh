@@ -3,22 +3,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Deck/Data/DeckData.h"
+#include "Deck/Data/FDeckData.h"
+#include "Deck/Type/EDeckStatType.h"
 
 /**
  * 
  */
-class YOGIOH_API DeckDomain
+class YOGIOH_API FDeckDomain
 {
 public:
-	explicit DeckDomain(const FDeckData& inData);
+	explicit FDeckDomain(const FDeckData& inData);
 	
-	explicit DeckDomain();
+	explicit FDeckDomain();
 
-	// ----- Query -----
+	// ----- Get -----
 	const FString& GetName() const { return data.deckName; }
-	int32 GetTotalScore() const { return data.totalScore; }
-
+	float GetTotalScore() const { return data.totalScore; }
+	float GetStatScore(const EDeckStatType StatType) const;
+	
+	// ----- Set -----
+	void SetStatScore(const EDeckStatType StatType, float NewScore);
+	
 	// ----- Command -----
 	bool Rename(const FString& NewName, FString& OutError);
 	void RecalculateScore();

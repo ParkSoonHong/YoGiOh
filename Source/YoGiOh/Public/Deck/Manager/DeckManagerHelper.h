@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "Deck/Data/DeckData.h"
+#include "Deck/Data/FDeckData.h"
 #include "Deck/Type/EDeckOwner.h"
 #include "UI/Type/EEditableTextType.h"
 #include "Deck/Type/EDeckStatType.h"

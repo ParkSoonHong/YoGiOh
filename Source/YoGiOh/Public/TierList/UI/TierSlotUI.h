@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Deck/Data/DeckData.h"
+#include "Deck/Data/FDeckData.h"
 #include "TierSlotUI.generated.h"
 
 

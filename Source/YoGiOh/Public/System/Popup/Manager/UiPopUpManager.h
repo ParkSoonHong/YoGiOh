@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "System/Popup/UIPopUpType.h" 
-#include "Deck/Data/DeckData.h"
+#include "Deck/Data/FDeckData.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UiPopUpManager.generated.h"
 

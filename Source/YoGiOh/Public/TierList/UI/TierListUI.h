@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "System/Popup/UiPopUpBase.h"
-#include "Deck/Data/DeckData.h"
+#include "Deck/Data/FDeckData.h"
 #include "TierListUI.generated.h"
 
 class UDeckManager;

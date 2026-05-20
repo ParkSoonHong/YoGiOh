@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "Deck/Data/DeckData.h"
-#include "Deck/Domain/DeckDomain.h"
+#include "Deck/Data/FDeckData.h"
+#include "Deck/Domain/FDeckDomain.h"
 #include "DeckManager.generated.h"
 
 class DeckManagerHelper;
@@ -31,24 +31,30 @@ public:
          
 	bool DeleteDeck(const FString& DeckID, FString& OutError);
 	
-	void NotifyDeckListChanged();
 	
-	TArray<DeckDomain> GetDecks ();
+	TArray<FDeckDomain> GetDecks ();
 	
 	DECLARE_MULTICAST_DELEGATE(FOnDeckListChanged);
+	DECLARE_MULTICAST_DELEGATE(FOndeckUpdate);
 
+	FOndeckUpdate OnDeckUpdate;
 	FOnDeckListChanged OnDeckListChanged;
 	
-	DeckDomain  GetCurrentDeck() const;
+	FDeckDomain  GetCurrentDeck() const;
+	
+	float GetcurrentDeckTotalScore() const;
 	
 	void CurrentBackDeck();
 	
-	void createDeck();
+	void CreateDeck();
 	
-	void EditDeck(const FString& DeckId);
+	void UpdateCurrentDeck(EDeckStatType StatType,float StatScore);
+	
+	void EditDeck(const FString& deckId);
 	
 private:
+	void NotifyDeckListChanged();
 	TUniquePtr<DeckManagerHelper> DeckHelper;
-	TArray<DeckDomain> Decks;
-	DeckDomain  currentDeck;
+	TArray<FDeckDomain> Decks;
+	FDeckDomain  currentDeck;
 };

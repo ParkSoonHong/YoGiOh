@@ -2,7 +2,7 @@
 
 
 #include "Deck/Manager/DeckManager.h"
-#include "Deck/Domain/DeckDomain.h"
+#include "Deck/Domain/FDeckDomain.h"
 #include "Deck/Repository/DeckRepository.h"
 
 void UDeckManager::Initialize(FSubsystemCollectionBase& Collection)
@@ -20,7 +20,7 @@ bool UDeckManager::CreateAndSaveDeck(const FDeckData& InputData, FString& OutErr
 		Data.deckID = FGuid::NewGuid().ToString(EGuidFormats::Digits);
 	}
 	
-	DeckDomain Domain(InputData);
+	FDeckDomain Domain(InputData);
 	if (!Domain.IsValid(OutError))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Deck validation failed: %s"), *OutError);
@@ -75,7 +75,7 @@ bool UDeckManager::LoadDeck(const FString& FilePath, FDeckData& OutData)
 		return false;
 	}
 	*/
-	DeckDomain Domain(OutData);
+	FDeckDomain Domain(OutData);
 	FString Error;
 	if (!Domain.IsValid(Error))
 	{
@@ -148,26 +148,38 @@ void UDeckManager::NotifyDeckListChanged()
 	OnDeckListChanged.Broadcast();
 }
 
-TArray<DeckDomain> UDeckManager::GetDecks()
+TArray<FDeckDomain> UDeckManager::GetDecks()
 {
 	return  Decks;
 }
 
-DeckDomain UDeckManager::GetCurrentDeck()const
+FDeckDomain UDeckManager::GetCurrentDeck()const
 {
 	return currentDeck;
+}
+
+float UDeckManager::GetcurrentDeckTotalScore() const
+{
+	return currentDeck.GetTotalScore();
 }
 
 void UDeckManager::CurrentBackDeck() 
 {
 }
 
-void UDeckManager::createDeck()
+void UDeckManager::CreateDeck()
 {
-	currentDeck = DeckDomain();
+	currentDeck = FDeckDomain();
+	UE_LOG(LogTemp,Warning,TEXT("CreateDeck"));
 }
 
-void UDeckManager::EditDeck(const FString& DeckId)
+void UDeckManager::UpdateCurrentDeck(EDeckStatType StatType, float StatScore)
+{
+	currentDeck.SetStatScore(StatType, StatScore);
+	OnDeckUpdate.Broadcast();
+}
+
+void UDeckManager::EditDeck(const FString& deckId)
 {
 	
 }

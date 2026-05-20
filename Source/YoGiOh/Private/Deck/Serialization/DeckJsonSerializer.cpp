@@ -5,7 +5,7 @@
 #include "Serialization/JsonWriter.h"
 #include "Serialization/JsonSerializer.h"
 #include "Misc/FileHelper.h"
-#include "Deck/Data/DeckData.h"
+#include "Deck/Data/FDeckData.h"
 
 bool FDeckJsonSerializer::TrySerialize(const FDeckData& data, FString& outJson)
 {

@@ -2,10 +2,14 @@
 
 
 #include "TierList/UI/DeckDetailUI.h"
+
+#include <string>
+
 #include "Deck/Type//EDeckOwner.h"
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 #include "Components/EditableText.h"
+#include "Components/TextBlock.h"
 #include "Deck/Calculation/FDeckScoreCalculator.h"
 #include "Deck/Manager/DeckManager.h"
 
@@ -15,21 +19,17 @@ void UDeckDetailUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	
-	if (Button_SaveButton)
-	{
-		Button_SaveButton->OnClicked.AddDynamic(this,&UDeckDetailUI::OnClickedSaveButton);
-	}
-	
-	/*
-	InitializeDeckOwnerComboBox();
 	BindUIEvents();
-	*/
+	
+	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+	{
+		deckMgr->OnDeckUpdate.AddUObject(this, &UDeckDetailUI::RefreshTotalScore);
+	}
+
 }
 
 void UDeckDetailUI::InitializeDetail(UDeckManager* Manager, const FDeckData& Data)
 {
-	
 	
 }
 
@@ -161,17 +161,11 @@ void UDeckDetailUI::OnChangeImage()
 void UDeckDetailUI::OnClickedSaveButton()
 {
 	FString Error;
-	/*
-	if (!DeckHelper->Save(Error))
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s"), *Error);
-		return;
-	}
-	*/
 	
+	FText Deployment =  Editable_Deployment->GetText();
 	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 	{
-		deckMgr->NotifyDeckListChanged();
+		//deckMgr->NotifyDeckListChanged();
 	}
 	else
 	{
@@ -203,8 +197,6 @@ void UDeckDetailUI::OnClickedBackButton()
 
 void UDeckDetailUI::RefreshUI()
 {
-	RefreshScore(); // 내부에서 호출
-	
 	if (Button_DeckImage == nullptr) return;;
 	
 	FButtonStyle btrStyle;
@@ -225,45 +217,25 @@ void UDeckDetailUI::RefreshUI()
 	Button_DeckImage->SetStyle(btrStyle);
 }
 
-void UDeckDetailUI::RefreshScore()
-{
-	//Text_TotalScore->SetText(DeckHelper->GetTotalScoreText());
-
-	/*
-	Slider_Deployment->SetValue(Data.Deployment / 10.f);
-	Text_Deployment->SetText(FText::AsNumber(Data.Deployment));
-	
-	Slider_Breakthrough->SetValue(Data.Breakthrough / 10.f);
-	Text_Breakthrough->SetText(FText::AsNumber(Data.Breakthrough));
-	
-	Slider_Retention->SetValue(Data.Retention / 10.f);
-	Text_Retention->SetText(FText::AsNumber(Data.Retention));
-	
-	Slider_Recovery->SetValue(Data.Recovery / 10.f);
-	Text_Recovery->SetText(FText::AsNumber(Data.Recovery));
-	
-	Slider_Control->SetValue(Data.Control / 10.f);
-	Text_Control->SetText(FText::AsNumber(Data.Control));
-	
-	Slider_Flexibility->SetValue(Data.Flexibility / 10.f);
-	Text_Flexibility->SetText(FText::AsNumber(Data.Flexibility));
-	
-	Slider_BasePower->SetValue(Data.BasePower / 10.f);
-	Text_BasePower->SetText(FText::AsNumber(Data.BasePower));
-	
-	Slider_RelativeA->SetValue(Data.RelativeA / 10.f);
-	Text_RelativeA->SetText(FText::AsNumber(Data.RelativeA));
-	
-	Slider_RelativeB->SetValue(Data.RelativeB / 10.f);
-	Text_RelativeB->SetText(FText::AsNumber(Data.RelativeB));
-	*/
-}
-
-void UDeckDetailUI::RefreshTotalScore(EDeckStatType statType, float statScore)
+void UDeckDetailUI::UpdateStat(EDeckStatType StatType,float StatScore)
 {
 	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 	{
-		FDeckScoreCalculator::TotalScroeCalculation(deckMgr->GetCurrentDeck(),statType,statScore);
+		deckMgr->UpdateCurrentDeck(StatType,StatScore);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
+	}
+}
+
+void UDeckDetailUI::RefreshTotalScore()
+{
+	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+	{
+		float totalScore = deckMgr->GetCurrentDeck().GetTotalScore();
+		FString strFloat = FString::Printf(TEXT("%.2f"), totalScore);
+		Text_TotalScore->SetText(FText::FromString(strFloat));
 	}
 	else
 	{
@@ -287,42 +259,55 @@ void UDeckDetailUI::OnDeckNameCommitted(const FText& Text, ETextCommit::Type Com
 
 void UDeckDetailUI::OnDeploymentValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	FText Deployment =  Editable_Deployment->GetText();
-	float Deploymentvalue =  FCString::Atof(*Deployment.ToString());
+	float deploymentValue =  FCString::Atof(*Text.ToString());
+	UpdateStat(EDeckStatType::DEPLOYMENT,deploymentValue);
 }
 
 void UDeckDetailUI::OnBreakthroughValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
+	float breakthroghValue =  FCString::Atof(*Text.ToString());
+	UpdateStat(EDeckStatType::BREAKTHROUGH,breakthroghValue);
 }
 
 void UDeckDetailUI::OnRetentionValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
+	float retentionValue =  FCString::Atof(*Text.ToString());
+	UpdateStat(EDeckStatType::RETENTION,retentionValue);
 }
 
 void UDeckDetailUI::OnRecoveryValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
+	float recoveryValue =  FCString::Atof(*Text.ToString());
+	UpdateStat(EDeckStatType::RECOVERY,recoveryValue);
 }
 
 void UDeckDetailUI::OnControlValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
+	float controlValue =  FCString::Atof(*Text.ToString());
+	UpdateStat(EDeckStatType::CONTROL,controlValue);
 }
 
 void UDeckDetailUI::OnFlexibilityValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
+	float flexibilityValue =  FCString::Atof(*Text.ToString());
+	UpdateStat(EDeckStatType::FLEXIBILITY,flexibilityValue);
 }
 
 void UDeckDetailUI::OnBasePowerValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	
+	float basePowerValue =  FCString::Atof(*Text.ToString());
+	UpdateStat(EDeckStatType::BASEPOWER,basePowerValue);
 }
 
 void UDeckDetailUI::OnRelativeAValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	
+	float relativeAValue =  FCString::Atof(*Text.ToString());
+	UpdateStat(EDeckStatType::RELATIVEA,relativeAValue);
 }
 
 void UDeckDetailUI::OnRelativeBValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	
+	float relativeBValue =  FCString::Atof(*Text.ToString());
+	UpdateStat(EDeckStatType::RELATIVEB,relativeBValue);
 }
 
