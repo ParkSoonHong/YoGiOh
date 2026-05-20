@@ -5,6 +5,7 @@
 
 #include "Deck/Calculation/FDeckScoreCalculator.h"
 #include "Deck/Domain/Specification/DeckNameSpecification.h"
+#include "Deck/Rules/FDeckStatRule.h"
 #include "Deck/Type/EDeckStatType.h"
 
 FDeckDomain::FDeckDomain(const FDeckData& inData) : data(inData)
@@ -17,7 +18,7 @@ FDeckDomain::FDeckDomain()
 	
 }
 
-float FDeckDomain::GetStatScore(const EDeckStatType StatType) const
+float FDeckDomain::GetStatScore(EDeckStatType StatType) const
 {
 	switch (StatType)
 	{
@@ -38,25 +39,32 @@ float FDeckDomain::GetStatScore(const EDeckStatType StatType) const
 	}
 }
 
-void FDeckDomain::SetStatScore(const EDeckStatType StatType, float NewScore)
+bool FDeckDomain::SetStatScore(EDeckStatType StatType, float NewScore)
 {
+	if (!FDeckStatRule::IsValid(StatType,NewScore))
+	{
+		return false;
+	}
 	switch (StatType)
 	{
 	case EDeckStatType::DEPLOYMENT: data.deployment = NewScore;break; 
 	case EDeckStatType::BREAKTHROUGH: data.breakthrough = NewScore;break;
-	case EDeckStatType::RETENTION:  data.retention = NewScore;break;;
-	case EDeckStatType::RECOVERY:  data.recovery = NewScore;break;; 
-	case EDeckStatType::CONTROL:  data.control = NewScore;break;; 
-	case EDeckStatType::FLEXIBILITY:  data.flexibility = NewScore;break;;
-	case EDeckStatType::BASEPOWER:  data.basePower = NewScore;break;;
-	case EDeckStatType::RELATIVEA:  data.relativeA = NewScore;break;; 
-	case EDeckStatType::RELATIVEB:  data.relativeB = NewScore;break;; 
+	case EDeckStatType::RETENTION:  data.retention = NewScore;break;
+	case EDeckStatType::RECOVERY:  data.recovery = NewScore;break;
+	case EDeckStatType::CONTROL:  data.control = NewScore;break;
+	case EDeckStatType::FLEXIBILITY:  data.flexibility = NewScore;break;
+	case EDeckStatType::BASEPOWER:  data.basePower = NewScore;break;
+	case EDeckStatType::RELATIVEA:  data.relativeA = NewScore;break;
+	case EDeckStatType::RELATIVEB:  data.relativeB = NewScore;break;
 	default:
 		{
 			UE_LOG(LogTemp,Error,TEXT("DeckDomain::GetStatScore: Unknown deck stat type"))
+			return false;
 		}
 	}
-	data.totalScore = FDeckScoreCalculator::TotalScroeCalculation(data);
+	data.totalScore = FDeckScoreCalculator::TotalScoreCalculation(data);
+	
+	return true;
 }
 
 bool FDeckDomain::Rename(const FString& newName, FString& outError)

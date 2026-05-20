@@ -3,7 +3,7 @@
 #include "Deck/Data/FDeckData.h"
 #include "Deck/Type/EDeckStatType.h"
 
-float FDeckScoreCalculator::TotalScroeCalculation(const FDeckData& Data)
+float FDeckScoreCalculator::TotalScoreCalculation(const FDeckData& Data)
 {
 	float totalScore = 
 		Data.breakthrough + 

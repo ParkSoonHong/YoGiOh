@@ -10,8 +10,8 @@
 #include "Components/ComboBoxString.h"
 #include "Components/EditableText.h"
 #include "Components/TextBlock.h"
-#include "Deck/Calculation/FDeckScoreCalculator.h"
 #include "Deck/Manager/DeckManager.h"
+#include "Deck/Rules/FDeckStatRule.h"
 
 #include "System/Popup/Manager/UiPopUpManager.h"
 
@@ -26,63 +26,12 @@ void UDeckDetailUI::NativeConstruct()
 		deckMgr->OnDeckUpdate.AddUObject(this, &UDeckDetailUI::RefreshTotalScore);
 	}
 
+	InitializeDeckOwnerComboBox();
 }
 
 void UDeckDetailUI::InitializeDetail(UDeckManager* Manager, const FDeckData& Data)
 {
 	
-}
-
-void UDeckDetailUI::OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type SelectionType)
-{
-	// String을 Enum으로 변환
-	if (StringToEnumMap.Contains(SelectedItem))
-	{
-		SelectedDeckOwner = StringToEnumMap[SelectedItem];
-		UE_LOG(LogTemp, Warning, TEXT("Selected DeckOwner: %s"), *SelectedItem);
-	}
-}
-
-void UDeckDetailUI::InitializeDeckOwnerComboBox()
-{
-	if (!ComboBox_DeckOwner)
-		return;
-
-	// ComboBox 초기화
-	ComboBox_DeckOwner->ClearOptions();
-
-	// Enum의 모든 값을 순회하며 추가 -> 데이터베이스 플레이어 로 추후 변경
-	const UEnum* EnumPtr = StaticEnum<EDeckOwner>();
-    
-	for (int32 i = 0; i < EnumPtr->NumEnums() - 1; ++i)  // -1은 MAX 값 제외
-	{
-		EDeckOwner EnumValue = static_cast<EDeckOwner>(EnumPtr->GetValueByIndex(i));
-        
-		// DisplayName 가져오기
-		FString DisplayName = EnumPtr->GetDisplayNameTextByIndex(i).ToString();
-        
-		// ComboBox에 추가
-		ComboBox_DeckOwner->AddOption(DisplayName);
-        
-		// 맵에 저장
-		StringToEnumMap.Add(DisplayName, EnumValue);
-		EnumToStringMap.Add(EnumValue, DisplayName);
-	}
-
-	// 기본값 설정
-	SelectedDeckOwner = EDeckOwner::PLAYERA;
-	ComboBox_DeckOwner->SetSelectedOption(EnumToStringMap[EDeckOwner::PLAYERA]);
-	
-}
-
-void UDeckDetailUI::SetSelectedDeckOwner(EDeckOwner NewOwner)
-{
-	SelectedDeckOwner = NewOwner;
-    
-	if (ComboBox_DeckOwner && EnumToStringMap.Contains(NewOwner))
-	{
-		ComboBox_DeckOwner->SetSelectedOption(EnumToStringMap[NewOwner]);
-	}
 }
 
 // 바인딩
@@ -136,6 +85,39 @@ void UDeckDetailUI::BindUIEvents()
 	if (Editable_RelativeB == nullptr) return;
 	Editable_RelativeB->OnTextCommitted.AddDynamic(this, &UDeckDetailUI::OnRelativeBValueCommitted);
 }
+
+void UDeckDetailUI::OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type SelectionType)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Selected DeckOwner: %s"), *SelectedItem);
+	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+	{
+		deckMgr->OnDeckUpdate.AddUObject(this, &UDeckDetailUI::RefreshTotalScore);
+	}
+}
+
+void UDeckDetailUI::InitializeDeckOwnerComboBox()
+{
+	if (!ComboBox_DeckOwner)
+		return;
+
+	// ComboBox 초기화
+	ComboBox_DeckOwner->ClearOptions();
+
+	// Enum의 모든 값을 순회하며 추가 -> 데이터베이스 플레이어 로 추후 변경
+	const UEnum* EnumPtr = StaticEnum<EDeckOwner>();
+    
+	for (int32 i = 0; i < EnumPtr->NumEnums() - 1; ++i)  // -1은 MAX 값 제외
+	{
+		EDeckOwner EnumValue = static_cast<EDeckOwner>(EnumPtr->GetValueByIndex(i));
+        
+		// DisplayName 가져오기
+		FString DisplayName = EnumPtr->GetDisplayNameTextByIndex(i).ToString();
+        
+		// ComboBox에 추가
+		ComboBox_DeckOwner->AddOption(DisplayName);
+	}
+}
+
 
 // 이미지 변경
 void UDeckDetailUI::OnChangeImage()
@@ -221,7 +203,7 @@ void UDeckDetailUI::UpdateStat(EDeckStatType StatType,float StatScore)
 {
 	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 	{
-		deckMgr->UpdateCurrentDeck(StatType,StatScore);
+		deckMgr->UpdateStatCurrentDeck(StatType,StatScore);
 	}
 	else
 	{
@@ -260,54 +242,128 @@ void UDeckDetailUI::OnDeckNameCommitted(const FText& Text, ETextCommit::Type Com
 void UDeckDetailUI::OnDeploymentValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	float deploymentValue =  FCString::Atof(*Text.ToString());
+	deploymentValue = FMath::Clamp(
+		deploymentValue, FDeckStatRule::GetMin(), FDeckStatRule::GetMax(EDeckStatType::DEPLOYMENT));
+	
+	FString formatted  = FString::Printf(TEXT("%.2f"), deploymentValue);
+	if (Editable_Deployment->GetText().ToString() != formatted )
+	{
+		Editable_Deployment->SetText(FText::FromString(formatted ));
+		UE_LOG(LogTemp, Warning, TEXT("OnDeploymentValueCommitted"));
+	}
 	UpdateStat(EDeckStatType::DEPLOYMENT,deploymentValue);
 }
 
 void UDeckDetailUI::OnBreakthroughValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	float breakthroghValue =  FCString::Atof(*Text.ToString());
+	breakthroghValue = FMath::Clamp(
+		breakthroghValue, FDeckStatRule::GetMin(), FDeckStatRule::GetMax(EDeckStatType::BREAKTHROUGH));
+	
+	FString formatted  = FString::Printf(TEXT("%.2f"), breakthroghValue);
+	if (Editable_Breakthrough->GetText().ToString() != formatted )
+	{
+		Editable_Breakthrough->SetText(FText::FromString(formatted ));
+		UE_LOG(LogTemp, Warning, TEXT("OnDeploymentValueCommitted"));
+	}
 	UpdateStat(EDeckStatType::BREAKTHROUGH,breakthroghValue);
 }
 
 void UDeckDetailUI::OnRetentionValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	float retentionValue =  FCString::Atof(*Text.ToString());
+	retentionValue = FMath::Clamp(
+		retentionValue, FDeckStatRule::GetMin(), FDeckStatRule::GetMax(EDeckStatType::RETENTION));
+	
+	FString formatted  = FString::Printf(TEXT("%.2f"), retentionValue);
+	if (Editable_Retention->GetText().ToString() != formatted )
+	{
+		Editable_Retention->SetText(FText::FromString(formatted ));
+	}
 	UpdateStat(EDeckStatType::RETENTION,retentionValue);
 }
 
 void UDeckDetailUI::OnRecoveryValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	float recoveryValue =  FCString::Atof(*Text.ToString());
+	recoveryValue = FMath::Clamp(
+		recoveryValue, FDeckStatRule::GetMin(), FDeckStatRule::GetMax(EDeckStatType::RECOVERY));
+	
+	FString formatted  = FString::Printf(TEXT("%.2f"), recoveryValue);
+	if (Editable_Recovery->GetText().ToString() != formatted )
+	{
+		Editable_Recovery->SetText(FText::FromString(formatted ));
+	}
 	UpdateStat(EDeckStatType::RECOVERY,recoveryValue);
 }
 
 void UDeckDetailUI::OnControlValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	float controlValue =  FCString::Atof(*Text.ToString());
+	controlValue = FMath::Clamp(
+		controlValue, FDeckStatRule::GetMin(), FDeckStatRule::GetMax(EDeckStatType::CONTROL));
+	
+	FString formatted  = FString::Printf(TEXT("%.2f"), controlValue);
+	if (Editable_Control->GetText().ToString() != formatted )
+	{
+		Editable_Control->SetText(FText::FromString(formatted ));
+	}
 	UpdateStat(EDeckStatType::CONTROL,controlValue);
 }
 
 void UDeckDetailUI::OnFlexibilityValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	float flexibilityValue =  FCString::Atof(*Text.ToString());
+	flexibilityValue = FMath::Clamp(
+		flexibilityValue, FDeckStatRule::GetMin(), FDeckStatRule::GetMax(EDeckStatType::FLEXIBILITY));
+	
+	FString formatted  = FString::Printf(TEXT("%.2f"), flexibilityValue);
+	if (Editable_Flexibility->GetText().ToString() != formatted )
+	{
+		Editable_Flexibility->SetText(FText::FromString(formatted ));
+	}
 	UpdateStat(EDeckStatType::FLEXIBILITY,flexibilityValue);
 }
 
 void UDeckDetailUI::OnBasePowerValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	float basePowerValue =  FCString::Atof(*Text.ToString());
+	basePowerValue = FMath::Clamp(
+		basePowerValue, FDeckStatRule::GetMin(), FDeckStatRule::GetMax(EDeckStatType::BASEPOWER));
+	
+	FString formatted  = FString::Printf(TEXT("%.2f"), basePowerValue);
+	if (Editable_BasePower->GetText().ToString() != formatted )
+	{
+		Editable_BasePower->SetText(FText::FromString(formatted ));
+	}
 	UpdateStat(EDeckStatType::BASEPOWER,basePowerValue);
 }
 
 void UDeckDetailUI::OnRelativeAValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	float relativeAValue =  FCString::Atof(*Text.ToString());
+	relativeAValue = FMath::Clamp(
+		relativeAValue, FDeckStatRule::GetMin(), FDeckStatRule::GetMax(EDeckStatType::RELATIVEA));
+	
+	FString formatted  = FString::Printf(TEXT("%.2f"), relativeAValue);
+	if (Editable_RelativeA->GetText().ToString() != formatted )
+	{
+		Editable_RelativeA->SetText(FText::FromString(formatted ));
+	}
 	UpdateStat(EDeckStatType::RELATIVEA,relativeAValue);
 }
 
 void UDeckDetailUI::OnRelativeBValueCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	float relativeBValue =  FCString::Atof(*Text.ToString());
+	relativeBValue = FMath::Clamp(
+	relativeBValue, FDeckStatRule::GetMin(), FDeckStatRule::GetMax(EDeckStatType::RELATIVEB));
+	
+	FString formatted  = FString::Printf(TEXT("%.2f"), relativeBValue);
+	if (Editable_RelativeB->GetText().ToString() != formatted )
+	{
+		Editable_RelativeB->SetText(FText::FromString(formatted ));
+	}
 	UpdateStat(EDeckStatType::RELATIVEB,relativeBValue);
 }
 

@@ -6,6 +6,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Deck/Data/FDeckData.h"
 #include "Deck/Domain/FDeckDomain.h"
+#include "Deck/Type/EDeckFieldType.h"
 #include "DeckManager.generated.h"
 
 class DeckManagerHelper;
@@ -44,11 +45,11 @@ public:
 	
 	float GetcurrentDeckTotalScore() const;
 	
-	void CurrentBackDeck();
-	
 	void CreateDeck();
 	
-	void UpdateCurrentDeck(EDeckStatType StatType,float StatScore);
+	void UpdateStatCurrentDeck(EDeckStatType StatType,float StatScore);
+	
+	void UpdateTextCurrentDeck(EDeckFieldType FieldType,const FString& Text);
 	
 	void EditDeck(const FString& deckId);
 	

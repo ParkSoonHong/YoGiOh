@@ -83,7 +83,6 @@ bool UDeckManager::LoadDeck(const FString& FilePath, FDeckData& OutData)
 	}
 	return true;
 }
-
 // 전체 불러오기
 bool UDeckManager::LoadAllDecks()
 {
@@ -163,22 +162,30 @@ float UDeckManager::GetcurrentDeckTotalScore() const
 	return currentDeck.GetTotalScore();
 }
 
-void UDeckManager::CurrentBackDeck() 
-{
-}
-
 void UDeckManager::CreateDeck()
 {
 	currentDeck = FDeckDomain();
-	UE_LOG(LogTemp,Warning,TEXT("CreateDeck"));
 }
 
-void UDeckManager::UpdateCurrentDeck(EDeckStatType StatType, float StatScore)
+void UDeckManager::UpdateStatCurrentDeck(EDeckStatType StatType, float StatScore)
 {
-	currentDeck.SetStatScore(StatType, StatScore);
+	if (!currentDeck.SetStatScore(StatType, StatScore))
+	{
+		// 추후 에러창 
+		UE_LOG(LogTemp,Error, 
+			TEXT("Failed to update stat. Type: %d, Score: %.2f"),
+			static_cast<int32>(StatType),
+			StatScore);
+	}
 	OnDeckUpdate.Broadcast();
 }
 
+void UDeckManager::UpdateTextCurrentDeck(EDeckFieldType FieldType, const FString& Text)
+{
+	
+}
+
+// 수정할때 사용 이때 델리게이트 만들어서 UI초기화 
 void UDeckManager::EditDeck(const FString& deckId)
 {
 	

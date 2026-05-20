@@ -103,26 +103,8 @@ private:
 	UFUNCTION()
 	void OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type SelectionType);
 	
-	// 선택된 Enum 값 저장
-	EDeckOwner SelectedDeckOwner;
-
-	// String을 Enum으로 변환하는 맵
-	TMap<FString, EDeckOwner> StringToEnumMap;
-
-	// Enum을 String으로 변환하는 맵
-	TMap<EDeckOwner, FString> EnumToStringMap;
-
 	// ComboBox 초기화
 	void InitializeDeckOwnerComboBox();
-
-public:
-	// 선택된 Enum 값 가져오기
-	UFUNCTION(BlueprintCallable, Category = "ComboBox")
-	EDeckOwner GetSelectedDeckOwner() const { return SelectedDeckOwner; }
-
-	// Enum 값으로 선택 설정
-	UFUNCTION(BlueprintCallable, Category = "ComboBox")
-	void SetSelectedDeckOwner(EDeckOwner NewOwner);
 	
 private:
 	void BindUIEvents();

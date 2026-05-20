@@ -19,10 +19,10 @@ public:
 	// ----- Get -----
 	const FString& GetName() const { return data.deckName; }
 	float GetTotalScore() const { return data.totalScore; }
-	float GetStatScore(const EDeckStatType StatType) const;
+	float GetStatScore(EDeckStatType StatType) const;
 	
 	// ----- Set -----
-	void SetStatScore(const EDeckStatType StatType, float NewScore);
+	bool SetStatScore(EDeckStatType StatType, float NewScore);
 	
 	// ----- Command -----
 	bool Rename(const FString& NewName, FString& OutError);
