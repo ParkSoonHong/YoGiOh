@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Deck/Data/FDeckData.h"
+#include "Deck/Domain/FDeckDomain.h"
 
 /**
  * 
@@ -12,6 +13,6 @@ class YOGIOH_API FDeckJsonSerializer
 {
 
 public:
-	static  bool TrySerialize(const FDeckData& data, FString& outJson);
-	static  bool TryDeserialize(const FString& json, FDeckData& outData);
+	static  bool TrySerialize(const FDeckDomain& Domain, FString& outJson);
+	static  bool TryDeserialize(const FString& json, FDeckDomain& Domain);
 };

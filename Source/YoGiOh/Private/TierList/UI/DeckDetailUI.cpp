@@ -10,6 +10,7 @@
 #include "Components/ComboBoxString.h"
 #include "Components/EditableText.h"
 #include "Components/TextBlock.h"
+#include "Deck/Impoter/DeckImageImporter.h"
 #include "Deck/Manager/DeckManager.h"
 #include "Deck/Rules/FDeckStatRule.h"
 
@@ -173,22 +174,39 @@ void UDeckDetailUI::OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type
 // 이미지 변경
 void UDeckDetailUI::OnChangeImage()
 {
-	FButtonStyle btrStyle;
-	FSlateBrush normal;
-	FSlateBrush hover = normal;
-	FSlateBrush pressed = normal;
+	if (UDeckImageImporter* ImageService =
+		GetGameInstance()
+		->GetSubsystem<UDeckImageImporter>())
+	{
+		FString SavedPath;
+		UTexture2D* Texture = nullptr;
 
-	
-	normal.ImageSize = FVector2D(695, 545);
-	normal.TintColor = FSlateColor(FLinearColor::White);
+		if (ImageService->ImportDeckImage(
+			SavedPath,
+			Texture))
+		{
+			// Domain 저장
+			if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+			{
+				deckMgr->UpdateImagePath(SavedPath);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
+			}
 
-	hover.ImageSize = FVector2D(695, 545);
-	hover.TintColor = FSlateColor(FLinearColor(0.8f,0.8f,0.8f,1.0f));
+			// 썸네일 표시
+			FButtonStyle btrStyle = Button_DeckImage->GetStyle();
+			btrStyle.Normal.SetResourceObject(Texture);
+			btrStyle.Hovered.SetResourceObject(Texture);
+			btrStyle.Pressed.SetResourceObject(Texture);
+		
+			Button_DeckImage->SetStyle(btrStyle);
+		}
+	}
 	
-	pressed.ImageSize = FVector2D(695, 545);
-	pressed.TintColor = FSlateColor(FLinearColor(0.4f,0.4f,0.4f,1.0f));
 	
-	Button_DeckImage->SetStyle(btrStyle);
+	
 }
 
 void UDeckDetailUI::OnClickedSaveButton()

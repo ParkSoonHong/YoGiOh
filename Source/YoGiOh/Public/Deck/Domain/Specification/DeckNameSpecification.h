@@ -7,10 +7,5 @@
 class YOGIOH_API DeckNameSpecification
 {
 public:
-	bool IsSatisfiedBy(const FString& Name, FString& OutError) const
-	{
-		
-
-		return true;
-	}
+	static bool IsSatisfiedByName(const FString& Name, FString& OutError);
 };

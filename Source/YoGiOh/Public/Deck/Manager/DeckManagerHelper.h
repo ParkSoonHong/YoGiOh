@@ -22,7 +22,6 @@ public:
 	
 	/* ===== Output ===== */
 
-	static void Recalculate(FDeckData& WorkingData);
 	FSlateBrush GetThumbnailBrush() const;
 	//static EDeckTier CalculateTier(uint8 TotalScore);
 

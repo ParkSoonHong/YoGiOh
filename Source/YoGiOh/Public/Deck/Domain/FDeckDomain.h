@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Deck/Calculation/FDeckScoreCalculator.h"
 #include "Deck/Data/FDeckData.h"
 #include "Deck/Type/EDeckFieldType.h"
 #include "Deck/Type/EDeckStatType.h"
@@ -18,8 +19,10 @@ public:
 	explicit FDeckDomain();
 
 	// ----- Get -----
-	const FString& GetName() const { return data.deckName; }
-	float GetTotalScore() const { return data.totalScore; }
+	const FString& GetImagePath() const { return data.imagePath; }
+	const FString& GetDeckId() const{ return data.deckID;}
+	float GetTotalScore() const { return FDeckScoreCalculator::TotalScoreCalculation(data); }
+	
 	float GetStatScore(EDeckStatType StatType) const;
 	FString GetField(EDeckFieldType FieldType) const;
 	//const FDeckData& GetDeckData() const;
@@ -27,6 +30,9 @@ public:
 	// ----- Set -----
 	bool SetStatScore(EDeckStatType StatType, float NewScore);
 	bool SetField(EDeckFieldType FieldType, const FString& Field);
+	bool SetPath(const FString& Path);
+	bool SetDeckId();
+	void SetDeckId(const FString& DeckId);
 	
 	// ----- Command -----
 	bool Rename(const FString& NewName, FString& OutError);

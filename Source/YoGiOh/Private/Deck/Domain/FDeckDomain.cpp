@@ -5,6 +5,7 @@
 
 #include "Deck/Calculation/FDeckScoreCalculator.h"
 #include "Deck/Domain/Specification/DeckNameSpecification.h"
+#include "Deck/Domain/Specification/DeckOwnerSpecification.h"
 #include "Deck/Rules/FDeckStatRule.h"
 #include "Deck/Type/EDeckStatType.h"
 
@@ -84,8 +85,6 @@ bool FDeckDomain::SetStatScore(EDeckStatType StatType, float NewScore)
 			return false;
 		}
 	}
-	data.totalScore = FDeckScoreCalculator::TotalScoreCalculation(data);
-	
 	return true;
 }
 
@@ -106,10 +105,37 @@ bool FDeckDomain::SetField(EDeckFieldType FieldType, const FString& Field)
 	return  true;
 }
 
+bool FDeckDomain::SetPath(const FString& Path)
+{
+	// 검증 추가 
+	data.imagePath = Path;
+	return true;
+}
+
+bool FDeckDomain::SetDeckId()
+{
+	FString Error;
+	if (!DeckNameSpecification::IsSatisfiedByName(data.deckName, Error))
+	{
+		return false;
+	}
+	if (!DeckOwnerSpecification::isSatisfiedByOwner(data.deckOwner, Error))
+	{
+		return false;
+	}
+	data.deckID = data.deckName + data.deckOwner +  FGuid::NewGuid().ToString();
+	return  true;
+}
+
+void FDeckDomain::SetDeckId(const FString& DeckId)
+{
+	data.deckID = DeckId;
+}
+
 bool FDeckDomain::Rename(const FString& newName, FString& outError)
 {
 	DeckNameSpecification Spec;
-	if (!Spec.IsSatisfiedBy(newName, outError))
+	if (!Spec.IsSatisfiedByName(newName, outError))
 	{
 		return false;
 	}
@@ -121,26 +147,12 @@ bool FDeckDomain::Rename(const FString& newName, FString& outError)
 bool FDeckDomain::IsValid(FString& outError) const
 {
 	DeckNameSpecification nameSpec;
-	if (!nameSpec.IsSatisfiedBy(data.deckName, outError))
+	if (!nameSpec.IsSatisfiedByName(data.deckName, outError))
 	{
 		return false;
 	}
 
 	return true;
-}
-
-void FDeckDomain::RecalculateScore()
-{
-	data.totalScore =
-		data.deployment +
-		data.breakthrough +
-		data.retention +
-		data.recovery +
-		data.control +
-		data.flexibility +
-		data.basePower +
-		data.relativeA +
-		data.relativeB;
 }
 
 FDeckData FDeckDomain::ToSaveData() const

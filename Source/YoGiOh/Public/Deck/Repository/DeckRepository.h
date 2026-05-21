@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Deck/Data/FDeckData.h"
+#include "Deck/Domain/FDeckDomain.h"
 
 /**
  * 
@@ -11,6 +12,9 @@
 class YOGIOH_API FDeckRepository
 {
 public:
-	static bool SaveToJson(const FString& filePath, const FDeckData& data);
-	static bool LoadFromJson(const FString& filePath, FDeckData& outData);
+	 bool Save(const FDeckDomain& Domain);
+	 bool LoadAll(TArray<FDeckData>& OutDomains);
+	
+private:
+	FString saveDirectory = FPaths::ProjectSavedDir() / TEXT("Decks");
 };

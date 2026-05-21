@@ -17,7 +17,7 @@ public:
 	FString imagePath; // 대표 이미지 경로 (PNG/JPG)
 	
 	UPROPERTY()
-	FString deckID; // 덱 아이디
+	FString deckID; // 덱 아이디 -> 덱 이름 + 덱 주인 + 
 
 	UPROPERTY()
 	FString deckName; // 덱 이름
@@ -25,8 +25,8 @@ public:
 	UPROPERTY()
 	FString deckOwner; // 덱 주인
 
-	UPROPERTY()
-	TSet<EPlayablePlayer> playablePlayers; // 플레이 가능한 플레이어
+	//UPROPERTY()
+	//TSet<EPlayablePlayer> playablePlayers; // 플레이 가능한 플레이어
 	
 	UPROPERTY()
 	float deployment = 0; // 전개
@@ -54,9 +54,6 @@ public:
 
 	UPROPERTY()
 	float relativeB = 0; // 상대평가2
-
-	UPROPERTY()
-	float totalScore = 0; // 종합점수
 
 	UPROPERTY()
 	FString comment; // 종합평

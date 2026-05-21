@@ -6,6 +6,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Deck/Data/FDeckData.h"
 #include "Deck/Domain/FDeckDomain.h"
+#include "Deck/Repository/DeckRepository.h"
 #include "Deck/Type/EDeckFieldType.h"
 #include "DeckManager.generated.h"
 
@@ -21,7 +22,7 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	
 	bool CreateAndSaveDeck(const FDeckData& InputData, FString& OutError);
-	bool SaveDeck(FString& OutError, const FDeckData& Data);
+	bool SaveDeck();
 	bool LoadDeck(const FString& FilePath, FDeckData& OutData);
 	
 	FString GetDeckDir() const;
@@ -51,6 +52,8 @@ public:
 	
 	void UpdateFieldCurrentDeck(EDeckFieldType FieldType,const FString& Field);
 	
+	void UpdateImagePath(const FString& Path);
+	
 	void EditDeck(const FString& deckId);
 	
 	void TestSave();
@@ -60,4 +63,5 @@ private:
 	TUniquePtr<DeckManagerHelper> DeckHelper;
 	TArray<FDeckDomain> Decks;
 	FDeckDomain  currentDeck;
+	FDeckRepository repository;
 };

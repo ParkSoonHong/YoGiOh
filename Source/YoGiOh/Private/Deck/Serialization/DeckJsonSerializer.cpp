@@ -6,32 +6,33 @@
 #include "Serialization/JsonSerializer.h"
 #include "Misc/FileHelper.h"
 #include "Deck/Data/FDeckData.h"
+#include "Deck/Domain/FDeckDomain.h"
 
-bool FDeckJsonSerializer::TrySerialize(const FDeckData& data, FString& outJson)
+bool FDeckJsonSerializer::TrySerialize(const FDeckDomain& Domain, FString& outJson)
 {
 	TSharedPtr<FJsonObject> jsonObject = MakeShared<FJsonObject>();
 
-	jsonObject->SetStringField(TEXT("DeckName"), data.deckName);
-	jsonObject->SetStringField(TEXT("ImagePath"), data.imagePath);
-	jsonObject->SetStringField(TEXT("Owner"),data.deckOwner);
+	jsonObject->SetStringField(TEXT("ImagePath"), Domain.GetImagePath());
+	jsonObject->SetStringField(TEXT("DeckName"), Domain.GetField(EDeckFieldType::DECKNAME));
+	jsonObject->SetStringField(TEXT("Owner"),Domain.GetField(EDeckFieldType::OWNER));
+	jsonObject->SetStringField(TEXT("Comment"), Domain.GetField(EDeckFieldType::COMMENT));
+
 	//jsonObject->SetStringField(TEXT("Owner"), StaticEnum<EDeckOwner>()->GetNameStringByValue((int64)data.deckOwner));
 
 	// Stats
-	jsonObject->SetStringField(TEXT("DeckID"), data.deckID);
-	jsonObject->SetNumberField(TEXT("Deployment"), data.deployment);
-	jsonObject->SetNumberField(TEXT("Breakthrough"), data.breakthrough);
-	jsonObject->SetNumberField(TEXT("Retention"), data.retention);
-	jsonObject->SetNumberField(TEXT("Recovery"), data.recovery);
-	jsonObject->SetNumberField(TEXT("Control"), data.control);
-	jsonObject->SetNumberField(TEXT("Flexibility"), data.flexibility);
-	jsonObject->SetNumberField(TEXT("BasePower"), data.basePower);
-	jsonObject->SetNumberField(TEXT("RelativeA"), data.relativeA);
-	jsonObject->SetNumberField(TEXT("RelativeB"), data.relativeB);
-	jsonObject->SetNumberField(TEXT("TotalScore"), data.totalScore);
-
-	jsonObject->SetStringField(TEXT("Comment"), data.comment);
-
+	jsonObject->SetStringField(TEXT("DeckID"), Domain.GetDeckId());
+	jsonObject->SetNumberField(TEXT("Deployment"), Domain.GetStatScore(EDeckStatType::DEPLOYMENT));
+	jsonObject->SetNumberField(TEXT("Breakthrough"), Domain.GetStatScore(EDeckStatType::BREAKTHROUGH));
+	jsonObject->SetNumberField(TEXT("Retention"), Domain.GetStatScore(EDeckStatType::RETENTION));
+	jsonObject->SetNumberField(TEXT("Recovery"),Domain.GetStatScore(EDeckStatType::RECOVERY));
+	jsonObject->SetNumberField(TEXT("Control"), Domain.GetStatScore(EDeckStatType::CONTROL));
+	jsonObject->SetNumberField(TEXT("Flexibility"), Domain.GetStatScore(EDeckStatType::FLEXIBILITY));
+	jsonObject->SetNumberField(TEXT("BasePower"), Domain.GetStatScore(EDeckStatType::BASEPOWER));
+	jsonObject->SetNumberField(TEXT("RelativeA"), Domain.GetStatScore(EDeckStatType::RELATIVEA));
+	jsonObject->SetNumberField(TEXT("RelativeB"), Domain.GetStatScore(EDeckStatType::RELATIVEB));
+	
 	// PlayablePlayers
+	/*
 	TArray<TSharedPtr<FJsonValue>> playerArray;
 	for (EPlayablePlayer player : data.playablePlayers)
 	{
@@ -40,13 +41,13 @@ bool FDeckJsonSerializer::TrySerialize(const FDeckData& data, FString& outJson)
 		));
 	}
 	jsonObject->SetArrayField(TEXT("PlayablePlayers"), playerArray);
-
+	*/
 	TSharedRef<TJsonWriter<>> writer = TJsonWriterFactory<>::Create(&outJson);
 	FJsonSerializer::Serialize(jsonObject.ToSharedRef(), writer);
 	return true;
 }
 
-bool FDeckJsonSerializer::TryDeserialize(const FString& json, FDeckData& outData)
+bool FDeckJsonSerializer::TryDeserialize(const FString& json, FDeckDomain& Domain)
 {
     TSharedPtr<FJsonObject> jsonObject;
     TSharedRef<TJsonReader<>> reader = TJsonReaderFactory<>::Create(json);
@@ -57,11 +58,18 @@ bool FDeckJsonSerializer::TryDeserialize(const FString& json, FDeckData& outData
     }
 
     // 2. 문자열은 TryGet
-    jsonObject->TryGetStringField(TEXT("DeckName"), outData.deckName);
-    jsonObject->TryGetStringField(TEXT("ImagePath"), outData.imagePath);
-    jsonObject->TryGetStringField(TEXT("DeckID"), outData.deckID);
-    jsonObject->TryGetStringField(TEXT("Comment"), outData.comment);
-    jsonObject->TryGetStringField(TEXT("Owner"), outData.deckOwner);
+	FString OutString;
+    jsonObject->TryGetStringField(TEXT("DeckName"), OutString);
+	Domain.SetField(EDeckFieldType::DECKNAME,OutString);
+	jsonObject->TryGetStringField(TEXT("Comment"), OutString);
+	Domain.SetField(EDeckFieldType::COMMENT,OutString);
+	jsonObject->TryGetStringField(TEXT("Owner"), OutString);
+	Domain.SetField(EDeckFieldType::OWNER,OutString);
+    jsonObject->TryGetStringField(TEXT("ImagePath"), OutString);
+	Domain.SetPath(OutString);
+    jsonObject->TryGetStringField(TEXT("DeckID"), OutString);
+	Domain.SetDeckId(OutString);
+
 
 	/*
 	FString ownerStr;
@@ -80,56 +88,50 @@ bool FDeckJsonSerializer::TryDeserialize(const FString& json, FDeckData& outData
 	double value;
 	if (jsonObject->TryGetNumberField(TEXT("Deployment"), value))
 	{
-		outData.deployment = static_cast<float>(value);
+		Domain.SetStatScore(EDeckStatType::DEPLOYMENT,static_cast<float>(value));
 	}
 	
 	if (jsonObject->TryGetNumberField(TEXT("Breakthrough"), value))
 	{
-		outData.breakthrough = static_cast<float>(value);
+		Domain.SetStatScore(EDeckStatType::BREAKTHROUGH,static_cast<float>(value));
 	}
 	
 	if (jsonObject->TryGetNumberField(TEXT("Retention"), value))
 	{
-		outData.retention = static_cast<float>(value);
-
+		Domain.SetStatScore(EDeckStatType::RETENTION,static_cast<float>(value));
 	}
 	
 	if (jsonObject->TryGetNumberField(TEXT("Recovery"), value))
 	{
-		outData.recovery = static_cast<float>(value);
+		Domain.SetStatScore(EDeckStatType::RECOVERY,static_cast<float>(value));
 	}
 	
 	if (jsonObject->TryGetNumberField(TEXT("Control"), value))
 	{
-		outData.control = static_cast<float>(value);
+		Domain.SetStatScore(EDeckStatType::CONTROL,static_cast<float>(value));
 	}
 	
 	if (jsonObject->TryGetNumberField(TEXT("Flexibility"), value))
 	{
-		outData.flexibility = static_cast<float>(value);
+		Domain.SetStatScore(EDeckStatType::FLEXIBILITY,static_cast<float>(value));
 	}
 	
 	if (jsonObject->TryGetNumberField(TEXT("BasePower"), value))
 	{
-		outData.basePower = static_cast<float>(value);
+		Domain.SetStatScore(EDeckStatType::BASEPOWER,static_cast<float>(value));
 	}
 	if (jsonObject->TryGetNumberField(TEXT("RelativeA"), value))
 	{
-		outData.relativeA = static_cast<float>(value);
+		Domain.SetStatScore(EDeckStatType::RELATIVEA,static_cast<float>(value));
 	}
 	if (jsonObject->TryGetNumberField(TEXT("RelativeB"), value))
 	{
-		outData.relativeB = static_cast<float>(value);
+		Domain.SetStatScore(EDeckStatType::RELATIVEB,static_cast<float>(value));
 	}
 	
-	if (jsonObject->TryGetNumberField(TEXT("TotalScore"), value))
-	{
-		outData.totalScore = static_cast<float>(value);
-	}
-
     // 4. 배열
-    outData.playablePlayers.Reset();
-
+   // outData.playablePlayers.Reset();
+	/*
     const TArray<TSharedPtr<FJsonValue>>* playerArray;
     if (jsonObject->TryGetArrayField(TEXT("PlayablePlayers"), playerArray))
     {
@@ -150,6 +152,6 @@ bool FDeckJsonSerializer::TryDeserialize(const FString& json, FDeckData& outData
         	}
         }
     }
-
+	*/
     return true;
 }

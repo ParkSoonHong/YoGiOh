@@ -8,25 +8,26 @@
 #include "Misc/FileHelper.h"
 
 
-bool FDeckRepository::SaveToJson(const FString& filePath, const FDeckData& data)
+bool FDeckRepository::Save(const FDeckDomain& Domain)
 {
 	FString json;
-	if (!FDeckJsonSerializer::TrySerialize(data,json))
+	if (!FDeckJsonSerializer::TrySerialize(Domain,json))
 	{
 		return false;
 	}
-	return FFileHelper::SaveStringToFile(json, *filePath);
+	return FFileHelper::SaveStringToFile(json, *saveDirectory);
 }
 
 
-bool FDeckRepository::LoadFromJson(const FString& filePath, FDeckData& outData)
+bool FDeckRepository::LoadAll(TArray<FDeckData>& OutDomains)
 {
-	outData = FDeckData();
+	//outData = FDeckData();
     FString jsonString;
 	
-	if (!FFileHelper::LoadFileToString(jsonString, *filePath))
+	if (!FFileHelper::LoadFileToString(jsonString, *saveDirectory))
 	{
 		return false;
 	}
-	return  FDeckJsonSerializer::TryDeserialize(jsonString,outData);
+	//return  FDeckJsonSerializer::TryDeserialize(jsonString,outData);
+	return  true;
 }

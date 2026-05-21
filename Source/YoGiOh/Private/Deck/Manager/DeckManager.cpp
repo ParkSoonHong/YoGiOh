@@ -44,25 +44,23 @@ bool UDeckManager::CreateAndSaveDeck(const FDeckData& InputData, FString& OutErr
 }
 
 
-bool UDeckManager::SaveDeck(FString& OutError, const FDeckData& Data)
+bool UDeckManager::SaveDeck()
 {
-	FDeckData SaveData = Data;
-
-	if (SaveData.deckID.IsEmpty())
+	if (currentDeck.GetDeckId().IsEmpty())
 	{
-		SaveData.deckID = FGuid::NewGuid().ToString();
+		if (!currentDeck.SetDeckId())
+		{
+			UE_LOG(LogTemp,Error,TEXT("Failed To SetDeckId"));
+		}
 	}
-
-	const FString Path = GetDeckFilePath(SaveData.deckID);
-
-	/*
-	if (!DeckRepository::SaveToJson(Path, SaveData))
+	
+	if (!repository.Save(currentDeck))
 	{
-		OutError = TEXT("덱 저장 실패");
+		UE_LOG(LogTemp,Error,TEXT("Failed To SaveDeck"));
 		return false;
 	}
-*/
-	OnDeckListChanged.Broadcast();
+
+	//OnDeckListChanged.Broadcast();
 	return true;
 }
 
@@ -187,7 +185,15 @@ void UDeckManager::UpdateFieldCurrentDeck(EDeckFieldType FieldType, const FStrin
 		UE_LOG(LogTemp,Error, 
 			TEXT("Failed to update Field. Type: %s"),*Field);
 	}
-	
+}
+
+void UDeckManager::UpdateImagePath(const FString& Path)
+{
+	if (!currentDeck.SetPath(Path))
+	{
+		UE_LOG(LogTemp,Error, 
+			TEXT("Failed to update Path. Path: %s"),*Path);
+	}
 }
 
 // 수정할때 사용 이때 델리게이트 만들어서 UI초기화 
@@ -208,6 +214,9 @@ void UDeckManager::TestSave()
 
 	UE_LOG(LogTemp, Warning, TEXT("Comment : %s"),
 		*currentDeck.GetField(EDeckFieldType::COMMENT));
+	
+	UE_LOG(LogTemp,Warning,TEXT("ImagePath : %s"),
+		*currentDeck.GetImagePath());
 
 	UE_LOG(LogTemp, Warning, TEXT("Deployment : %.2f"),
 		currentDeck.GetStatScore(EDeckStatType::DEPLOYMENT));

@@ -58,7 +58,6 @@ void DeckManagerHelper::SetStatBySlider(EDeckStatType Type, float SliderValue, F
 	case EDeckStatType::RELATIVEB:     WorkingData.relativeB = FMath::Clamp(Value, 0, 5); break;
 	}
 
-	Recalculate(WorkingData);
 }
 
 void DeckManagerHelper::SetText(const FString& Text, const EEditableTextType TextType,  FDeckData& WorkingData)
@@ -147,19 +146,6 @@ bool DeckManagerHelper::SaveImageConvert(FString& OutError, FDeckData& WorkingDa
 	//return Manager->SaveDeck(OutError, WorkingData);
 }
 
-void DeckManagerHelper::Recalculate(FDeckData& WorkingData)
-{
-	WorkingData.totalScore 
-	= WorkingData.deployment 
-	+ WorkingData.breakthrough 
-	+ WorkingData.retention
-	+ WorkingData.recovery 
-	+ WorkingData.control 
-	+ WorkingData.flexibility 
-	+ WorkingData.basePower 
-	+ WorkingData.relativeA 
-	+ WorkingData.relativeB;
-}
 
 UTexture2D* DeckManagerHelper::LoadTextureFromFile(const FString& FilePath)
 {
