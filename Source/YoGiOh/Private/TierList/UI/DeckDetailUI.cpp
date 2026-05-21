@@ -215,7 +215,8 @@ void UDeckDetailUI::OnClickedSaveButton()
 	
 	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 	{
-		deckMgr->TestSave();
+		//deckMgr->TestSave();
+		deckMgr->SaveDeck();
 		//deckMgr->NotifyDeckListChanged();
 	}
 	else

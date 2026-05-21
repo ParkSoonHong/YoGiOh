@@ -13,8 +13,9 @@ class YOGIOH_API FDeckRepository
 {
 public:
 	 bool Save(const FDeckDomain& Domain);
-	 bool LoadAll(TArray<FDeckData>& OutDomains);
-	
+	 bool LoadAll(TArray<FDeckDomain>& OutDomains);
+
+	FString GetDeckFilePath(const FDeckDomain& Domain) const;
 private:
 	FString saveDirectory = FPaths::ProjectSavedDir() / TEXT("Decks");
 };

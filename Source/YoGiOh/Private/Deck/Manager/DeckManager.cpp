@@ -9,40 +9,11 @@ void UDeckManager::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	
+	if (!LoadAllDecks())
+	{
+		UE_LOG(LogTemp, Error, TEXT("Decks not loaded"));
+	}
 }
-
-bool UDeckManager::CreateAndSaveDeck(const FDeckData& InputData, FString& OutError)
-{
-	FDeckData Data = InputData;
-
-	if (Data.deckID.IsEmpty())
-	{
-		Data.deckID = FGuid::NewGuid().ToString(EGuidFormats::Digits);
-	}
-	
-	FDeckDomain Domain(InputData);
-	if (!Domain.IsValid(OutError))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Deck validation failed: %s"), *OutError);
-		return false;
-	}
-
-	const FString DeckDir = GetDeckDir();
-	IFileManager::Get().MakeDirectory(*DeckDir, true);
-	
-	const FString FilePath = GetDeckFilePath(Data.deckID);
-	/*
-	if (!DeckRepository::SaveToJson(FilePath, Domain.ToSaveData()))
-	{
-		OutError = TEXT("덱 저장 실패");
-		return false;
-	}
-	*/
-	NotifyDeckListChanged();
-	UE_LOG(LogTemp, Log, TEXT("Deck saved successfully: %s"), *FilePath);
-	return true;
-}
-
 
 bool UDeckManager::SaveDeck()
 {
@@ -64,44 +35,20 @@ bool UDeckManager::SaveDeck()
 	return true;
 }
 
-bool UDeckManager::LoadDeck(const FString& FilePath, FDeckData& OutData)
-{
-	/*
-	if (!DeckRepository::LoadFromJson(FilePath, OutData))
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to load deck from %s"), *FilePath);
-		return false;
-	}
-	*/
-	FDeckDomain Domain(OutData);
-	FString Error;
-	if (!Domain.IsValid(Error))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Loaded deck invalid: %s"), *Error);
-	}
-	return true;
-}
 // 전체 불러오기
 bool UDeckManager::LoadAllDecks()
 {
-	const FString Dir = GetDeckDir();
-    
-	if (!IFileManager::Get().DirectoryExists(*Dir))
+	if (!repository.LoadAll(Decks))
 	{
-		return true;
+		UE_LOG(LogTemp,Error,TEXT("LoadAll Failed"));
+		return false;
 	}
-    	TArray<FString> Files;
-    	IFileManager::Get().FindFiles(Files, *Dir, TEXT("*.json"));
-    
-    	for (const FString& File : Files)
-    	{
-    		FDeckData Data;
-    		if (LoadDeck(Dir / File, Data))
-    		{
-    			//Decks.Add(Data);
-    		}
-    	}
-    	return true;
+	
+	for (FDeckDomain Deck : Decks)
+	{
+		TestLoad(Deck);
+	}
+	return true;
 }
 
 bool UDeckManager::DeleteDeck(const FString& DeckID, FString& OutError)
@@ -112,7 +59,7 @@ bool UDeckManager::DeleteDeck(const FString& DeckID, FString& OutError)
 		return false;
 	}
 	
-	const FString FilePath = GetDeckFilePath(DeckID);
+	const FString FilePath = repository.GetDeckFilePath(currentDeck);
 
 	if (!IFileManager::Get().FileExists(*FilePath))
 	{
@@ -130,22 +77,12 @@ bool UDeckManager::DeleteDeck(const FString& DeckID, FString& OutError)
 	return true;
 }
 
-FString UDeckManager::GetDeckDir() const
-{
-	return FPaths::ProjectSavedDir() / TEXT("Decks");
-}
-
-FString UDeckManager::GetDeckFilePath(const FString& DeckID) const
-{
-	return GetDeckDir() / FString::Printf(TEXT("%s.json"), *DeckID);
-}
-
 void UDeckManager::NotifyDeckListChanged()
 {
 	OnDeckListChanged.Broadcast();
 }
 
-TArray<FDeckDomain> UDeckManager::GetDecks()
+TArray<FDeckDomain> UDeckManager::GetDecks() const
 {
 	return  Decks;
 }
@@ -197,58 +134,77 @@ void UDeckManager::UpdateImagePath(const FString& Path)
 }
 
 // 수정할때 사용 이때 델리게이트 만들어서 UI초기화 
-void UDeckManager::EditDeck(const FString& deckId)
+void UDeckManager::UpdateDeck(const FString& deckId)
 {
-	
+	if (!FindDeck(deckId,currentDeck))
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Failed UpdateDeck"));
+		return;
+	}
+	// UI 수정
 }
 
-void UDeckManager::TestSave()
+void UDeckManager::TestLoad(FDeckDomain Domain)
 {	
 	UE_LOG(LogTemp, Warning, TEXT("===== Current Deck ====="));
 
 	UE_LOG(LogTemp, Warning, TEXT("DeckName : %s"),
-		*currentDeck.GetField(EDeckFieldType::DECKNAME));
+		*Domain.GetField(EDeckFieldType::DECKNAME));
 	
 	UE_LOG(LogTemp, Warning, TEXT("DeckOwner : %s"),
-		 *currentDeck.GetField(EDeckFieldType::OWNER));
+		 *Domain.GetField(EDeckFieldType::OWNER));
 
 	UE_LOG(LogTemp, Warning, TEXT("Comment : %s"),
-		*currentDeck.GetField(EDeckFieldType::COMMENT));
+		*Domain.GetField(EDeckFieldType::COMMENT));
 	
 	UE_LOG(LogTemp,Warning,TEXT("ImagePath : %s"),
-		*currentDeck.GetImagePath());
+		*Domain.GetImagePath());
 
 	UE_LOG(LogTemp, Warning, TEXT("Deployment : %.2f"),
-		currentDeck.GetStatScore(EDeckStatType::DEPLOYMENT));
+		Domain.GetStatScore(EDeckStatType::DEPLOYMENT));
 
 	UE_LOG(LogTemp, Warning, TEXT("Breakthrough : %.2f"),
-		currentDeck.GetStatScore(EDeckStatType::BREAKTHROUGH));
+		Domain.GetStatScore(EDeckStatType::BREAKTHROUGH));
 
 	UE_LOG(LogTemp, Warning, TEXT("Retention : %.2f"),
-		currentDeck.GetStatScore(EDeckStatType::RETENTION));
+		Domain.GetStatScore(EDeckStatType::RETENTION));
 
 	UE_LOG(LogTemp, Warning, TEXT("Recovery : %.2f"),
-		currentDeck.GetStatScore(EDeckStatType::RECOVERY));
+		Domain.GetStatScore(EDeckStatType::RECOVERY));
 
 	UE_LOG(LogTemp, Warning, TEXT("Control : %.2f"),
-		currentDeck.GetStatScore(EDeckStatType::CONTROL));
+		Domain.GetStatScore(EDeckStatType::CONTROL));
 
 	UE_LOG(LogTemp, Warning, TEXT("Flexibility : %.2f"),
-		currentDeck.GetStatScore(EDeckStatType::FLEXIBILITY));
+		Domain.GetStatScore(EDeckStatType::FLEXIBILITY));
 
 	UE_LOG(LogTemp, Warning, TEXT("BasePower : %.2f"),
-		currentDeck.GetStatScore(EDeckStatType::BASEPOWER));
+		Domain.GetStatScore(EDeckStatType::BASEPOWER));
 
 	UE_LOG(LogTemp, Warning, TEXT("RelativeA : %.2f"),
-		currentDeck.GetStatScore(EDeckStatType::RELATIVEA));
+		Domain.GetStatScore(EDeckStatType::RELATIVEA));
 
 	UE_LOG(LogTemp, Warning, TEXT("RelativeB : %.2f"),
-		currentDeck.GetStatScore(EDeckStatType::RELATIVEB));
+		Domain.GetStatScore(EDeckStatType::RELATIVEB));
 
 	UE_LOG(LogTemp, Warning, TEXT("TotalScore : %.2f"),
-		currentDeck.GetTotalScore());
+		Domain.GetTotalScore());
 
 	UE_LOG(LogTemp, Warning, TEXT("========================"));
+}
+
+bool UDeckManager::FindDeck(const FString& DeckID,FDeckDomain& OutDomain)
+{
+	for (FDeckDomain Deck : Decks)
+	{
+		if (Deck.GetDeckId().Equals(DeckID))
+		{
+			OutDomain = Deck;
+			return true;			
+		}
+	}
+	
+	return false;
 }
 
 

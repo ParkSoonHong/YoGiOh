@@ -101,7 +101,11 @@ bool UDeckImageImporter::CopyImageToSavedFolder(const FString& SourcePath, FStri
 			true:
 			중간 폴더까지 자동 생성
 	*/
-	IFileManager::Get().MakeDirectory(*saveDir, true);
+	if (!IFileManager::Get().MakeDirectory(*saveDir, true))
+	{
+		UE_LOG(LogTemp,Error,TEXT("Could not create Image directory %s"),*saveDir);
+		return false;
+	}
 	/*
 		파일 확장자 추출
 		예:

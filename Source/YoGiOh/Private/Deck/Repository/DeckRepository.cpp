@@ -15,19 +15,63 @@ bool FDeckRepository::Save(const FDeckDomain& Domain)
 	{
 		return false;
 	}
-	return FFileHelper::SaveStringToFile(json, *saveDirectory);
+	IFileManager::Get().MakeDirectory(*saveDirectory, true);
+	
+	FString filePath =
+		saveDirectory / 
+		Domain.GetDeckId() + TEXT(".json");
+	
+	return FFileHelper::SaveStringToFile(json, *filePath);
 }
 
 
-bool FDeckRepository::LoadAll(TArray<FDeckData>& OutDomains)
+bool FDeckRepository::LoadAll(TArray<FDeckDomain>& OutDomains)
 {
-	//outData = FDeckData();
-    FString jsonString;
-	
-	if (!FFileHelper::LoadFileToString(jsonString, *saveDirectory))
+	TArray<FString> JsonFiles;
+
+	IFileManager::Get().FindFiles(
+		JsonFiles,
+		*(saveDirectory / TEXT("*.json")),
+		true,
+		false);
+
+	if (JsonFiles.IsEmpty())
 	{
+		UE_LOG(LogTemp,Error,TEXT("Could not load JsonFiles "));
 		return false;
 	}
-	//return  FDeckJsonSerializer::TryDeserialize(jsonString,outData);
-	return  true;
+	for (const FString& FileName : JsonFiles)
+	{
+		FString FilePath = saveDirectory / FileName;
+
+		FString JsonString;
+
+		if (!FFileHelper::LoadFileToString(JsonString,*FilePath))
+		{
+			UE_LOG(LogTemp,Error,TEXT("Could not load Deck %s"),*FilePath);
+			continue;
+		}
+
+		FDeckDomain Domain;
+
+		if (FDeckJsonSerializer::TryDeserialize(JsonString,Domain))
+		{
+			OutDomains.Add(Domain);
+		}
+		else
+		{
+			UE_LOG(LogTemp,Error,TEXT("Could not load Deck %s"),*FilePath);
+		}
+	}
+
+	return true;
+}
+
+FString FDeckRepository::GetDeckFilePath(const FDeckDomain& Domain) const
+{
+	FString filePath =
+	saveDirectory / 
+	Domain.GetDeckId() + TEXT(".json");
+	
+	return filePath;
 }
