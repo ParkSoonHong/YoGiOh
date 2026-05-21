@@ -20,10 +20,12 @@ class YOGIOH_API UDeckManager : public UGameInstanceSubsystem
 	GENERATED_BODY()
 public:
 	DECLARE_MULTICAST_DELEGATE(FOnDeckListChanged);
-	DECLARE_MULTICAST_DELEGATE(FOndeckUpdate);
+	DECLARE_MULTICAST_DELEGATE(FOnDeckUpdate);
+	DECLARE_MULTICAST_DELEGATE(FOnDeckInitialize);
 
-	FOndeckUpdate OnDeckUpdate;
+	FOnDeckUpdate OnDeckUpdate;
 	FOnDeckListChanged OnDeckListChanged;
+	FOnDeckInitialize OnDeckInitialize;
 	
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	bool SaveDeck();

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "System/Popup/UiPopUpBase.h"
-#include "Deck/Type/EDeckOwner.h"
 #include "Deck/Data/FDeckData.h"
 #include "Deck/Manager/DeckManagerHelper.h"
 #include "DeckDetailUI.generated.h"
@@ -16,6 +15,7 @@ class UComboBoxString;
 class UEditableText;
 class UTextBlock;
 class UImage;
+class UTexture2D;
 
 UCLASS()
 class YOGIOH_API UDeckDetailUI : public UUiPopUpBase
@@ -99,6 +99,9 @@ public:
 	
 	UPROPERTY(meta = (BindWidget))
 	UEditableText* Editable_Comment;
+	
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D * DeckBaseImage;
 private:
 	
 	UFUNCTION()
@@ -108,10 +111,12 @@ private:
 	void InitializeDeckOwnerComboBox();
 	
 private:
+	void InitializeUI();
+	void InitializeStatEditableTextBox(UEditableText* TextBox);
 	void BindUIEvents();
 	
 	void RefreshUI();
-	void RefreshTotalScore();
+	void RefreshTotalScoreUI();
 	
 	void UpdateStat(EDeckStatType StatType,float StatScore);
 

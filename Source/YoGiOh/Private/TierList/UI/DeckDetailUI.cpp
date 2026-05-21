@@ -9,9 +9,11 @@
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 #include "Components/EditableText.h"
+#include "Components/EditableTextBox.h"
 #include "Components/TextBlock.h"
 #include "Deck/Impoter/DeckImageImporter.h"
 #include "Deck/Manager/DeckManager.h"
+#include "Deck/Rules/FDeckRankRules.h"
 #include "Deck/Rules/FDeckStatRule.h"
 
 #include "System/Popup/Manager/UiPopUpManager.h"
@@ -24,10 +26,12 @@ void UDeckDetailUI::NativeConstruct()
 	
 	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 	{
-		deckMgr->OnDeckUpdate.AddUObject(this, &UDeckDetailUI::RefreshTotalScore);
+		deckMgr->OnDeckUpdate.AddUObject(this, &UDeckDetailUI::RefreshTotalScoreUI);
+		deckMgr->OnDeckInitialize.AddUObject(this, &UDeckDetailUI::InitializeUI);
 	}
 
 	InitializeDeckOwnerComboBox();
+	InitializeUI();
 }
 
 void UDeckDetailUI::InitializeDetail(UDeckManager* Manager, const FDeckData& Data)
@@ -58,6 +62,48 @@ void UDeckDetailUI::InitializeDeckOwnerComboBox()
 	}
 }
 
+void UDeckDetailUI::InitializeUI()
+{
+	// 버튼 이미지 초기화
+	if (Button_DeckImage == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Button_DeckImage is nullptr"));
+		return;
+	}
+	
+	if (DeckBaseImage == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UDeckBaseImage is nullptr"));
+		return;
+	}
+	FButtonStyle btrStyle = Button_DeckImage->GetStyle();
+	btrStyle.Normal.SetResourceObject(DeckBaseImage);
+	btrStyle.Hovered.SetResourceObject(DeckBaseImage);
+	btrStyle.Pressed.SetResourceObject(DeckBaseImage);
+	
+	// 스텟 초기화
+	Button_DeckImage->SetStyle(btrStyle);
+	
+	InitializeStatEditableTextBox(Editable_Deployment);
+	InitializeStatEditableTextBox(Editable_Breakthrough);
+	InitializeStatEditableTextBox(Editable_Retention);
+	InitializeStatEditableTextBox(Editable_Recovery);
+	InitializeStatEditableTextBox(Editable_Control);
+	InitializeStatEditableTextBox(Editable_Flexibility);
+	InitializeStatEditableTextBox(Editable_BasePower);
+	InitializeStatEditableTextBox(Editable_RelativeA);
+	InitializeStatEditableTextBox(Editable_RelativeB);
+	Text_TotalScore->SetText(FText::FromString(TEXT("0.00")));
+	
+	//콤보박스 초기화
+	ComboBox_DeckOwner->ClearSelection();
+	
+	Editable_DeckName->SetText(FText::GetEmpty());
+	Editable_Comment->SetText(FText::GetEmpty());
+	
+	Text_Rank->SetText(FText::FromString("F"));
+}
+
 void UDeckDetailUI::UpdateStat(EDeckStatType StatType,float StatScore)
 {
 	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
@@ -80,39 +126,35 @@ void UDeckDetailUI::UpdateField(EDeckFieldType FieldType, const FString& FieldTe
 
 void UDeckDetailUI::RefreshUI()
 {
-	if (Button_DeckImage == nullptr) return;;
 	
-	FButtonStyle btrStyle;
-	FSlateBrush normal;// = DeckHelper->GetThumbnailBrush();
-	FSlateBrush hover = normal;
-	FSlateBrush pressed = normal;
-
-	
-	normal.ImageSize = FVector2D(695, 545);
-	normal.TintColor = FSlateColor(FLinearColor::White);
-
-	hover.ImageSize = FVector2D(695, 545);
-	hover.TintColor = FSlateColor(FLinearColor(0.8f,0.8f,0.8f,1.0f));
-	
-	pressed.ImageSize = FVector2D(695, 545);
-	pressed.TintColor = FSlateColor(FLinearColor(0.4f,0.4f,0.4f,1.0f));
-	
-	Button_DeckImage->SetStyle(btrStyle);
 }
 
-void UDeckDetailUI::RefreshTotalScore()
+void UDeckDetailUI::RefreshTotalScoreUI()
 {
 	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 	{
 		float totalScore = deckMgr->GetCurrentDeck().GetTotalScore();
 		FString strFloat = FString::Printf(TEXT("%.2f"), totalScore);
 		Text_TotalScore->SetText(FText::FromString(strFloat));
+		
+		EDeckRank Rank = FDeckRankRules::GetRank(totalScore);
+		Text_Rank->SetText(FText::FromString(FDeckRankRules::GetRankText(Rank))); 
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
 	}
 }
+
+void UDeckDetailUI::InitializeStatEditableTextBox(UEditableText* TextBox)
+{
+	if (TextBox == nullptr) return;
+	
+	float minValue = FDeckStatRule::GetMin();
+	FString formatted  = FString::Printf(TEXT("%.2f"), minValue);
+	TextBox->SetText(FText::FromString(formatted));
+}
+
 // 바인딩
 void UDeckDetailUI::BindUIEvents()
 {
@@ -181,9 +223,7 @@ void UDeckDetailUI::OnChangeImage()
 		FString SavedPath;
 		UTexture2D* Texture = nullptr;
 
-		if (ImageService->ImportDeckImage(
-			SavedPath,
-			Texture))
+		if (ImageService->ImportDeckImage(SavedPath,Texture))
 		{
 			// Domain 저장
 			if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())

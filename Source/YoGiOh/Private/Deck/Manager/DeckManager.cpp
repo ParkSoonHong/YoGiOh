@@ -100,6 +100,7 @@ float UDeckManager::GetcurrentDeckTotalScore() const
 void UDeckManager::CreateDeck()
 {
 	currentDeck = FDeckDomain();
+	OnDeckInitialize.Broadcast();
 }
 
 void UDeckManager::UpdateStatCurrentDeck(EDeckStatType StatType, float StatScore)

@@ -1,4 +1,4 @@
-﻿#include "FDeckStatRule.h"
+﻿#include "Deck/Rules/FDeckStatRule.h"
 
 
 float FDeckStatRule::GetMax(EDeckStatType Type)
