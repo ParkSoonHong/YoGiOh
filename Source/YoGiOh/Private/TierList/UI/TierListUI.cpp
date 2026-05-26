@@ -4,25 +4,31 @@
 #include "TierList/UI/TierListUI.h"
 //#include "System/Popup/UiPopUpManager.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
+#include "Deck/Impoter/DeckImageImporter.h"
 #include "System/Popup/Manager/UiPopUpManager.h"
 #include "Deck/Manager/DeckManager.h"
+#include "Deck/Rules/FDeckRankRules.h"
+#include "Deck/Type/EDeckRank.h"
 #include "TierList/UI/TierLineUI.h"
+#include "TierList/UI/TierSlotUI.h"
 
 
 void UTierListUI::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
-	DeckManager = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>();
 
-	if (DeckManager == nullptr)
+	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+	{
+		deckMgr->OnDeckListChanged.AddUObject(this, &UTierListUI::RefreshList);
+	}
+	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("DeckManager Null"));
 		return;
 	}
 	
-	DeckManager->OnDeckListChanged.AddUObject(this, &UTierListUI::RefreshList);
 
 	if (Button_DataAdd)
 	{
@@ -33,52 +39,40 @@ void UTierListUI::NativeConstruct()
 	{
 		Button_Back->OnClicked.AddDynamic(this,&UTierListUI::OnClickedBackButton);
 	}
+	RefreshList();
 }
 
-void UTierListUI::BuildTierMap(const TArray<FDeckData>& Decks)
+void UTierListUI::BuildTierMap(const TArray<FDeckDomain>& Decks)
 {
-//	tierMap.Reset();
+	tierMap.Reset();
 
-	for (const FDeckData& Deck : Decks)
+	for (const FDeckDomain& Deck : Decks)
 	{
-//		const EDeckTier Tier = DeckManagerHelper::CalculateTier(Deck.TotalScore);
-//		tierMap.FindOrAdd(Tier).Add(Deck);
+		const EDeckRank rank = FDeckRankRules::GetRank(Deck.GetTotalScore());
+		tierMap.FindOrAdd(rank).Add(Deck);
 	}
 }
 // UI 초기화
 void UTierListUI::RefreshList()
 {
 	VerticalBox_Tier->ClearChildren();
-
-	if (!DeckManager->LoadAllDecks())
+	TArray<FDeckDomain> decks;
+	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("DeckManager LoadAllDecks Failed"));
-		return;
+		decks =	deckMgr->GetDecks();
 	}
-	TArray<FDeckDomain> Decks = DeckManager->GetDecks();
 
-	if (Decks.IsEmpty())
+	if (decks.IsEmpty())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("DeckManager GetDecks Failed"));
 		return;
 	}
-	//BuildTierMap(Decks);
-/*
-	// 원하는 티어 순서 명시
-	static const EDeckTier TierOrder[] =
+	
+	BuildTierMap(decks);
+	
+	for (EDeckRank Tier : FDeckRankRules::GetRankOrder())
 	{
-		EDeckTier::S,
-		EDeckTier::A,
-		EDeckTier::B,
-		EDeckTier::C,
-		EDeckTier::D,
-		EDeckTier::E,
-		EDeckTier::F
-	};
-
-	for (EDeckTier Tier : TierOrder)
-	{
-		const TArray<FDeckSaveData>* TierDecks = tierMap.Find(Tier);
+		const TArray<FDeckDomain>* TierDecks = tierMap.Find(Tier);
 		if (!TierDecks || TierDecks->Num() == 0)
 		{
 			continue; //  존재하지 않는 티어는 스킵
@@ -86,31 +80,29 @@ void UTierListUI::RefreshList()
 
 		UTierLineUI* LineWidget =
 			CreateWidget<UTierLineUI>(this, LineClass);
-
+	
 		LineWidget->InitializeLine(Tier);
 		VerticalBox_Tier->AddChild(LineWidget);
 
-		for (const FDeckSaveData& Data : *TierDecks)
+		for (const FDeckDomain& domain : *TierDecks)
 		{
 			UTierSlotUI* tierSlot =
 				CreateWidget<UTierSlotUI>(this, SlotClass);
-
-			tierSlot->SetDeckID(Data.DeckID); // ⭐ ID만 저장
-			tierSlot->Text_DeckName->SetText(FText::FromString(Data.DeckName));
+	
+			tierSlot->SetDeckID(domain.GetDeckId()); 
+			tierSlot->Text_DeckName->SetText(FText::FromString(domain.GetField(EDeckFieldType::DECKNAME)));
+			
+			if (UDeckImageImporter* ImageService = GetGameInstance()->GetSubsystem<UDeckImageImporter>())
+			{
+				if (UTexture2D * Thumbnail = ImageService->LoadTextureFromFile(domain.GetImagePath()))
+				{
+					tierSlot->SetThumbnail(Thumbnail);
+				}
+			}
 			LineWidget->AddSlot(tierSlot);
 		}
 	}
-	*/
-}
-void UTierListUI::HandleSlotClicked(const FDeckData& Data)
-{
-	/*
-	if (UUiPopUpManager* PopupMgr =
-				GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
-	{
-		PopupMgr->PushPopup(EUIPopUpType::TierListDetail);
-	}
-	*/
+	
 }
 
 void UTierListUI::OnClickedDataAddButton()

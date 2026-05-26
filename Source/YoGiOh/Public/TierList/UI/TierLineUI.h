@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/WrapBox.h"
+#include "Deck/Type/EDeckRank.h"
 #include "TierLineUI.generated.h"
 
 class UVerticalBox;
@@ -16,13 +18,13 @@ class YOGIOH_API UTierLineUI : public UUserWidget
 public:
 	
 	virtual void NativeConstruct() override;
-	//void InitializeLine(EDeckTier tier);
+	void InitializeLine(EDeckRank Rank);
 
 	void AddSlot(UTierSlotUI* tierSlot);
 	
-	UPROPERTY()
-	UTextBlock* Text_TierName;
+	UPROPERTY(meta=(BindWidget))
+	UTextBlock* TierName;
 
-	UPROPERTY()
-	UVerticalBox* Box_Slots;	
+	UPROPERTY(meta=(BindWidget))
+	UWrapBox* WrapBox_List;	
 };

@@ -22,21 +22,19 @@ public:
 	
 	virtual void NativeConstruct() override;
 	
-	FOnDeckSlotClicked OnClicked;
+	UPROPERTY(meta=(BindWidget))
+	UButton* Button_Detail;
 
-	UPROPERTY()
-	UButton* Button_Select;
-
-	UPROPERTY()
-	UButton* Image_Thumbnail;
-
-	UPROPERTY()
+	UPROPERTY(meta=(BindWidget))
 	UTextBlock* Text_DeckName;
 
 	void SetDeckID(FString deckID);
 	
+	void SetThumbnail(UTexture2D* Thumbnail);
+	
 private:
 	UFUNCTION()
-	void HandleClicked();
+	void OnClickedSelectButton();
+	
 	FString deckId;
 };

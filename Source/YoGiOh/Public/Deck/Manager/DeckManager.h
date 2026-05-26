@@ -20,11 +20,13 @@ class YOGIOH_API UDeckManager : public UGameInstanceSubsystem
 	GENERATED_BODY()
 public:
 	DECLARE_MULTICAST_DELEGATE(FOnDeckListChanged);
+	DECLARE_MULTICAST_DELEGATE(FOnDeckTotatlScoreUpdate);
 	DECLARE_MULTICAST_DELEGATE(FOnDeckUpdate);
 	DECLARE_MULTICAST_DELEGATE(FOnDeckInitialize);
 
-	FOnDeckUpdate OnDeckUpdate;
 	FOnDeckListChanged OnDeckListChanged;
+	FOnDeckTotatlScoreUpdate OnDeckTotatlScoreUpdate;
+	FOnDeckUpdate OnDeckUpdate;
 	FOnDeckInitialize OnDeckInitialize;
 	
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
@@ -34,9 +36,6 @@ public:
 	
 	TArray<FDeckDomain> GetDecks() const;
 	FDeckDomain  GetCurrentDeck() const;
-	
-	float GetcurrentDeckTotalScore() const;
-	
 	
 	void UpdateStatCurrentDeck(EDeckStatType StatType,float StatScore);
 	
@@ -51,9 +50,6 @@ public:
 	
 private:
 	bool FindDeck(const FString& DeckID, FDeckDomain& OutDomain);
-	
-	void NotifyDeckListChanged();
-	
 	
 	TUniquePtr<DeckManagerHelper> DeckHelper;
 	TArray<FDeckDomain> Decks;

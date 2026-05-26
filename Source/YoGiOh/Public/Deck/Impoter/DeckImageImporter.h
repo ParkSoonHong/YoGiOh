@@ -17,11 +17,11 @@ public:
 
 	bool ImportDeckImage(FString& OutSavedPath, UTexture2D*& OutTexture);
 
+	UTexture2D* LoadTextureFromFile(const FString& FilePath);
 private:
 
 	bool OpenImageDialog(FString& OutSelectedPath);
 
 	bool CopyImageToSavedFolder(const FString& SourcePath,FString& OutSavedPath);
 
-	UTexture2D* LoadTextureFromFile(const FString& FilePath);
 };

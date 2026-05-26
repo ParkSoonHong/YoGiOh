@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "System/Popup/UiPopUpBase.h"
 #include "Deck/Data/FDeckData.h"
+#include "Deck/Type/EDeckRank.h"
 #include "TierListUI.generated.h"
 
 class UDeckManager;
@@ -41,14 +42,11 @@ protected:
 	FDeckData PendingDetailData;
 
 private:
-	UDeckManager* DeckManager;	
 
-	void BuildTierMap(const TArray<FDeckData>& Decks);
+	void BuildTierMap(const TArray<FDeckDomain>& Decks);
 	void RefreshList();
 
-	void HandleSlotClicked(const FDeckData& Data);
-private:
-	//TMap<EDeckTier,TArray<FDeckSaveData>> tierMap;
+	TMap<EDeckRank,TArray<FDeckDomain>> tierMap;
 public:
 	
 	UFUNCTION()

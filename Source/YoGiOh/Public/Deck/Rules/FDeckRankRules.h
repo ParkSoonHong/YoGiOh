@@ -7,4 +7,6 @@ public:
 	static EDeckRank GetRank (float TotalScore);
 	static FString  GetRankText (EDeckRank TotalScore);
 	
+	static const TArray<EDeckRank>& GetRankOrder();
+	
 };

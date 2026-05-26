@@ -4,6 +4,7 @@
 #include "Deck/Manager/DeckManager.h"
 #include "Deck/Domain/FDeckDomain.h"
 #include "Deck/Repository/DeckRepository.h"
+#include "System/Popup/Manager/UiPopUpManager.h"
 
 void UDeckManager::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -31,7 +32,8 @@ bool UDeckManager::SaveDeck()
 		return false;
 	}
 
-	//OnDeckListChanged.Broadcast();
+	LoadAllDecks();
+	
 	return true;
 }
 
@@ -48,6 +50,8 @@ bool UDeckManager::LoadAllDecks()
 	{
 		TestLoad(Deck);
 	}
+	
+	OnDeckListChanged.Broadcast();
 	return true;
 }
 
@@ -73,13 +77,8 @@ bool UDeckManager::DeleteDeck(const FString& DeckID, FString& OutError)
 		return false;
 	}
 
-	NotifyDeckListChanged();
-	return true;
-}
-
-void UDeckManager::NotifyDeckListChanged()
-{
 	OnDeckListChanged.Broadcast();
+	return true;
 }
 
 TArray<FDeckDomain> UDeckManager::GetDecks() const
@@ -90,11 +89,6 @@ TArray<FDeckDomain> UDeckManager::GetDecks() const
 FDeckDomain UDeckManager::GetCurrentDeck()const
 {
 	return currentDeck;
-}
-
-float UDeckManager::GetcurrentDeckTotalScore() const
-{
-	return currentDeck.GetTotalScore();
 }
 
 void UDeckManager::CreateDeck()
@@ -113,7 +107,7 @@ void UDeckManager::UpdateStatCurrentDeck(EDeckStatType StatType, float StatScore
 			static_cast<int32>(StatType),
 			StatScore);
 	}
-	OnDeckUpdate.Broadcast();
+	OnDeckTotatlScoreUpdate.Broadcast();
 }
 
 void UDeckManager::UpdateFieldCurrentDeck(EDeckFieldType FieldType, const FString& Field)
@@ -141,6 +135,12 @@ void UDeckManager::UpdateDeck(const FString& deckId)
 	{
 		UE_LOG(LogTemp,Warning,TEXT("Failed UpdateDeck"));
 		return;
+	}
+	OnDeckUpdate.Broadcast();
+	
+	if (UUiPopUpManager * Popupmgr = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
+	{
+		Popupmgr->PushPopup(EUIPopUpType::TierListDetail);
 	}
 	// UI 수정
 }

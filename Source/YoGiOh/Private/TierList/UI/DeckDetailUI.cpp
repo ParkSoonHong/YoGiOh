@@ -26,12 +26,13 @@ void UDeckDetailUI::NativeConstruct()
 	
 	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 	{
-		deckMgr->OnDeckUpdate.AddUObject(this, &UDeckDetailUI::RefreshTotalScoreUI);
+		deckMgr->OnDeckTotatlScoreUpdate.AddUObject(this, &UDeckDetailUI::RefreshTotalScoreUI);
+		deckMgr->OnDeckUpdate.AddUObject(this, &UDeckDetailUI::RefreshUI);
 		deckMgr->OnDeckInitialize.AddUObject(this, &UDeckDetailUI::InitializeUI);
 	}
 
 	InitializeDeckOwnerComboBox();
-	InitializeUI();
+//	InitializeUI();
 }
 
 void UDeckDetailUI::InitializeDetail(UDeckManager* Manager, const FDeckData& Data)
@@ -126,7 +127,58 @@ void UDeckDetailUI::UpdateField(EDeckFieldType FieldType, const FString& FieldTe
 
 void UDeckDetailUI::RefreshUI()
 {
+	FDeckDomain domain;
+	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+	{
+		domain = deckMgr->GetCurrentDeck();
+	}
 	
+	// 버튼 이미지 초기화
+	if (Button_DeckImage == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Button_DeckImage is nullptr"));
+		return;
+	}
+	
+	if (DeckBaseImage == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UDeckBaseImage is nullptr"));
+		return;
+	}
+	
+	FButtonStyle btrStyle = Button_DeckImage->GetStyle();
+	
+	if (UDeckImageImporter* ImageService = GetGameInstance()->GetSubsystem<UDeckImageImporter>())
+	{
+		if (UTexture2D * Thumbnail = ImageService->LoadTextureFromFile(domain.GetImagePath()))
+		{
+			btrStyle.Normal.SetResourceObject(Thumbnail);
+			btrStyle.Hovered.SetResourceObject(Thumbnail);
+			btrStyle.Pressed.SetResourceObject(Thumbnail);
+			Button_DeckImage->SetStyle(btrStyle);
+		}
+	}
+	
+	UpdateStatEditableTextBox(Editable_Deployment,domain.GetStatScore(EDeckStatType::DEPLOYMENT));
+	UpdateStatEditableTextBox(Editable_Breakthrough,domain.GetStatScore(EDeckStatType::BREAKTHROUGH));
+	UpdateStatEditableTextBox(Editable_Retention,domain.GetStatScore(EDeckStatType::RETENTION));
+	UpdateStatEditableTextBox(Editable_Recovery,domain.GetStatScore(EDeckStatType::RECOVERY));
+	UpdateStatEditableTextBox(Editable_Control,domain.GetStatScore(EDeckStatType::CONTROL));
+	UpdateStatEditableTextBox(Editable_Flexibility,domain.GetStatScore(EDeckStatType::FLEXIBILITY));
+	UpdateStatEditableTextBox(Editable_BasePower,domain.GetStatScore(EDeckStatType::BASEPOWER));
+	UpdateStatEditableTextBox(Editable_RelativeA,domain.GetStatScore(EDeckStatType::RELATIVEA));
+	UpdateStatEditableTextBox(Editable_RelativeB,domain.GetStatScore(EDeckStatType::RELATIVEB));
+	FString formatted  = FString::Printf(TEXT("%.2f"), domain.GetTotalScore());
+	Text_TotalScore->SetText(FText::FromString(formatted) );
+	
+	//콤보박스 초기화
+	ComboBox_DeckOwner->SetSelectedOption(domain.GetField(EDeckFieldType::OWNER));
+	
+	Editable_DeckName->SetText(FText::FromString(domain.GetField(EDeckFieldType::DECKNAME)));
+	Editable_Comment->SetText(FText::FromString(domain.GetField(EDeckFieldType::COMMENT)));
+	
+	EDeckRank rank = FDeckRankRules::GetRank(domain.GetTotalScore());
+	Text_Rank->SetText(FText::FromString(FDeckRankRules::GetRankText(rank)));
 }
 
 void UDeckDetailUI::RefreshTotalScoreUI()
@@ -144,6 +196,13 @@ void UDeckDetailUI::RefreshTotalScoreUI()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
 	}
+}
+void UDeckDetailUI::UpdateStatEditableTextBox(UEditableText* TextBox, float Value)
+{
+	if (TextBox == nullptr) return;
+	
+	FString formatted  = FString::Printf(TEXT("%.2f"), Value);
+	TextBox->SetText(FText::FromString(formatted));
 }
 
 void UDeckDetailUI::InitializeStatEditableTextBox(UEditableText* TextBox)
@@ -255,9 +314,11 @@ void UDeckDetailUI::OnClickedSaveButton()
 	
 	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 	{
-		//deckMgr->TestSave();
-		deckMgr->SaveDeck();
-		//deckMgr->NotifyDeckListChanged();
+		if (!deckMgr->SaveDeck())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("DackSave Failed"));
+			return;
+		}
 	}
 	else
 	{

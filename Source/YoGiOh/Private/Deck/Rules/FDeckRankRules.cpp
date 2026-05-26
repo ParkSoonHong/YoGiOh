@@ -26,3 +26,19 @@ FString FDeckRankRules::GetRankText(EDeckRank TotalScore)
 	default: return TEXT("F");
 	}
 }
+
+const TArray<EDeckRank>& FDeckRankRules::GetRankOrder()
+{
+	static const TArray<EDeckRank> RankOrder =
+	{
+		EDeckRank::S,
+		EDeckRank::A,
+		EDeckRank::B,
+		EDeckRank::C,
+		EDeckRank::D,
+		EDeckRank::E,
+		EDeckRank::F
+	};
+
+	return RankOrder;
+}

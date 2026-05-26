@@ -3,8 +3,7 @@
 
 #include "TierList/UI/TierSlotUI.h"
 #include "Components/Button.h"
-#include "Components/TextBlock.h"
-#include "Deck/Manager/DeckManagerHelper.h"
+#include "Deck/Manager/DeckManager.h"
 
 void UTierSlotUI::NativeConstruct()
 {
@@ -12,9 +11,9 @@ void UTierSlotUI::NativeConstruct()
 	
 	UE_LOG(LogTemp, Warning, TEXT("UTierSlotUI NativeConstruct"));
 	
-	if (Button_Select)
+	if (Button_Detail)
 	{
-		Button_Select->OnClicked.AddDynamic(this, &UTierSlotUI::HandleClicked);
+		Button_Detail->OnClicked.AddDynamic(this, &UTierSlotUI::OnClickedSelectButton);
 	}
 }
 
@@ -24,7 +23,18 @@ void UTierSlotUI::SetDeckID(FString deckID)
 	deckId = deckID;
 }
 
-void UTierSlotUI::HandleClicked()
+void UTierSlotUI::SetThumbnail(UTexture2D* Thumbnail)
 {
-	//OnClicked.ExecuteIfBound(DeckData);
+	FButtonStyle btrStyle = Button_Detail->GetStyle();
+	btrStyle.Normal.SetResourceObject(Thumbnail);
+	btrStyle.Hovered.SetResourceObject(Thumbnail);
+	btrStyle.Pressed.SetResourceObject(Thumbnail);
+}
+
+void UTierSlotUI::OnClickedSelectButton()
+{
+	if (UDeckManager* deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+	{
+		deckMgr->UpdateDeck(deckId);
+	}
 }

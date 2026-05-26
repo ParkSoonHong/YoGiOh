@@ -121,6 +121,9 @@ private:
 	void UpdateStat(EDeckStatType StatType,float StatScore);
 
 	void UpdateField(EDeckFieldType FieldType,const FString & FieldText);
+	
+	void UpdateStatEditableTextBox(UEditableText* TextBox, float Value);
+	
 	// 바인딩 함수들
 	UFUNCTION()
 	void OnChangeImage();
