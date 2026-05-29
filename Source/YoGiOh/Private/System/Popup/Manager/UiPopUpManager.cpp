@@ -107,22 +107,6 @@ void UUiPopUpManager::PopPopup()
 	Top->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void UUiPopUpManager::PushDeckDetailPopup(const FDeckData& Data)
-{
-	//PushPopup(EUIPopUpType::TierListDetail);
-
-	UUiPopUpBase* Top = PopupStack.Last();
-	if (UDeckDetailUI* Detail = Cast<UDeckDetailUI>(Top))
-	{
-		if (!DeckManager)
-		{
-			DeckManager = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>();
-		}
-
-		Detail->InitializeDetail(DeckManager, Data);
-	}
-}
-
 UUiPopUpBase* UUiPopUpManager::CreatePopup(EUIPopUpType Type)
 {
 	// 이미 생성되어있으면 반환

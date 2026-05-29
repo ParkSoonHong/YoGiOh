@@ -25,9 +25,6 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:	
-	
-	void InitializeDetail(UDeckManager* Manager, const FDeckData& Data);
-
 	UPROPERTY(meta=(BindWidget))
 	UButton* Button_SaveButton;
 	
@@ -109,10 +106,9 @@ private:
 	
 	// ComboBox 초기화
 	void InitializeDeckOwnerComboBox();
-	
-private:
 	void InitializeUI();
 	void InitializeStatEditableTextBox(UEditableText* TextBox);
+	
 	void BindUIEvents();
 	
 	void RefreshUI();

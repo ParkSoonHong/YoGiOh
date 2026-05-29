@@ -40,17 +40,20 @@ bool UDeckManager::SaveDeck()
 // 전체 불러오기
 bool UDeckManager::LoadAllDecks()
 {
+	Decks.Reset();
+	
 	if (!repository.LoadAll(Decks))
 	{
 		UE_LOG(LogTemp,Error,TEXT("LoadAll Failed"));
 		return false;
 	}
 	
-	for (FDeckDomain Deck : Decks)
+	/*
+	for (const FDeckDomain& Deck  : Decks)
 	{
 		TestLoad(Deck);
 	}
-	
+	*/
 	OnDeckListChanged.Broadcast();
 	return true;
 }

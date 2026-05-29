@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "System/Popup/UiPopUpBase.h"
 #include "Deck/Data/FDeckData.h"
+#include "Deck/Domain/FDeckDomain.h"
 #include "Deck/Type/EDeckRank.h"
 #include "TierListUI.generated.h"
 

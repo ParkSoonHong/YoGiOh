@@ -9,7 +9,7 @@ public class YoGiOh : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine","UMG","Slate",
-			"SlateCore", "InputCore", "EnhancedInput", "Json", "JsonUtilities","DesktopPlatform","ImageWrapper",
+			"SlateCore", "InputCore", "EnhancedInput", "HTTP", "Json", "JsonUtilities","DesktopPlatform","ImageWrapper",
 			"RenderCore"
 		});
 

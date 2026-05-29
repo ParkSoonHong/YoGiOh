@@ -31,10 +31,6 @@ public:
 	// Popup
 	void PushPopup(EUIPopUpType Type);
 	void PopPopup();
-	
-	// ⭐ 추가
-	void PushDeckDetailPopup(const FDeckData& Data);
-
 
 private:
 	 UUiPopUpBase* CreatePopup(EUIPopUpType Type);

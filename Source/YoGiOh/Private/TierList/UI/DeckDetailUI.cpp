@@ -35,10 +35,7 @@ void UDeckDetailUI::NativeConstruct()
 //	InitializeUI();
 }
 
-void UDeckDetailUI::InitializeDetail(UDeckManager* Manager, const FDeckData& Data)
-{
-	
-}
+
 
 void UDeckDetailUI::InitializeDeckOwnerComboBox()
 {

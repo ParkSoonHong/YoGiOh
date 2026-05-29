@@ -56,6 +56,7 @@ void UTierListUI::BuildTierMap(const TArray<FDeckDomain>& Decks)
 void UTierListUI::RefreshList()
 {
 	VerticalBox_Tier->ClearChildren();
+	
 	TArray<FDeckDomain> decks;
 	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 	{

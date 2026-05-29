@@ -2,12 +2,12 @@
 
 EDeckRank FDeckRankRules::GetRank(float TotalScore) 
 {
-	if (TotalScore >= 90)return EDeckRank::S;
-	if (TotalScore >= 80) return EDeckRank::A;
-	if (TotalScore >= 70) return EDeckRank::B;
-	if (TotalScore >= 60) return EDeckRank::C;
-	if (TotalScore >= 50) return EDeckRank::D;
-	if (TotalScore >= 40) return EDeckRank::E;
+	if (TotalScore >= 85.66)return EDeckRank::S;
+	if (TotalScore >= 71.38) return EDeckRank::A;
+	if (TotalScore >= 57.1) return EDeckRank::B;
+	if (TotalScore >= 42.82) return EDeckRank::C;
+	if (TotalScore >= 28.54) return EDeckRank::D;
+	if (TotalScore >= 14.26) return EDeckRank::E;
 	
 	return EDeckRank::F;
 }
