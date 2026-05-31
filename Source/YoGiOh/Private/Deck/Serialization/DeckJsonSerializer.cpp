@@ -31,17 +31,6 @@ bool FDeckJsonSerializer::TrySerialize(const FDeckDomain& Domain, FString& outJs
 	jsonObject->SetNumberField(TEXT("RelativeA"), Domain.GetStatScore(EDeckStatType::RELATIVEA));
 	jsonObject->SetNumberField(TEXT("RelativeB"), Domain.GetStatScore(EDeckStatType::RELATIVEB));
 	
-	// PlayablePlayers
-	/*
-	TArray<TSharedPtr<FJsonValue>> playerArray;
-	for (EPlayablePlayer player : data.playablePlayers)
-	{
-		playerArray.Add(MakeShared<FJsonValueString>(
-			StaticEnum<EPlayablePlayer>()->GetNameStringByValue((int64)player)
-		));
-	}
-	jsonObject->SetArrayField(TEXT("PlayablePlayers"), playerArray);
-	*/
 	TSharedRef<TJsonWriter<>> writer = TJsonWriterFactory<>::Create(&outJson);
 	FJsonSerializer::Serialize(jsonObject.ToSharedRef(), writer);
 	return true;

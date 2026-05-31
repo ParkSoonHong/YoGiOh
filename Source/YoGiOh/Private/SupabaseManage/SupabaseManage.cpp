@@ -1,41 +1,29 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "USupabaseManager.h"
-
+#include "Supabase/SupabaseManage.h"
 #include "HttpModule.h"
+#include "Deck/Serialization/DeckJsonSerializer.h"
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
 
 #include "Serialization/JsonWriter.h"
 #include "Serialization/JsonSerializer.h"
 
-void UUSupabaseManager::Initialize(FSubsystemCollectionBase& Collection)
+void USupabaseManage::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	
-	TestInsertDeck();
-	
 }
 
-void UUSupabaseManager::TestInsertDeck()
+void USupabaseManage::InsertDeck(const FDeckDomain& Domain)
 {
-	FString Url =
-		BaseUrl + TEXT("/rest/v1/") + TableName;
+	FString Url = baseUrl + TEXT("/rest/v1/") + table_Decks;
 
-	TSharedPtr<FJsonObject> JsonObject =
-		MakeShared<FJsonObject>();
-
-	JsonObject->SetStringField(TEXT("deck_name"), TEXT("BlueEyes"));
-	JsonObject->SetStringField(TEXT("owner"), TEXT("Yugi"));
-	JsonObject->SetNumberField(TEXT("total_score"), 95.5f);
-
-	FString JsonString;
-
-	TSharedRef<TJsonWriter<>> Writer =
-		TJsonWriterFactory<>::Create(&JsonString);
-
-	FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer);
+	FString json;
+	if (!FDeckJsonSerializer::TrySerialize(Domain,json))
+	{
+		
+	}
 
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request =
 		FHttpModule::Get().CreateRequest();
@@ -44,10 +32,10 @@ void UUSupabaseManager::TestInsertDeck()
 	Request->SetVerb(TEXT("POST"));
 
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-	Request->SetHeader(TEXT("apikey"), ApiKey);
-	Request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + ApiKey);
+	Request->SetHeader(TEXT("apikey"), apiKey);
+	Request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + apiKey);
 
-	Request->SetContentAsString(JsonString);
+	Request->SetContentAsString(json);
 
 	Request->OnProcessRequestComplete().BindLambda(
 		[this](FHttpRequestPtr Req, FHttpResponsePtr Response, bool bSuccess)
@@ -58,21 +46,20 @@ void UUSupabaseManager::TestInsertDeck()
 				return;
 			}
 
-			UE_LOG(LogTemp, Warning,
-				TEXT("Insert Success: %s"),
+			UE_LOG(LogTemp, Warning, TEXT("Insert Success: %s"),
 				*Response->GetContentAsString());
 			
-			TestGetDecks();
+			//GetDecks();
 		});
 
 	Request->ProcessRequest();
 }
 
-void UUSupabaseManager::TestGetDecks()
+void USupabaseManage::GetDecks()
 {
 	FString Url =
-	BaseUrl + TEXT("/rest/v1/")
-	+ TableName
+	baseUrl + TEXT("/rest/v1/")
+	+ table_Decks
 	+ TEXT("?select=*");
 
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request =
@@ -81,8 +68,8 @@ void UUSupabaseManager::TestGetDecks()
 	Request->SetURL(Url);
 	Request->SetVerb(TEXT("GET"));
 
-	Request->SetHeader(TEXT("apikey"), ApiKey);
-	Request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + ApiKey);
+	Request->SetHeader(TEXT("apikey"), apiKey);
+	Request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + apiKey);
 
 	Request->OnProcessRequestComplete().BindLambda(
 		[](FHttpRequestPtr Req, FHttpResponsePtr Response, bool bSuccess)
@@ -93,8 +80,7 @@ void UUSupabaseManager::TestGetDecks()
 				return;
 			}
 
-			FString Result =
-				Response->GetContentAsString();
+			FString Result = Response->GetContentAsString();
 
 			UE_LOG(LogTemp, Warning,
 				TEXT("Deck Data: %s"),
@@ -102,4 +88,20 @@ void UUSupabaseManager::TestGetDecks()
 		});
 
 	Request->ProcessRequest();
+}
+
+void USupabaseManage::DeleteDeck()
+{
+}
+
+void USupabaseManage::InsertUser()
+{
+}
+
+void USupabaseManage::GetUser()
+{
+}
+
+void USupabaseManage::DeleteUser()
+{
 }

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "System/Popup/UiPopUpBase.h"
-#include "Deck/Data/FDeckData.h"
 #include "Deck/Manager/DeckManagerHelper.h"
 #include "DeckDetailUI.generated.h"
 

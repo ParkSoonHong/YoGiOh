@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "System/Popup/UIPopUpType.h" 
+#include "System/Popup/Type/UIPopUpType.h" 
 #include "UiPopUpBase.generated.h"
 
 /**

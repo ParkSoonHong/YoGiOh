@@ -6,15 +6,17 @@
 #include "Serialization/JsonWriter.h"
 #include "Serialization/JsonSerializer.h"
 #include "Misc/FileHelper.h"
+#include "Supabase/SupabaseManage.h"
 
 
-bool FDeckRepository::Save(const FDeckDomain& Domain)
+bool FDeckRepository::LocalSave(const FDeckDomain& Domain)
 {
 	FString json;
 	if (!FDeckJsonSerializer::TrySerialize(Domain,json))
 	{
 		return false;
 	}
+	
 	IFileManager::Get().MakeDirectory(*saveDirectory, true);
 	
 	FString filePath =
@@ -25,7 +27,7 @@ bool FDeckRepository::Save(const FDeckDomain& Domain)
 }
 
 
-bool FDeckRepository::LoadAll(TArray<FDeckDomain>& OutDomains)
+bool FDeckRepository::LocalLoadAll(TArray<FDeckDomain>& OutDomains)
 {
 	TArray<FString> JsonFiles;
 

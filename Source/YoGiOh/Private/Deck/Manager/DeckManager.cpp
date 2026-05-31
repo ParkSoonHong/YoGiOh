@@ -4,11 +4,18 @@
 #include "Deck/Manager/DeckManager.h"
 #include "Deck/Domain/FDeckDomain.h"
 #include "Deck/Repository/DeckRepository.h"
+#include "Supabase/SupabaseManage.h"
 #include "System/Popup/Manager/UiPopUpManager.h"
 
 void UDeckManager::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+	
+	if (USupabaseManage* Supabase =
+		GetGameInstance()->GetSubsystem<USupabaseManage>())
+	{
+	
+	}
 	
 	if (!LoadAllDecks())
 	{
@@ -26,7 +33,7 @@ bool UDeckManager::SaveDeck()
 		}
 	}
 	
-	if (!repository.Save(currentDeck))
+	if (!repository.LocalSave(currentDeck))
 	{
 		UE_LOG(LogTemp,Error,TEXT("Failed To SaveDeck"));
 		return false;
@@ -42,7 +49,7 @@ bool UDeckManager::LoadAllDecks()
 {
 	Decks.Reset();
 	
-	if (!repository.LoadAll(Decks))
+	if (!repository.LocalLoadAll(Decks))
 	{
 		UE_LOG(LogTemp,Error,TEXT("LoadAll Failed"));
 		return false;

@@ -3,7 +3,7 @@
 
 #include "System/Popup/Manager/UiPopUpManager.h"
 #include "System/Popup/UiPopUpBase.h"
-#include "System/Popup/UIPopUpType.h"
+#include "System/Popup/Type/UIPopUpType.h" 
 
 #include "Deck/Manager/DeckManager.h"
 
