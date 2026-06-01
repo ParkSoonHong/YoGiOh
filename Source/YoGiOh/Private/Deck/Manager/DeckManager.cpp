@@ -138,7 +138,6 @@ void UDeckManager::UpdateImagePath(const FString& Path)
 	}
 }
 
-// 수정할때 사용 이때 델리게이트 만들어서 UI초기화 
 void UDeckManager::UpdateDeck(const FString& deckId)
 {
 	if (!FindDeck(deckId,currentDeck))
@@ -146,13 +145,12 @@ void UDeckManager::UpdateDeck(const FString& deckId)
 		UE_LOG(LogTemp,Warning,TEXT("Failed UpdateDeck"));
 		return;
 	}
-	OnDeckUpdate.Broadcast();
 	
 	if (UUiPopUpManager * Popupmgr = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
 	{
 		Popupmgr->PushPopup(EUIPopUpType::TierListDetail);
 	}
-	// UI 수정
+	OnDeckUpdate.Broadcast();
 }
 
 void UDeckManager::TestLoad(FDeckDomain Domain)

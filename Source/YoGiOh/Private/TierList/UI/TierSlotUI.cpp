@@ -9,7 +9,6 @@ void UTierSlotUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 	
-	UE_LOG(LogTemp, Warning, TEXT("UTierSlotUI NativeConstruct"));
 	
 	if (Button_Detail)
 	{
@@ -29,6 +28,8 @@ void UTierSlotUI::SetThumbnail(UTexture2D* Thumbnail)
 	btrStyle.Normal.SetResourceObject(Thumbnail);
 	btrStyle.Hovered.SetResourceObject(Thumbnail);
 	btrStyle.Pressed.SetResourceObject(Thumbnail);
+	
+	Button_Detail->SetStyle(btrStyle);
 }
 
 void UTierSlotUI::OnClickedSelectButton()

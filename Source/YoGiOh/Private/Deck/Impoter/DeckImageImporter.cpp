@@ -138,6 +138,10 @@ bool UDeckImageImporter::CopyImageToSavedFolder(const FString& SourcePath, FStri
 */
 UTexture2D* UDeckImageImporter::LoadTextureFromFile(const FString& FilePath)
 {
+	if (FilePath.IsEmpty())
+	{
+		return nullptr;
+	}
 	/*
 		이미지 파일의 바이너리 데이터 저장 배열
 		png/jpg 파일 내용이 들어감

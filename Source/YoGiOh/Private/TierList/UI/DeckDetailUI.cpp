@@ -35,8 +35,6 @@ void UDeckDetailUI::NativeConstruct()
 //	InitializeUI();
 }
 
-
-
 void UDeckDetailUI::InitializeDeckOwnerComboBox()
 {
 	if (!ComboBox_DeckOwner)
