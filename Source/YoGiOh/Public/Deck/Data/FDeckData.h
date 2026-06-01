@@ -3,16 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Deck/Type/EDeckOwner.h"
-#include "Deck/Type/EPlayablePlayer.h"
 #include "FDeckData.generated.h"
 
 USTRUCT(BlueprintType)
 struct FDeckData
 {
 	GENERATED_BODY()
-public:
-	
+
 	UPROPERTY()
 	FString imagePath; // 대표 이미지 경로 (PNG/JPG)
 	

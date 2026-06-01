@@ -7,6 +7,7 @@
 #include "Misc/FileHelper.h"
 #include "Deck/Data/FDeckData.h"
 #include "Deck/Domain/FDeckDomain.h"
+#include "Deck/Type/EDeckStatType.h"
 
 bool FDeckJsonSerializer::TrySerialize(const FDeckDomain& Domain, FString& outJson)
 {

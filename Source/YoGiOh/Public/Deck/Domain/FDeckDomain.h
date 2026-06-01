@@ -6,7 +6,6 @@
 #include "Deck/Calculation/FDeckScoreCalculator.h"
 #include "Deck/Data/FDeckData.h"
 #include "Deck/Type/EDeckFieldType.h"
-#include "Deck/Type/EDeckStatType.h"
 
 /**
  * 
