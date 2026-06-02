@@ -45,7 +45,6 @@ void UTierListUI::NativeConstruct()
 void UTierListUI::BuildTierMap(const TArray<FDeckDomain>& Decks)
 {
 	tierMap.Reset();
-
 	for (const FDeckDomain& Deck : Decks)
 	{
 		const EDeckRank rank = FDeckRankRules::GetRank(Deck.GetTotalScore());
@@ -110,7 +109,7 @@ void UTierListUI::OnClickedDataAddButton()
 {
 	if (UUiPopUpManager* popupMgr = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
 	{
-		popupMgr->PushPopup(EUIPopUpType::TierListDetail);
+		popupMgr->PushPopup(EUIPopUpType::TIERLISTDETAIL);
 	}
 	
 	if (UDeckManager* deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())

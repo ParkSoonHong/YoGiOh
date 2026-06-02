@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "User/Domain/FYogUserDomain.h"
 #include "User/Repository/UserRepository.h"
+#include "User/Type/FUserTypes.h"
 #include "UserManager.generated.h"
 
 /**
@@ -18,13 +18,26 @@ class YOGIOH_API UUserManager : public UGameInstanceSubsystem
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	
-	bool LoadAllUsers();
-	void SaveUser();
+	void LodingStart();
+	
+	bool LocalLoadAllUsers();
+	bool ServerLoadAllUsers();
+	
+	void LocalSaveUser();
+	void LocalSaveAllUser();
+	void ServerSaveUser();
+	
 	void UpdateUser();
-	void FindUser(const FString& userID);
+	const FYogUserDomain* FindUser(const FString& UserId);
+	
+	void LoadingCompleted(const FUserMap& UserMap);
+	void LoadingFailed();
+	
+	DECLARE_MULTICAST_DELEGATE(FOnUserLoadcompleted);
+	FOnUserLoadcompleted OnUserLoadcompleted;
 	
 private:
-	TMap<FString,FString> userMap;
+	TMap<FString,FYogUserDomain> userMap;
 	UserRepository repository;
 	FYogUserDomain currentUser;
 };

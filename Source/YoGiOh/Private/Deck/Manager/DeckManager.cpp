@@ -4,26 +4,30 @@
 #include "Deck/Manager/DeckManager.h"
 #include "Deck/Domain/FDeckDomain.h"
 #include "Deck/Repository/DeckRepository.h"
-#include "Supabase/SupabaseManage.h"
+#include "Supabase/SupabaseManager.h"
 #include "System/Popup/Manager/UiPopUpManager.h"
 
 void UDeckManager::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	
-	if (USupabaseManage* Supabase =
-		GetGameInstance()->GetSubsystem<USupabaseManage>())
-	{
-	
-	}
-	
-	if (!LoadAllDecks())
-	{
-		UE_LOG(LogTemp, Error, TEXT("Decks not loaded"));
-	}
 }
 
-bool UDeckManager::SaveDeck()
+void UDeckManager::LoadingStart()
+{
+	if (USupabaseManager* supabaseMgr = GetGameInstance()->GetSubsystem<USupabaseManager>())
+	{
+		supabaseMgr->OnDecksLoaded.AddUObject(this, &UDeckManager::LoadingCompleted);
+		supabaseMgr->OnDecksLoaded.AddUObject(this, &UDeckManager::LoadingCompleted);
+	}
+	else
+	{
+		UE_LOG(LogTemp,Error,TEXT("Insert User Failed"));
+	}
+	ServerLoadAllDeck();
+}
+
+bool UDeckManager::LocalSaveDeck()
 {
 	if (currentDeck.GetDeckId().IsEmpty())
 	{
@@ -35,33 +39,68 @@ bool UDeckManager::SaveDeck()
 	
 	if (!repository.LocalSave(currentDeck))
 	{
-		UE_LOG(LogTemp,Error,TEXT("Failed To SaveDeck"));
+		UE_LOG(LogTemp,Error,TEXT("Failed To LocalSave"));
 		return false;
 	}
 
-	LoadAllDecks();
-	
+	ServerSaveDeck();
+	return true;
+}
+
+bool UDeckManager::LocalSaveAllDeck()
+{
+	TArray<FDeckDomain> deckDomains;
+	deckMap.GenerateValueArray(deckDomains);
+
+	for (const FDeckDomain& deckDomain : deckDomains)
+	{
+		if (repository.LocalSave(deckDomain))
+		{
+			UE_LOG(LogTemp,Error,TEXT("Failed To LocalSave"));
+			return false;
+		}
+	}
 	return true;
 }
 
 // 전체 불러오기
-bool UDeckManager::LoadAllDecks()
+bool UDeckManager::LocalLoadAllDecks()
 {
-	Decks.Reset();
+	deckMap.Reset();
 	
-	if (!repository.LocalLoadAll(Decks))
+	if (!repository.LocalLoadAll(deckMap))
 	{
 		UE_LOG(LogTemp,Error,TEXT("LoadAll Failed"));
 		return false;
 	}
-	
-	/*
-	for (const FDeckDomain& Deck  : Decks)
-	{
-		TestLoad(Deck);
-	}
-	*/
+
 	OnDeckListChanged.Broadcast();
+	return true;
+}
+
+bool UDeckManager::ServerLoadAllDeck()
+{
+	if (USupabaseManager* supabaseMgr = GetGameInstance()->GetSubsystem<USupabaseManager>())
+	{
+		supabaseMgr->GetDecks();
+	}
+	else
+	{
+		UE_LOG(LogTemp,Error,TEXT("Insert User Failed"));
+	}
+	return true;
+}
+
+bool UDeckManager::ServerSaveDeck()
+{
+	if (USupabaseManager* supabaseMgr = GetGameInstance()->GetSubsystem<USupabaseManager>())
+	{
+		supabaseMgr->InsertDeck(currentDeck);
+	}
+	else
+	{
+		UE_LOG(LogTemp,Error,TEXT("Insert User Failed"));
+	}
 	return true;
 }
 
@@ -91,14 +130,30 @@ bool UDeckManager::DeleteDeck(const FString& DeckID, FString& OutError)
 	return true;
 }
 
-TArray<FDeckDomain> UDeckManager::GetDecks() const
+void UDeckManager::LoadingCompleted(const FDeckMap& DeckMap)
 {
-	return  Decks;
+	deckMap = DeckMap;
+	LocalSaveAllDeck();
+	OnDeckLoadcompleted.Broadcast();
 }
 
-FDeckDomain UDeckManager::GetCurrentDeck()const
+void UDeckManager::LoadingFailed()
 {
-	return currentDeck;
+	if (!LocalLoadAllDecks())
+	{
+		UE_LOG(LogTemp,Error,TEXT("Loading Failed"));
+		return;
+	}
+	OnDeckLoadcompleted.Broadcast();
+}
+
+TArray<FDeckDomain> UDeckManager::GetDecks() const
+{
+	TArray<FDeckDomain> Result;
+
+	deckMap.GenerateValueArray(Result);
+
+	return Result;
 }
 
 void UDeckManager::CreateDeck()
@@ -138,9 +193,9 @@ void UDeckManager::UpdateImagePath(const FString& Path)
 	}
 }
 
-void UDeckManager::UpdateDeck(const FString& deckId)
+void UDeckManager::UpdateDeck(const FString& DeckId)
 {
-	if (!FindDeck(deckId,currentDeck))
+	if (!FindDeck(DeckId,currentDeck))
 	{
 		UE_LOG(LogTemp,Warning,TEXT("Failed UpdateDeck"));
 		return;
@@ -148,69 +203,17 @@ void UDeckManager::UpdateDeck(const FString& deckId)
 	
 	if (UUiPopUpManager * Popupmgr = GetWorld()->GetGameInstance()->GetSubsystem<UUiPopUpManager>())
 	{
-		Popupmgr->PushPopup(EUIPopUpType::TierListDetail);
+		Popupmgr->PushPopup(EUIPopUpType::TIERLISTDETAIL);
 	}
 	OnDeckUpdate.Broadcast();
 }
 
-void UDeckManager::TestLoad(FDeckDomain Domain)
-{	
-	UE_LOG(LogTemp, Warning, TEXT("===== Current Deck ====="));
-
-	UE_LOG(LogTemp, Warning, TEXT("DeckName : %s"),
-		*Domain.GetField(EDeckFieldType::DECKNAME));
-	
-	UE_LOG(LogTemp, Warning, TEXT("DeckOwner : %s"),
-		 *Domain.GetField(EDeckFieldType::OWNER));
-
-	UE_LOG(LogTemp, Warning, TEXT("Comment : %s"),
-		*Domain.GetField(EDeckFieldType::COMMENT));
-	
-	UE_LOG(LogTemp,Warning,TEXT("ImagePath : %s"),
-		*Domain.GetImagePath());
-
-	UE_LOG(LogTemp, Warning, TEXT("Deployment : %.2f"),
-		Domain.GetStatScore(EDeckStatType::DEPLOYMENT));
-
-	UE_LOG(LogTemp, Warning, TEXT("Breakthrough : %.2f"),
-		Domain.GetStatScore(EDeckStatType::BREAKTHROUGH));
-
-	UE_LOG(LogTemp, Warning, TEXT("Retention : %.2f"),
-		Domain.GetStatScore(EDeckStatType::RETENTION));
-
-	UE_LOG(LogTemp, Warning, TEXT("Recovery : %.2f"),
-		Domain.GetStatScore(EDeckStatType::RECOVERY));
-
-	UE_LOG(LogTemp, Warning, TEXT("Control : %.2f"),
-		Domain.GetStatScore(EDeckStatType::CONTROL));
-
-	UE_LOG(LogTemp, Warning, TEXT("Flexibility : %.2f"),
-		Domain.GetStatScore(EDeckStatType::FLEXIBILITY));
-
-	UE_LOG(LogTemp, Warning, TEXT("BasePower : %.2f"),
-		Domain.GetStatScore(EDeckStatType::BASEPOWER));
-
-	UE_LOG(LogTemp, Warning, TEXT("RelativeA : %.2f"),
-		Domain.GetStatScore(EDeckStatType::RELATIVEA));
-
-	UE_LOG(LogTemp, Warning, TEXT("RelativeB : %.2f"),
-		Domain.GetStatScore(EDeckStatType::RELATIVEB));
-
-	UE_LOG(LogTemp, Warning, TEXT("TotalScore : %.2f"),
-		Domain.GetTotalScore());
-
-	UE_LOG(LogTemp, Warning, TEXT("========================"));
-}
-
 bool UDeckManager::FindDeck(const FString& DeckID,FDeckDomain& OutDomain)
 {
-	for (FDeckDomain Deck : Decks)
+	if (const FDeckDomain* Domain = deckMap.Find(DeckID))
 	{
-		if (Deck.GetDeckId().Equals(DeckID))
-		{
-			OutDomain = Deck;
-			return true;			
-		}
+		OutDomain = *Domain;
+		return true;
 	}
 	
 	return false;

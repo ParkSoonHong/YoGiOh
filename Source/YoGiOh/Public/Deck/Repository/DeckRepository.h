@@ -13,7 +13,7 @@ class YOGIOH_API FDeckRepository
 {
 public:
 	bool LocalSave(const FDeckDomain& Domain);
-	bool LocalLoadAll(TArray<FDeckDomain>& OutDomains);
+	bool LocalLoadAll(TMap<FString, FDeckDomain>& OutDeckMap);
 
 	FString GetDeckFilePath(const FDeckDomain& Domain) const;
 private:

@@ -13,5 +13,13 @@ UCLASS()
 class YOGIOH_API ULoadingManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
+public:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	
+	void LoadingStart();
+	
+	void LoadingEnd();
+	
+private:
+	int8 LoadingCount;
 };

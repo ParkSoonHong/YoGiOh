@@ -9,5 +9,5 @@ enum class  EDeckFieldType: uint8
 {
 	DECKNAME,
 	COMMENT,
-	OWNER,
+	OWNERID,
 };

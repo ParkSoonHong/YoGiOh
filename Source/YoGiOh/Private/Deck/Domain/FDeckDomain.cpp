@@ -45,7 +45,7 @@ FString FDeckDomain::GetField(EDeckFieldType FieldType) const
 	FString Error;
 	switch (FieldType)
 	{
-	case EDeckFieldType::OWNER : return data.deckOwner; 
+	case EDeckFieldType::OWNERID : return data.deckOwner; 
 	case EDeckFieldType::DECKNAME : return data.deckName;
 	case EDeckFieldType::COMMENT : return data.comment;
 	default:
@@ -92,7 +92,7 @@ bool FDeckDomain::SetField(EDeckFieldType FieldType, const FString& Field)
 {
 	switch (FieldType)
 	{
-		case EDeckFieldType::OWNER : data.deckOwner = Field; break;
+		case EDeckFieldType::OWNERID : data.deckOwner = Field; break;
 		case EDeckFieldType::DECKNAME : data.deckName = Field; break;
 		case EDeckFieldType::COMMENT : data.comment = Field; break;
 		default:

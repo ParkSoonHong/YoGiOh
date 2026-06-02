@@ -19,7 +19,7 @@ UUiPopUpManager::UUiPopUpManager()
 	
 	if (TierListUIBP.Succeeded())
 	{
-		PopupClassMap.Add(EUIPopUpType::TierList, TierListUIBP.Class);
+		PopupClassMap.Add(EUIPopUpType::TIERLIST, TierListUIBP.Class);
 		UE_LOG(LogTemp, Warning, TEXT("WBP_TierList load OK"));
 	}
 	else
@@ -32,7 +32,7 @@ UUiPopUpManager::UUiPopUpManager()
 	
 	if (TierListDetailUIBP.Succeeded())
 	{
-		PopupClassMap.Add(EUIPopUpType::TierListDetail, TierListDetailUIBP.Class);
+		PopupClassMap.Add(EUIPopUpType::TIERLISTDETAIL, TierListDetailUIBP.Class);
 		UE_LOG(LogTemp, Warning, TEXT("WBP_TierListDetail load OK"));
 	}
 	else

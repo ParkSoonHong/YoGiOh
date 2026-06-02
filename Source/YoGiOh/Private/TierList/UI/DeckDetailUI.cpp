@@ -167,7 +167,7 @@ void UDeckDetailUI::RefreshUI()
 	Text_TotalScore->SetText(FText::FromString(formatted) );
 	
 	//콤보박스 초기화
-	ComboBox_DeckOwner->SetSelectedOption(domain.GetField(EDeckFieldType::OWNER));
+	ComboBox_DeckOwner->SetSelectedOption(domain.GetField(EDeckFieldType::OWNERID));
 	
 	Editable_DeckName->SetText(FText::FromString(domain.GetField(EDeckFieldType::DECKNAME)));
 	Editable_Comment->SetText(FText::FromString(domain.GetField(EDeckFieldType::COMMENT)));
@@ -263,7 +263,7 @@ void UDeckDetailUI::BindUIEvents()
 
 void UDeckDetailUI::OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type SelectionType)
 {
-	UpdateField(EDeckFieldType::OWNER,SelectedItem);
+	UpdateField(EDeckFieldType::OWNERID,SelectedItem);
 }
 
 
@@ -309,7 +309,7 @@ void UDeckDetailUI::OnClickedSaveButton()
 	
 	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 	{
-		if (!deckMgr->SaveDeck())
+		if (!deckMgr->LocalSaveDeck())
 		{
 			UE_LOG(LogTemp, Warning, TEXT("DackSave Failed"));
 			return;

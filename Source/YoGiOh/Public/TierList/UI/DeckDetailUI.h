@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Deck/Type/EDeckFieldType.h"
+#include "Deck/Type/EDeckStatType.h"
 #include "System/Popup/UiPopUpBase.h"
-#include "Deck/Manager/DeckManagerHelper.h"
 #include "DeckDetailUI.generated.h"
 
 
-enum class EDeckFieldType : uint8;
 class UButton;
 class UComboBoxString;
 class UEditableText;

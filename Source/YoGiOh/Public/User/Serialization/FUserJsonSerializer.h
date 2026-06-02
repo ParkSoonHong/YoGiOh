@@ -1,9 +1,15 @@
 ﻿#pragma once
-#include "User/Domain/FYogUserDomain.h"
+#include "User/Type/FUserTypes.h"
 
-class FUserSerialization
+class FUserJsonSerializer
 {
 public:
-	static  bool TrySerialize(const FYogUserDomain& Domain, FString& outJson);
-	static  bool TryDeserialize(const FString& json, FYogUserDomain& Domain);
+	static bool TrySerialize(const FYogUserDomain& Domain, FString& OutJson);
+	static bool TryDeserialize(const FString& Json, FYogUserDomain& Domain);
+	
+	static bool TryDeserializeArray(const FString& Json,FUserMap& OutUsers);
+	
+private:
+	static bool TryDeserializeObject( const TSharedPtr<FJsonObject>& JsonObject,
+	FYogUserDomain& Domain);
 };

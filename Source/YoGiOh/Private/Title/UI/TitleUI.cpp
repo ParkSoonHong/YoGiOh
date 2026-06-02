@@ -31,7 +31,7 @@ void UTitleUI::OnDeckListButtonClicked()
 	if (UUiPopUpManager* PopupManager = GetWorld()->
 	   GetGameInstance()->GetSubsystem<UUiPopUpManager>())
 	{
-		PopupManager->PushPopup(EUIPopUpType::TierList);
+		PopupManager->PushPopup(EUIPopUpType::TIERLIST);
 	}
 }
 
@@ -40,7 +40,7 @@ void UTitleUI::OnCalculatorButtonClicked()
 	if (UUiPopUpManager* PopupManager = GetWorld()->
 	   GetGameInstance()->GetSubsystem<UUiPopUpManager>())
 	{
-		PopupManager->PushPopup(EUIPopUpType::Calculator);
+		PopupManager->PushPopup(EUIPopUpType::CALCCULATOR);
 	}
 }
 
@@ -49,6 +49,6 @@ void UTitleUI::OnRollManualButtonClicked()
 	if (UUiPopUpManager* PopupManager = GetWorld()->
 	   GetGameInstance()->GetSubsystem<UUiPopUpManager>())
 	{
-		PopupManager->PushPopup(EUIPopUpType::Manual);
+		PopupManager->PushPopup(EUIPopUpType::MANUAL);
 	}
 }

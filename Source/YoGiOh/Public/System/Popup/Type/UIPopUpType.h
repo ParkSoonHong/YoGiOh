@@ -5,9 +5,10 @@
 UENUM(BlueprintType)
 enum class EUIPopUpType : uint8
 {
-	Title,
-	TierList,
-	TierListDetail,
-	Calculator,
-	Manual,
+	TITLE,
+	TIERLIST,
+	TIERLISTDETAIL,
+	CALCCULATOR,
+	MANUAL,
+	LODING,
 };

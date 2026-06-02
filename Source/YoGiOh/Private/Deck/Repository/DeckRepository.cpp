@@ -6,7 +6,7 @@
 #include "Serialization/JsonWriter.h"
 #include "Serialization/JsonSerializer.h"
 #include "Misc/FileHelper.h"
-#include "Supabase/SupabaseManage.h"
+#include "Supabase/SupabaseManager.h"
 
 
 bool FDeckRepository::LocalSave(const FDeckDomain& Domain)
@@ -27,8 +27,10 @@ bool FDeckRepository::LocalSave(const FDeckDomain& Domain)
 }
 
 
-bool FDeckRepository::LocalLoadAll(TArray<FDeckDomain>& OutDomains)
+bool FDeckRepository::LocalLoadAll(TMap<FString, FDeckDomain>& OutDeckMap)
 {
+	OutDeckMap.Reset();
+	
 	TArray<FString> JsonFiles;
 
 	IFileManager::Get().FindFiles(
@@ -42,6 +44,7 @@ bool FDeckRepository::LocalLoadAll(TArray<FDeckDomain>& OutDomains)
 		UE_LOG(LogTemp,Error,TEXT("Could not load JsonFiles "));
 		return false;
 	}
+	
 	for (const FString& FileName : JsonFiles)
 	{
 		FString FilePath = saveDirectory / FileName;
@@ -56,14 +59,21 @@ bool FDeckRepository::LocalLoadAll(TArray<FDeckDomain>& OutDomains)
 
 		FDeckDomain Domain;
 
-		if (FDeckJsonSerializer::TryDeserialize(JsonString,Domain))
+		if (!FDeckJsonSerializer::TryDeserialize(JsonString, Domain))
 		{
-			OutDomains.Add(Domain);
+			UE_LOG(LogTemp, Error, TEXT("Deserialize Failed %s"), *FilePath);
+			continue;
 		}
-		else
+
+		const FString DeckId = Domain.GetDeckId();
+
+		if (DeckId.IsEmpty())
 		{
-			UE_LOG(LogTemp,Error,TEXT("Could not load Deck %s"),*FilePath);
+			UE_LOG(LogTemp, Error, TEXT("DeckId Empty %s"), *FilePath);
+			continue;
 		}
+
+		OutDeckMap.Add(DeckId, Domain);
 	}
 
 	return true;
@@ -71,9 +81,7 @@ bool FDeckRepository::LocalLoadAll(TArray<FDeckDomain>& OutDomains)
 
 FString FDeckRepository::GetDeckFilePath(const FDeckDomain& Domain) const
 {
-	FString filePath =
-	saveDirectory / 
-	Domain.GetDeckId() + TEXT(".json");
+	FString filePath = saveDirectory / Domain.GetDeckId() + TEXT(".json");
 	
 	return filePath;
 }
