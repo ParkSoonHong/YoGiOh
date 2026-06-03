@@ -145,7 +145,7 @@ void UDeckDetailUI::RefreshUI()
 	
 	if (UDeckImageImporter* ImageService = GetGameInstance()->GetSubsystem<UDeckImageImporter>())
 	{
-		if (UTexture2D * Thumbnail = ImageService->LoadTextureFromFile(domain.GetImagePath()))
+		if (UTexture2D * Thumbnail = ImageService->LoadDeckImage(domain.GetImagePath()))
 		{
 			btrStyle.Normal.SetResourceObject(Thumbnail);
 			btrStyle.Hovered.SetResourceObject(Thumbnail);

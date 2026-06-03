@@ -18,6 +18,8 @@ public:
 	bool ImportDeckImage(FString& OutSavedPath, UTexture2D*& OutTexture);
 
 	UTexture2D* LoadTextureFromFile(const FString& FilePath);
+	
+	UTexture2D* LoadDeckImage(const FString& FileName);
 private:
 
 	bool OpenImageDialog(FString& OutSelectedPath);

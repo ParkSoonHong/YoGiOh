@@ -41,7 +41,9 @@ bool UDeckImageImporter::ImportDeckImage(FString& OutSavedPath, UTexture2D*& Out
 		return false;
 	}
 	// 복사된 이미지를 Texture2D 로 변환
-	OutTexture = LoadTextureFromFile(OutSavedPath);
+	
+	FString Path = FPaths::ProjectSavedDir() / TEXT("CopyImages") / OutSavedPath;
+	OutTexture = LoadTextureFromFile(Path);
 	// 텍스쳐 생성 성공 여부 반환
 	return OutTexture != nullptr;
 }
@@ -123,7 +125,8 @@ bool UDeckImageImporter::CopyImageToSavedFolder(const FString& SourcePath, FStri
 		예:
 		Saved/CopyImages/1A2B3C4D.png
 	*/
-	OutSavedPath = saveDir / fileName;
+	FString DestPath = saveDir / fileName;
+	OutSavedPath = fileName;
 	/*
 		파일 복사
 		왼쪽:
@@ -131,7 +134,7 @@ bool UDeckImageImporter::CopyImageToSavedFolder(const FString& SourcePath, FStri
 		오른쪽:
 		원본 파일
 	*/
-	return IFileManager::Get().Copy(*OutSavedPath,*SourcePath) == COPY_OK;
+	return IFileManager::Get().Copy(*DestPath,*SourcePath) == COPY_OK;
 }
 /*
 	이미지 파일을 Texture2D 로 변환
@@ -228,4 +231,11 @@ UTexture2D* UDeckImageImporter::LoadTextureFromFile(const FString& FilePath)
 
 	// 완성된 Texture2D 반환
 	return texture;
+}
+
+UTexture2D* UDeckImageImporter::LoadDeckImage(const FString& FileName)
+{
+	FString path = FPaths::ProjectSavedDir() / TEXT("CopyImages")/ FileName;
+
+	return LoadTextureFromFile(path);
 }

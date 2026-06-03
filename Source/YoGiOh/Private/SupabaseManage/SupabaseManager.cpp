@@ -72,9 +72,10 @@ void USupabaseManager::GetDecks()
 	Request->OnProcessRequestComplete().BindLambda(
 		[this](FHttpRequestPtr Req, FHttpResponsePtr Response, bool bSuccess)
 		{
-			if (!bSuccess || !Response.IsValid())
+			if (!bSuccess || !Response.IsValid() || !EHttpResponseCodes::IsOk(Response->GetResponseCode()))
 			{
 				UE_LOG(LogTemp, Error, TEXT("Get Failed"));
+				OnDecksLoadFailed.Broadcast();
 				return;
 			}
 
@@ -154,10 +155,10 @@ void USupabaseManager::GetUsers()
 	Request->OnProcessRequestComplete().BindLambda(
 		[this](FHttpRequestPtr Req, FHttpResponsePtr Response, bool bSuccess)
 		{
-			if (!bSuccess || !Response.IsValid())
+			if (!bSuccess || !Response.IsValid() || !EHttpResponseCodes::IsOk(Response->GetResponseCode()))
 			{
 				UE_LOG(LogTemp, Error, TEXT("Get Failed"));
-				
+				OnUsersLoadFailed.Broadcast();
 				return;
 			}
 

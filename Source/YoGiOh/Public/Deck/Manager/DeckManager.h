@@ -41,7 +41,7 @@ public:
 	bool ServerLoadAllDeck();
 	bool ServerSaveDeck();
 	
-	bool DeleteDeck(const FString& DeckID, FString& OutError);
+	bool DeleteDeck(FString& OutError);
 	
 	void LoadingCompleted(const FDeckMap& DeckMap);
 	void LoadingFailed();

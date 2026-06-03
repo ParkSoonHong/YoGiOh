@@ -5,12 +5,11 @@
 #include "System/Popup/UiPopUpBase.h"
 #include "System/Popup/Type/UIPopUpType.h" 
 
-#include "Deck/Manager/DeckManager.h"
-
 #include "TierList/UI/DeckDetailUI.h"
 #include "TierList/UI/TierListUI.h"
 
-#include "Kismet/KismetSystemLibrary.h"
+#include "System/Loading/Ui/LoadingUi.h"
+#include "System/SystemPopup/UI/SystemPopupUI.h"
 
 UUiPopUpManager::UUiPopUpManager()
 {
@@ -33,11 +32,37 @@ UUiPopUpManager::UUiPopUpManager()
 	if (TierListDetailUIBP.Succeeded())
 	{
 		PopupClassMap.Add(EUIPopUpType::TIERLISTDETAIL, TierListDetailUIBP.Class);
-		UE_LOG(LogTemp, Warning, TEXT("WBP_TierListDetail load OK"));
+		UE_LOG(LogTemp, Warning, TEXT("WBP_CardDetailView load OK"));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("WBP_TierListDetail Null"));
+		UE_LOG(LogTemp, Warning, TEXT("WBP_CardDetailView Null"));
+	}
+	
+	static ConstructorHelpers::FClassFinder<ULoadingUi> 
+	LoadingUIBP(TEXT("/Game/BluePrints/Ui/WBP_Loading"));
+	
+	if (LoadingUIBP.Succeeded())
+	{
+		PopupClassMap.Add(EUIPopUpType::LODING, LoadingUIBP.Class);
+		UE_LOG(LogTemp, Warning, TEXT("WBP_Loading load OK"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WBP_Loading Null"));
+	}
+	
+	static ConstructorHelpers::FClassFinder<USystemPopupUI> 
+	SystemPopupUIBP(TEXT("/Game/BluePrints/Ui/WBP_SystemPopup"));
+	
+	if (SystemPopupUIBP.Succeeded())
+	{
+		PopupClassMap.Add(EUIPopUpType::SYSTEM, SystemPopupUIBP.Class);
+		UE_LOG(LogTemp, Warning, TEXT("WBP_SystemPopup load OK"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WBP_SystemPopup Null"));
 	}
 	
 }
@@ -140,10 +165,6 @@ UUiPopUpBase* UUiPopUpManager::CreatePopup(EUIPopUpType Type)
 	
 	NewPopup->AddToViewport();
 	NewPopup->SetVisibility(ESlateVisibility::Collapsed);
-	
-	// 옵저버 패턴 요청 등록 
-	NewPopup->OnRequestPop.AddUObject(this, &UUiPopUpManager::PopPopup);
-	NewPopup->OnRequestPush.AddUObject(this, &UUiPopUpManager::PushPopup);
 	
 	PopupInstanceMap.Add(Type, NewPopup);
 	

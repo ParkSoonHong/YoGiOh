@@ -94,7 +94,7 @@ void UTierListUI::RefreshList()
 			
 			if (UDeckImageImporter* ImageService = GetGameInstance()->GetSubsystem<UDeckImageImporter>())
 			{
-				if (UTexture2D * Thumbnail = ImageService->LoadTextureFromFile(domain.GetImagePath()))
+				if (UTexture2D * Thumbnail = ImageService->LoadDeckImage(domain.GetImagePath()))
 				{
 					tierSlot->SetThumbnail(Thumbnail);
 				}

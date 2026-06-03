@@ -18,7 +18,7 @@ void UDeckManager::LoadingStart()
 	if (USupabaseManager* supabaseMgr = GetGameInstance()->GetSubsystem<USupabaseManager>())
 	{
 		supabaseMgr->OnDecksLoaded.AddUObject(this, &UDeckManager::LoadingCompleted);
-		supabaseMgr->OnDecksLoaded.AddUObject(this, &UDeckManager::LoadingCompleted);
+		supabaseMgr->OnDecksLoadFailed.AddUObject(this, &UDeckManager::LoadingFailed);
 	}
 	else
 	{
@@ -54,7 +54,7 @@ bool UDeckManager::LocalSaveAllDeck()
 
 	for (const FDeckDomain& deckDomain : deckDomains)
 	{
-		if (repository.LocalSave(deckDomain))
+		if (!repository.LocalSave(deckDomain))
 		{
 			UE_LOG(LogTemp,Error,TEXT("Failed To LocalSave"));
 			return false;
@@ -104,14 +104,8 @@ bool UDeckManager::ServerSaveDeck()
 	return true;
 }
 
-bool UDeckManager::DeleteDeck(const FString& DeckID, FString& OutError)
+bool UDeckManager::DeleteDeck(FString& OutError)
 {
-	if (DeckID.IsEmpty())
-	{
-		OutError = TEXT("DeckID가 비어있습니다.");
-		return false;
-	}
-	
 	const FString FilePath = repository.GetDeckFilePath(currentDeck);
 
 	if (!IFileManager::Get().FileExists(*FilePath))

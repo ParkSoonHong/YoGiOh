@@ -7,8 +7,8 @@
 UENUM(BlueprintType)
 enum class  SystemPopupType : uint8
 {
-   Message,
-   Warning,
-   Error,
-   Confirm
+   MESSAGE,
+   WARINING,
+   ERROR,
+   CONFIRM
 };
