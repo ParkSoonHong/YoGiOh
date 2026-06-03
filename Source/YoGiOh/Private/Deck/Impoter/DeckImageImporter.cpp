@@ -119,7 +119,7 @@ bool UDeckImageImporter::CopyImageToSavedFolder(const FString& SourcePath, FStri
 		예:
 		1A2B3C4D.png
 	*/
-	FString fileName = FGuid::NewGuid().ToString() + TEXT(".") + extension;
+	FString fileName = FGuid::NewGuid().ToString(EGuidFormats::Digits) + TEXT(".") + extension;
 	/*
 		최종 저장 경로
 		예:

@@ -25,10 +25,10 @@ protected:
 
 public:	
 	UPROPERTY(meta=(BindWidget))
-	UButton* Button_SaveButton;
+	UButton* Button_Save; 
 	
 	UPROPERTY(meta=(BindWidget))
-	UButton* Button_BackButton;
+	UButton* Button_Back;
 	
 	UPROPERTY(meta=(BindWidget))
 	UButton* Button_DeckImage;
@@ -121,8 +121,7 @@ private:
 	
 	// 바인딩 함수들
 	UFUNCTION()
-	void OnChangeImage();
-	
+	void OnClickedImageButton();
 	UFUNCTION()
 	void OnClickedSaveButton();
 	UFUNCTION()

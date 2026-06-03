@@ -28,6 +28,10 @@ public:
 	void ServerSaveUser();
 	
 	void UpdateUser();
+	void UpdateUserName(const FString& UserName);
+	void UpdateUserImagePath(const FString& Path);
+
+	
 	const FYogUserDomain* FindUser(const FString& UserId);
 	
 	void LoadingCompleted(const FUserMap& UserMap);
@@ -35,6 +39,10 @@ public:
 	
 	DECLARE_MULTICAST_DELEGATE(FOnUserLoadcompleted);
 	FOnUserLoadcompleted OnUserLoadcompleted;
+	
+	FYogUserDomain GetCurrentUserDomain() const {return currentUser;}
+	
+	void CreateUserDomain();
 	
 private:
 	TMap<FString,FYogUserDomain> userMap;

@@ -10,6 +10,7 @@
 
 #include "System/Loading/Ui/LoadingUi.h"
 #include "System/SystemPopup/UI/SystemPopupUI.h"
+#include "User/UI/UserProfileUI.h"
 
 UUiPopUpManager::UUiPopUpManager()
 {
@@ -63,6 +64,19 @@ UUiPopUpManager::UUiPopUpManager()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("WBP_SystemPopup Null"));
+	}
+	
+	static ConstructorHelpers::FClassFinder<UUserProfileUI> 
+	UserProfileUIBP(TEXT("/Game/BluePrints/Ui/WBP_UserProfile"));
+	
+	if (UserProfileUIBP.Succeeded())
+	{
+		PopupClassMap.Add(EUIPopUpType::USERPROFILE, UserProfileUIBP.Class);
+		UE_LOG(LogTemp, Warning, TEXT("UserProfileUIBP load OK"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UserProfileUIBP Null"));
 	}
 	
 }

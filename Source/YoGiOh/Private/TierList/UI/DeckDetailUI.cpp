@@ -218,13 +218,13 @@ void UDeckDetailUI::BindUIEvents()
 	
 	//버튼들
 	if (Button_DeckImage == nullptr) return;
-	Button_DeckImage->OnClicked.AddDynamic(this, &UDeckDetailUI::OnChangeImage);
+	Button_DeckImage->OnClicked.AddDynamic(this, &UDeckDetailUI::OnClickedImageButton);
 	
-	if (Button_SaveButton == nullptr) return;
-	Button_SaveButton->OnClicked.AddDynamic(this, &UDeckDetailUI::OnClickedSaveButton);
+	if (Button_Save == nullptr) return;
+	Button_Save->OnClicked.AddDynamic(this, &UDeckDetailUI::OnClickedSaveButton);
 	
-	if (Button_BackButton == nullptr) return;
-	Button_BackButton->OnClicked.AddDynamic(this, &UDeckDetailUI::OnClickedBackButton);
+	if (Button_Back == nullptr) return;
+	Button_Back->OnClicked.AddDynamic(this, &UDeckDetailUI::OnClickedBackButton);
 	
 	//편집박스들
 	if (Editable_Comment == nullptr) return;
@@ -268,7 +268,7 @@ void UDeckDetailUI::OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type
 
 
 // 이미지 변경
-void UDeckDetailUI::OnChangeImage()
+void UDeckDetailUI::OnClickedImageButton()
 {
 	if (UDeckImageImporter* ImageService =
 		GetGameInstance()

@@ -11,7 +11,11 @@ public:
 	const FString& GetUserImagePath() const  {return userData.imagePath;};
 	// ----- Set -----
 	bool SetField(EUserFieldType FieldType, const FString& Field);
+	void SetUserId();
 	bool SetUserId(const FString& UserId);
+	bool SetUserName(const FString& UserName);
+	
+	bool IsValid() const;
 private:
 	FYogUserData userData;
 };

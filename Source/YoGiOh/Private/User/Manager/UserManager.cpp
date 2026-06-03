@@ -54,6 +54,16 @@ bool UUserManager::ServerLoadAllUsers()
 
 void UUserManager::LocalSaveUser()
 {
+	if (currentUser.GetUserId().IsEmpty())
+	{
+		currentUser.SetUserId();
+	}
+	
+	if (!currentUser.IsValid())
+	{
+		return;
+	}
+	
 	if (!repository.SaveUser(currentUser))
 	{
 		UE_LOG(LogTemp,Error,TEXT("SaveUser Failed"));
@@ -90,9 +100,24 @@ void UUserManager::ServerSaveUser()
 	}
 }
 
-
 void UUserManager::UpdateUser()
 {
+}
+
+void UUserManager::UpdateUserName(const FString& UserName)
+{
+	if (!currentUser.SetUserName(UserName))
+	{
+		UE_LOG(LogTemp,Error,TEXT("Update User Failed"));
+	}
+}
+
+void UUserManager::UpdateUserImagePath(const FString& Path)
+{
+	if (!currentUser.SetField(EUserFieldType::IMAGEPATH, Path))
+	{
+		UE_LOG(LogTemp,Error,TEXT("Update UserImagePath Failed"));
+	}
 }
 
 const FYogUserDomain* UUserManager::FindUser(const FString& UserId)
@@ -117,3 +142,9 @@ void UUserManager::LoadingFailed()
 	}
 	OnUserLoadcompleted.Broadcast();
 }
+
+void UUserManager::CreateUserDomain()
+{
+	currentUser = FYogUserDomain();
+}
+

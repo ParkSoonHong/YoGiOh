@@ -3,9 +3,8 @@
 
 #include "Deck/Domain/FDeckDomain.h"
 
-#include "Deck/Calculation/FDeckScoreCalculator.h"
-#include "Deck/Domain/Specification/DeckNameSpecification.h"
-#include "Deck/Domain/Specification/DeckOwnerSpecification.h"
+#include "Deck/Rules/Specification/DeckNameSpecification.h"
+#include "Deck/Rules/Specification/DeckCommentSpecification.h"
 #include "Deck/Rules/FDeckStatRule.h"
 #include "Deck/Type/EDeckStatType.h"
 
@@ -56,12 +55,6 @@ FString FDeckDomain::GetField(EDeckFieldType FieldType) const
 	return Error;
 }
 
-/*
-const FDeckData& FDeckDomain::GetDeckData() const
-{
-	return data;
-}
-*/
 bool FDeckDomain::SetStatScore(EDeckStatType StatType, float NewScore)
 {
 	if (!FDeckStatRule::IsValid(StatType,NewScore))
@@ -90,11 +83,32 @@ bool FDeckDomain::SetStatScore(EDeckStatType StatType, float NewScore)
 
 bool FDeckDomain::SetField(EDeckFieldType FieldType, const FString& Field)
 {
+	FString outError;
+	
 	switch (FieldType)
 	{
 		case EDeckFieldType::OWNERID : data.deckOwner = Field; break;
-		case EDeckFieldType::DECKNAME : data.deckName = Field; break;
-		case EDeckFieldType::COMMENT : data.comment = Field; break;
+		case EDeckFieldType::DECKNAME :
+			{
+				if (!DeckNameSpecification::IsSatisfiedByName(Field, outError))
+				{
+					UE_LOG(LogTemp,Error,TEXT("SetField DeckName Error : %s"),*outError);
+					return false;
+				}
+				data.deckName = Field; 
+				break;
+			}
+		case EDeckFieldType::COMMENT : 
+			{
+				if (!DeckCommentSpecification::IsSatisfiedByComment(Field, outError))
+				{
+					UE_LOG(LogTemp,Error,TEXT("SetField DeckComment Error : %s"),*outError);
+					return false;
+				}
+				data.comment = Field;  
+				break;
+			}
+		
 		default:
 			{
 				UE_LOG(LogTemp,Error,TEXT("DeckDomain::SetField: Unknown deck Field type"))
@@ -115,15 +129,8 @@ bool FDeckDomain::SetPath(const FString& Path)
 bool FDeckDomain::SetDeckId()
 {
 	FString Error;
-	if (!DeckNameSpecification::IsSatisfiedByName(data.deckName, Error))
-	{
-		return false;
-	}
-	if (!DeckOwnerSpecification::isSatisfiedByOwner(data.deckOwner, Error))
-	{
-		return false;
-	}
-	data.deckID = data.deckName + data.deckOwner +  FGuid::NewGuid().ToString();
+	
+	data.deckID =  FGuid::NewGuid().ToString(EGuidFormats::Digits);
 	return  true;
 }
 
@@ -144,11 +151,24 @@ bool FDeckDomain::Rename(const FString& newName, FString& outError)
 	return true;
 }
 
-bool FDeckDomain::IsValid(FString& outError) const
+bool FDeckDomain::IsValid() const
 {
-	DeckNameSpecification nameSpec;
-	if (!nameSpec.IsSatisfiedByName(data.deckName, outError))
+	FString outError;
+	if (data.deckID.IsEmpty())
 	{
+		UE_LOG(LogTemp,Error,TEXT("IsValid DeckName Error : IsEmpty"));
+		return false;
+	}
+	
+	if (!DeckCommentSpecification::IsSatisfiedByComment(data.comment, outError))
+	{
+		UE_LOG(LogTemp,Error,TEXT("IsValid DeckComment Error : %s"),*outError);
+		return false;
+	}
+	
+	if (!DeckNameSpecification::IsSatisfiedByName(data.deckName, outError))
+	{
+		UE_LOG(LogTemp,Error,TEXT("IsValid DeckName Error : %s"),*outError);
 		return false;
 	}
 

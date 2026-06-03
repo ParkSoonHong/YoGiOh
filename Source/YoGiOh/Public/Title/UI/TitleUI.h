@@ -18,6 +18,9 @@ public:
 	
 
 	UPROPERTY(meta = (BindWidget))
+	class UButton * Button_AddUser;
+	
+	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_DeckList;
 
 	UPROPERTY(meta = (BindWidget))
@@ -26,6 +29,9 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_RollManual;
 
+	UFUNCTION()
+	void OnAddUserButtonClicked();
+	
 	UFUNCTION()
 	void OnDeckListButtonClicked();
 

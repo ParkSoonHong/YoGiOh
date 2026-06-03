@@ -11,5 +11,6 @@ enum class EUIPopUpType : uint8
 	CALCCULATOR,
 	MANUAL,
 	LODING,
-	SYSTEM
+	SYSTEM,
+	USERPROFILE
 };

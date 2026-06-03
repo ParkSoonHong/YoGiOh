@@ -28,7 +28,6 @@ void UTierListUI::NativeConstruct()
 		UE_LOG(LogTemp, Warning, TEXT("DeckManager Null"));
 		return;
 	}
-	
 
 	if (Button_DataAdd)
 	{

@@ -38,7 +38,7 @@ public:
 	void RecalculateScore();
 
 	// ----- Validation -----
-	bool IsValid(FString& OutError) const;
+	bool IsValid() const;
 
 	// ----- Convert -----
 	FDeckData ToSaveData() const;
