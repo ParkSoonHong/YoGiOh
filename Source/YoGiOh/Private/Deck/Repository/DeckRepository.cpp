@@ -19,9 +19,7 @@ bool FDeckRepository::LocalSave(const FDeckDomain& Domain)
 	
 	IFileManager::Get().MakeDirectory(*saveDirectory, true);
 	
-	FString filePath =
-		saveDirectory / 
-		Domain.GetDeckId() + TEXT(".json");
+	FString filePath = saveDirectory / Domain.GetDeckId() + TEXT(".json");
 	
 	return FFileHelper::SaveStringToFile(json, *filePath);
 }

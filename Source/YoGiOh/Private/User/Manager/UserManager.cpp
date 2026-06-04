@@ -18,7 +18,7 @@ void UUserManager::LodingStart()
 		supabaseMgr->OnUsersLoaded.AddUObject(this, &UUserManager::LoadingCompleted);
 		supabaseMgr->OnUsersLoadFailed.AddUObject(this,&UUserManager::LoadingFailed);
 	}
-	else
+	else 
 	{
 		UE_LOG(LogTemp,Error,TEXT("Insert User Failed"));
 	}
@@ -52,7 +52,7 @@ bool UUserManager::ServerLoadAllUsers()
 	return false;
 }
 
-void UUserManager::LocalSaveUser()
+void UUserManager::SaveUser()
 {
 	if (currentUser.GetUserId().IsEmpty())
 	{
@@ -64,9 +64,10 @@ void UUserManager::LocalSaveUser()
 		return;
 	}
 	
-	if (!repository.SaveUser(currentUser))
+	if (!repository.LocalSaveUser(currentUser))
 	{
 		UE_LOG(LogTemp,Error,TEXT("SaveUser Failed"));
+		return;
 	}
 	
 	ServerSaveUser();
@@ -80,7 +81,7 @@ void UUserManager::LocalSaveAllUser()
 	
 	for (const FYogUserDomain& userDomain : userDomains)
 	{
-		if (!repository.SaveUser(userDomain))
+		if (!repository.LocalSaveUser(userDomain))
 		{
 			UE_LOG(LogTemp,Error,TEXT("SaveUser Failed"));
 		}	
@@ -98,10 +99,6 @@ void UUserManager::ServerSaveUser()
 	{
 		UE_LOG(LogTemp,Error,TEXT("Insert User Failed"));
 	}
-}
-
-void UUserManager::UpdateUser()
-{
 }
 
 void UUserManager::UpdateUserName(const FString& UserName)
@@ -143,8 +140,18 @@ void UUserManager::LoadingFailed()
 	OnUserLoadcompleted.Broadcast();
 }
 
+TArray<FYogUserDomain> UUserManager::GetUsers() const
+{
+	TArray<FYogUserDomain> result;
+
+	userMap.GenerateValueArray(result);
+
+	return result;
+}
+
 void UUserManager::CreateUserDomain()
 {
 	currentUser = FYogUserDomain();
+	OnUserInitialize.Broadcast();
 }
 

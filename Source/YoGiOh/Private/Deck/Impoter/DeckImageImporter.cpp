@@ -41,8 +41,7 @@ bool UDeckImageImporter::ImportDeckImage(FString& OutSavedPath, UTexture2D*& Out
 		return false;
 	}
 	// 복사된 이미지를 Texture2D 로 변환
-	
-	FString Path = FPaths::ProjectSavedDir() / TEXT("CopyImages") / OutSavedPath;
+	FString Path = saveDir / OutSavedPath;
 	OutTexture = LoadTextureFromFile(Path);
 	// 텍스쳐 생성 성공 여부 반환
 	return OutTexture != nullptr;
@@ -67,8 +66,7 @@ bool UDeckImageImporter::OpenImageDialog(FString& OutSelectedPath)
 		파일 탐색기 열기
 		사용자가 png 또는 jpg 파일 선택 가능
 	*/
-	bool bOpened =
-		desktopPlatform->OpenFileDialog(
+	bool bOpened = desktopPlatform->OpenFileDialog(
 			nullptr, // 부모 윈도우
 			TEXT("Select Deck Image"), // 탐색기 제목
 			TEXT(""),// 기본 폴더
@@ -92,12 +90,6 @@ bool UDeckImageImporter::OpenImageDialog(FString& OutSelectedPath)
 */
 bool UDeckImageImporter::CopyImageToSavedFolder(const FString& SourcePath, FString& OutSavedPath)
 {
-	/*
-		언리얼 프로젝트의 Saved 폴더 경로
-		예시:
-		MyProject/Saved/
-	*/
-	FString saveDir = FPaths::ProjectSavedDir() / TEXT("CopyImages");
 	/*
 			폴더 생성
 			true:
@@ -167,13 +159,11 @@ UTexture2D* UDeckImageImporter::LoadTextureFromFile(const FString& FilePath)
 		파일 형식 자동 판별
 		png인지 jpg인지 확인
 	*/
-	EImageFormat Format =  imageWrapperModule.DetectImageFormat(
-			fileData.GetData(),
+	EImageFormat Format =  imageWrapperModule.DetectImageFormat( fileData.GetData(),
 			fileData.Num());
 	
 	//이미지 해석 객체 생성
-	TSharedPtr<IImageWrapper> imageWrapper =
-		imageWrapperModule.CreateImageWrapper(Format);
+	TSharedPtr<IImageWrapper> imageWrapper = imageWrapperModule.CreateImageWrapper(Format);
 	// 실패 시 종료
 	if (!imageWrapper.IsValid())
 	{
@@ -235,7 +225,6 @@ UTexture2D* UDeckImageImporter::LoadTextureFromFile(const FString& FilePath)
 
 UTexture2D* UDeckImageImporter::LoadDeckImage(const FString& FileName)
 {
-	FString path = FPaths::ProjectSavedDir() / TEXT("CopyImages")/ FileName;
-
+	FString path = saveDir / FileName;
 	return LoadTextureFromFile(path);
 }

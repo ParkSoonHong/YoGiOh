@@ -10,7 +10,6 @@
 void UDeckManager::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	
 }
 
 void UDeckManager::LoadingStart()
@@ -42,8 +41,18 @@ bool UDeckManager::LocalSaveDeck()
 		UE_LOG(LogTemp,Error,TEXT("Failed To LocalSave"));
 		return false;
 	}
-
-	ServerSaveDeck();
+	
+	deckMap.Add(
+			currentDeck.GetDeckId(),
+			currentDeck);
+	
+	if (!ServerSaveDeck())
+	{
+		return false;
+	}
+	
+	OnDeckListChanged.Broadcast();
+	
 	return true;
 }
 
@@ -100,6 +109,7 @@ bool UDeckManager::ServerSaveDeck()
 	else
 	{
 		UE_LOG(LogTemp,Error,TEXT("Insert User Failed"));
+		return false;
 	}
 	return true;
 }
@@ -124,30 +134,13 @@ bool UDeckManager::DeleteDeck(FString& OutError)
 	return true;
 }
 
-void UDeckManager::LoadingCompleted(const FDeckMap& DeckMap)
-{
-	deckMap = DeckMap;
-	LocalSaveAllDeck();
-	OnDeckLoadcompleted.Broadcast();
-}
-
-void UDeckManager::LoadingFailed()
-{
-	if (!LocalLoadAllDecks())
-	{
-		UE_LOG(LogTemp,Error,TEXT("Loading Failed"));
-		return;
-	}
-	OnDeckLoadcompleted.Broadcast();
-}
-
 TArray<FDeckDomain> UDeckManager::GetDecks() const
 {
-	TArray<FDeckDomain> Result;
+	TArray<FDeckDomain> result;
 
-	deckMap.GenerateValueArray(Result);
+	deckMap.GenerateValueArray(result);
 
-	return Result;
+	return result;
 }
 
 void UDeckManager::CreateDeck()
@@ -213,4 +206,19 @@ bool UDeckManager::FindDeck(const FString& DeckID,FDeckDomain& OutDomain)
 	return false;
 }
 
+void UDeckManager::LoadingCompleted(const FDeckMap& DeckMap)
+{
+	deckMap = DeckMap;
+	LocalSaveAllDeck();
+	OnDeckLoadcompleted.Broadcast();
+}
 
+void UDeckManager::LoadingFailed()
+{
+	if (!LocalLoadAllDecks())
+	{
+		UE_LOG(LogTemp,Error,TEXT("Loading Failed"));
+		return;
+	}
+	OnDeckLoadcompleted.Broadcast();
+}

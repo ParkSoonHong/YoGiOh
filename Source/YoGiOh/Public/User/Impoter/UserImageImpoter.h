@@ -4,32 +4,27 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "DeckImageImporter.generated.h"
+#include "UserImageImpoter.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class YOGIOH_API UDeckImageImporter : public UGameInstanceSubsystem
+class YOGIOH_API UUserImageImpoter : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 public:
 
-	bool ImportDeckImage(FString& OutSavedPath, UTexture2D*& OutTexture);
+	bool ImportUserImage(FString& OutSavedPath, UTexture2D*& OutTexture);
 
 	UTexture2D* LoadTextureFromFile(const FString& FilePath);
 	
-	UTexture2D* LoadDeckImage(const FString& FileName);
+	UTexture2D* LoadUserImage(const FString& FileName);
 private:
 
 	bool OpenImageDialog(FString& OutSelectedPath);
 
 	bool CopyImageToSavedFolder(const FString& SourcePath,FString& OutSavedPath);
 	
-	/*
-		언리얼 프로젝트의 Saved 폴더 경로
-		예시:
-		MyProject/Saved/CopyDeckImages
-	*/
-	FString saveDir = FPaths::ProjectSavedDir() / TEXT("CopyDeckImages");
+	FString saveDir = FPaths::ProjectSavedDir() / TEXT("CopyUserImages");
 };

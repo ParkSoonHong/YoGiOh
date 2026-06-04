@@ -17,6 +17,8 @@
 #include "Deck/Rules/FDeckStatRule.h"
 
 #include "System/Popup/Manager/UiPopUpManager.h"
+#include "User/Domain/FYogUserDomain.h"
+#include "User/Manager/UserManager.h"
 
 void UDeckDetailUI::NativeConstruct()
 {
@@ -32,7 +34,7 @@ void UDeckDetailUI::NativeConstruct()
 	}
 
 	InitializeDeckOwnerComboBox();
-//	InitializeUI();
+	InitializeUI();
 }
 
 void UDeckDetailUI::InitializeDeckOwnerComboBox()
@@ -42,20 +44,24 @@ void UDeckDetailUI::InitializeDeckOwnerComboBox()
 
 	// ComboBox 초기화
 	ComboBox_DeckOwner->ClearOptions();
-
-	// Enum의 모든 값을 순회하며 추가 -> 데이터베이스 플레이어 로 추후 변경
-	const UEnum* EnumPtr = StaticEnum<EDeckOwner>();
-    
-	for (int32 i = 0; i < EnumPtr->NumEnums() - 1; ++i)  // -1은 MAX 값 제외
+	TArray<FYogUserDomain> userDomains;
+	if (UUserManager * userMgr = GetWorld()->GetGameInstance()->GetSubsystem<UUserManager>())
 	{
-		EDeckOwner EnumValue = static_cast<EDeckOwner>(EnumPtr->GetValueByIndex(i));
-        
-		// DisplayName 가져오기
-		FString DisplayName = EnumPtr->GetDisplayNameTextByIndex(i).ToString();
-        
-		// ComboBox에 추가
-		ComboBox_DeckOwner->AddOption(DisplayName);
+		userDomains = userMgr->GetUsers();
 	}
+	
+	if (userDomains.IsEmpty())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
+		return;
+	}
+	
+	for (const FYogUserDomain& userDomain : userDomains)
+	{
+		ComboBox_DeckOwner->AddOption(userDomain.GetUserName());
+	}
+
+	UE_LOG(LogTemp,Warning,TEXT("InitializeDeckOwnerComboBox"));
 }
 
 void UDeckDetailUI::InitializeUI()
@@ -141,12 +147,13 @@ void UDeckDetailUI::RefreshUI()
 		return;
 	}
 	
-	FButtonStyle btrStyle = Button_DeckImage->GetStyle();
-	
 	if (UDeckImageImporter* ImageService = GetGameInstance()->GetSubsystem<UDeckImageImporter>())
 	{
-		if (UTexture2D * Thumbnail = ImageService->LoadDeckImage(domain.GetImagePath()))
+		FString DeckFileName = domain.GetImagePath();
+		if (!DeckFileName.IsEmpty())
 		{
+			UTexture2D * Thumbnail = ImageService->LoadDeckImage(DeckFileName);
+			FButtonStyle btrStyle = Button_DeckImage->GetStyle();
 			btrStyle.Normal.SetResourceObject(Thumbnail);
 			btrStyle.Hovered.SetResourceObject(Thumbnail);
 			btrStyle.Pressed.SetResourceObject(Thumbnail);
@@ -270,36 +277,31 @@ void UDeckDetailUI::OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type
 // 이미지 변경
 void UDeckDetailUI::OnClickedImageButton()
 {
-	if (UDeckImageImporter* ImageService =
-		GetGameInstance()
-		->GetSubsystem<UDeckImageImporter>())
+	if (UDeckImageImporter* imageImpoter =GetGameInstance()->GetSubsystem<UDeckImageImporter>())
 	{
-		FString SavedPath;
-		UTexture2D* Texture = nullptr;
+		FString savedPath;
+		UTexture2D* texture = nullptr;
 
-		if (ImageService->ImportDeckImage(SavedPath,Texture))
+		if (imageImpoter->ImportDeckImage(savedPath,texture))
 		{
 			// Domain 저장
 			if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 			{
-				deckMgr->UpdateImagePath(SavedPath);
+				deckMgr->UpdateImagePath(savedPath);
 			}
 			else
 			{
 				UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
 			}
-
 			// 썸네일 표시
 			FButtonStyle btrStyle = Button_DeckImage->GetStyle();
-			btrStyle.Normal.SetResourceObject(Texture);
-			btrStyle.Hovered.SetResourceObject(Texture);
-			btrStyle.Pressed.SetResourceObject(Texture);
+			btrStyle.Normal.SetResourceObject(texture);
+			btrStyle.Hovered.SetResourceObject(texture);
+			btrStyle.Pressed.SetResourceObject(texture);
 		
 			Button_DeckImage->SetStyle(btrStyle);
 		}
 	}
-	
-	
 	
 }
 

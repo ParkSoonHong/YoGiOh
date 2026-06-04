@@ -23,26 +23,30 @@ public:
 	bool LocalLoadAllUsers();
 	bool ServerLoadAllUsers();
 	
-	void LocalSaveUser();
+	void SaveUser();
 	void LocalSaveAllUser();
 	void ServerSaveUser();
 	
-	void UpdateUser();
 	void UpdateUserName(const FString& UserName);
 	void UpdateUserImagePath(const FString& Path);
 
-	
 	const FYogUserDomain* FindUser(const FString& UserId);
 	
 	void LoadingCompleted(const FUserMap& UserMap);
 	void LoadingFailed();
 	
 	DECLARE_MULTICAST_DELEGATE(FOnUserLoadcompleted);
+	DECLARE_MULTICAST_DELEGATE(FOnUserInitialize);
+	
 	FOnUserLoadcompleted OnUserLoadcompleted;
+	FOnUserInitialize OnUserInitialize;
 	
 	FYogUserDomain GetCurrentUserDomain() const {return currentUser;}
+	TArray<FYogUserDomain> GetUsers() const;
 	
 	void CreateUserDomain();
+	
+	
 	
 private:
 	TMap<FString,FYogUserDomain> userMap;

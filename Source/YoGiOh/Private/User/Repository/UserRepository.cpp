@@ -3,7 +3,7 @@
 #include "User/Domain/FYogUserDomain.h"
 #include "User/Serialization/FUserJsonSerializer.h"
 
-bool UserRepository::SaveUser(const FYogUserDomain& Domain)
+bool UserRepository::LocalSaveUser(const FYogUserDomain& Domain)
 {
 	FString json;
 	if (!FUserJsonSerializer::TrySerialize(Domain,json))
@@ -13,9 +13,7 @@ bool UserRepository::SaveUser(const FYogUserDomain& Domain)
 	
 	IFileManager::Get().MakeDirectory(*saveDirectory, true);
 	
-	FString filePath =
-		saveDirectory / 
-		Domain.GetUserId() + TEXT(".json");
+	FString filePath = saveDirectory / Domain.GetUserId() + TEXT(".json");
 	
 	return FFileHelper::SaveStringToFile(json, *filePath);
 }

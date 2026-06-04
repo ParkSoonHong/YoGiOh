@@ -41,6 +41,7 @@ void UTierListUI::NativeConstruct()
 	RefreshList();
 }
 
+
 void UTierListUI::BuildTierMap(const TArray<FDeckDomain>& Decks)
 {
 	tierMap.Reset();
@@ -85,6 +86,10 @@ void UTierListUI::RefreshList()
 
 		for (const FDeckDomain& domain : *TierDecks)
 		{
+			UE_LOG(LogTemp, Warning,
+	  TEXT("DeckName=%s ImagePath=[%s]"),
+	  *domain.GetField(EDeckFieldType::DECKNAME),
+	  *domain.GetImagePath());
 			UTierSlotUI* tierSlot =
 				CreateWidget<UTierSlotUI>(this, SlotClass);
 	
@@ -93,10 +98,13 @@ void UTierListUI::RefreshList()
 			
 			if (UDeckImageImporter* ImageService = GetGameInstance()->GetSubsystem<UDeckImageImporter>())
 			{
-				if (UTexture2D * Thumbnail = ImageService->LoadDeckImage(domain.GetImagePath()))
+				FString DeckFileName = domain.GetImagePath();
+				if (!DeckFileName.IsEmpty())
 				{
+					UTexture2D * Thumbnail = ImageService->LoadDeckImage(DeckFileName);
 					tierSlot->SetThumbnail(Thumbnail);
 				}
+				
 			}
 			LineWidget->AddSlot(tierSlot);
 		}

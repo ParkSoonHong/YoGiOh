@@ -80,7 +80,7 @@ void USupabaseManager::GetDecks()
 			}
 
 			FString result = Response->GetContentAsString();
-			
+			UE_LOG(LogTemp, Warning, TEXT("user Data: %s"), *result);
 			FDeckMap deckMap;
 			if (!FDeckJsonSerializer::TryDeserializeArray(result,deckMap))
 			{
@@ -126,9 +126,14 @@ void USupabaseManager::InsertUser(const FYogUserDomain& Domain)
 	Request->OnProcessRequestComplete().BindLambda(
 		[this](FHttpRequestPtr Req, FHttpResponsePtr Response, bool bSuccess)
 		{
-			if (!bSuccess || !Response.IsValid())
+			if (!bSuccess || !Response.IsValid() || !EHttpResponseCodes::IsOk(Response->GetResponseCode()))
 			{
-				UE_LOG(LogTemp, Error, TEXT("Insert Failed"));
+				UE_LOG(LogTemp, Error,
+						TEXT("Insert Failed. Code=%d Response=%s"),
+						Response.IsValid() ? Response->GetResponseCode() : -1,
+						Response.IsValid() ? *Response->GetContentAsString() : TEXT("null")
+						);
+
 				return;
 			}
 

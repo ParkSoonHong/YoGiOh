@@ -23,7 +23,7 @@ class YOGIOH_API UTierListUI : public UUiPopUpBase
 
 public:
 	virtual void NativeConstruct() override;
-
+	
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox * VerticalBox_Tier;
 	

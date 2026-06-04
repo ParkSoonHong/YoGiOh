@@ -28,6 +28,9 @@ public:
 	UPROPERTY(meta=(BindWidget))
 	UEditableText* Editable_UserName;
 	
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* userProfileBaseImage;
+	
 	UFUNCTION()
 	void OnClickedImageButton();
 	UFUNCTION()
@@ -37,6 +40,10 @@ public:
 	
 	UFUNCTION()
 	void OnUserNameCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+	
+	
+	void InitializeUI();
+	
 private:
 	void BindUIEvents();
 };

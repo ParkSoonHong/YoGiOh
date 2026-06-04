@@ -4,7 +4,7 @@
 class UserRepository
 {
 public:
-	bool SaveUser(const FYogUserDomain& Domain);
+	bool LocalSaveUser(const FYogUserDomain& Domain);
 	bool LoadAllUser(TMap<FString,FYogUserDomain>& OutUsers);
 	
 	FString GetUserFilePath(const FYogUserDomain& Domain) const;
