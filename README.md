@@ -75,11 +75,17 @@
 ## 아키텍처
 
 UI Layer : 사용자 입력과 화면 표시를 담당
+
 ↓
+
 Manager Layer : 데이터 흐름 제어 
+
 ↓
+
 Domain Layer : 데이터 검증 및 도메인 규칙 관리
+
 ↓
+
 Data Layer : 데이터 보관
 
 ---
