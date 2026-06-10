@@ -15,15 +15,13 @@ struct FDeckData
 	
 	UPROPERTY()
 	FString deckID; // 덱 아이디 -> 덱 이름 + 덱 주인 + 
+	
+	UPROPERTY()
+	FString deckOwnerID; // 덱 주인ID
 
 	UPROPERTY()
 	FString deckName; // 덱 이름
 
-	UPROPERTY()
-	FString deckOwner; // 덱 주인
-
-	//UPROPERTY()
-	//TSet<EPlayablePlayer> playablePlayers; // 플레이 가능한 플레이어
 	
 	UPROPERTY()
 	float deployment = 0; // 전개

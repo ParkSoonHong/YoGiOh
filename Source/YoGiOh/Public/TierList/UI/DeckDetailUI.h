@@ -15,6 +15,7 @@ class UEditableText;
 class UTextBlock;
 class UImage;
 class UTexture2D;
+class UVerticalBox;
 
 UCLASS()
 class YOGIOH_API UDeckDetailUI : public UUiPopUpBase
@@ -34,7 +35,7 @@ public:
 	UButton* Button_DeckImage;
 	
 	UPROPERTY(meta=(BindWidget))
-	UImage* Image_Player;
+	UVerticalBox * VerticalBox_UserImages;
 	
 	UPROPERTY(meta = (BindWidget))
 	UComboBoxString* ComboBox_DeckOwner;

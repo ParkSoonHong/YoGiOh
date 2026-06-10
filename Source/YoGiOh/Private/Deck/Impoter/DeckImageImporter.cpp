@@ -91,42 +91,28 @@ bool UDeckImageImporter::OpenImageDialog(FString& OutSelectedPath)
 bool UDeckImageImporter::CopyImageToSavedFolder(const FString& SourcePath, FString& OutSavedPath)
 {
 	/*
-			폴더 생성
-			true:
-			중간 폴더까지 자동 생성
+		폴더 생성
+		true:
+		중간 폴더까지 자동 생성
+		saveDir = FPaths::ProjectSavedDir() / TEXT("CopyDeckImages");
 	*/
 	if (!IFileManager::Get().MakeDirectory(*saveDir, true))
 	{
 		UE_LOG(LogTemp,Error,TEXT("Could not create Image directory %s"),*saveDir);
 		return false;
 	}
-	/*
-		파일 확장자 추출
-		예:
-		test.png -> png
-	*/
+	//	파일 확장자 추출
 	FString extension = FPaths::GetExtension(SourcePath);
-	/*
-		중복 방지를 위해 랜덤 파일 이름 생성 - FGuid::NewGuid() sms 128비트 랜덤값이라 경우의 수가 매우 작다.
-		예:
-		1A2B3C4D.png
-	*/
+	//	중복 방지를 위해 랜덤 파일 이름 생성 - FGuid::NewGuid() sms 128비트 랜덤값이라 경우의 수가 매우 작다.
 	FString fileName = FGuid::NewGuid().ToString(EGuidFormats::Digits) + TEXT(".") + extension;
 	/*
 		최종 저장 경로
-		예:
-		Saved/CopyImages/1A2B3C4D.png
+		예: Saved/CopyImages/1A2B3C4D.png
 	*/
-	FString DestPath = saveDir / fileName;
+	FString destPath = saveDir / fileName;
 	OutSavedPath = fileName;
-	/*
-		파일 복사
-		왼쪽:
-		복사될 위치
-		오른쪽:
-		원본 파일
-	*/
-	return IFileManager::Get().Copy(*DestPath,*SourcePath) == COPY_OK;
+	
+	return IFileManager::Get().Copy(*destPath,*SourcePath) == COPY_OK;
 }
 /*
 	이미지 파일을 Texture2D 로 변환

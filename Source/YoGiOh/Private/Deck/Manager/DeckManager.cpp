@@ -6,6 +6,7 @@
 #include "Deck/Repository/DeckRepository.h"
 #include "Supabase/SupabaseManager.h"
 #include "System/Popup/Manager/UiPopUpManager.h"
+#include "User/Manager/UserManager.h"
 
 void UDeckManager::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -164,6 +165,14 @@ void UDeckManager::UpdateStatCurrentDeck(EDeckStatType StatType, float StatScore
 
 void UDeckManager::UpdateFieldCurrentDeck(EDeckFieldType FieldType, const FString& Field)
 {
+	if (FieldType == EDeckFieldType::OWNERID)
+	{
+		if (UUserManager * UserMgr = GetGameInstance()->GetSubsystem<UUserManager>())
+		{
+			Field = UserMgr->GetUser(Field);
+		}
+	}
+	
 	if (!currentDeck.SetField(FieldType,Field))
 	{
 		UE_LOG(LogTemp,Error, 

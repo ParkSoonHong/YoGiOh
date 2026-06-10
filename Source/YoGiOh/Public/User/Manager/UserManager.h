@@ -46,8 +46,6 @@ public:
 	
 	void CreateUserDomain();
 	
-	
-	
 private:
 	TMap<FString,FYogUserDomain> userMap;
 	UserRepository repository;
