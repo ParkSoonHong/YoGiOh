@@ -35,7 +35,8 @@ bool UUserManager::LocalLoadAllUsers()
 		UE_LOG(LogTemp,Error,TEXT("LoadAll Failed"));
 		return false;
 	}
-
+	RebuildUserNameIndex();
+	OnUserUpdate.Broadcast();
 	return  true;
 }
 
@@ -70,6 +71,7 @@ void UUserManager::SaveUser()
 		return;
 	}
 	
+	LocalLoadAllUsers();
 	ServerSaveUser();
 }
 
@@ -122,10 +124,26 @@ const FYogUserDomain* UUserManager::FindUser(const FString& UserId)
 	return userMap.Find(UserId);
 }
 
+bool UUserManager::TryGetUserIdByName(const FString& UserName, FString& OutUserId) const
+{
+	const FString* userId = userNameToId.Find(UserName);
+	
+	if (userId == nullptr)
+	{
+		return false;
+	}
+
+	OutUserId = *userId;
+	return true;
+}
+
 // 완료 델리게이트 등록 함수 
 void UUserManager::LoadingCompleted(const FUserMap& UserMap)
 {
 	userMap = UserMap;
+	
+	RebuildUserNameIndex();
+	
 	LocalSaveAllUser();
 	OnUserLoadcompleted.Broadcast();
 }
@@ -153,5 +171,15 @@ void UUserManager::CreateUserDomain()
 {
 	currentUser = FYogUserDomain();
 	OnUserInitialize.Broadcast();
+}
+
+void UUserManager::RebuildUserNameIndex()
+{
+	userNameToId.Reset();
+
+	for (const TPair<FString, FYogUserDomain>& Pair : userMap)
+	{
+		userNameToId.Add(Pair.Value.GetUserName(),Pair.Value.GetUserId());
+	}
 }
 

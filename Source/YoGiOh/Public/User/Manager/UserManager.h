@@ -31,15 +31,18 @@ public:
 	void UpdateUserImagePath(const FString& Path);
 
 	const FYogUserDomain* FindUser(const FString& UserId);
+	bool TryGetUserIdByName(const FString& UserName,FString& OutUserId) const;
 	
 	void LoadingCompleted(const FUserMap& UserMap);
 	void LoadingFailed();
 	
 	DECLARE_MULTICAST_DELEGATE(FOnUserLoadcompleted);
 	DECLARE_MULTICAST_DELEGATE(FOnUserInitialize);
+	DECLARE_MULTICAST_DELEGATE(FOnUserUpdate);
 	
 	FOnUserLoadcompleted OnUserLoadcompleted;
 	FOnUserInitialize OnUserInitialize;
+	FOnUserUpdate OnUserUpdate;
 	
 	FYogUserDomain GetCurrentUserDomain() const {return currentUser;}
 	TArray<FYogUserDomain> GetUsers() const;
@@ -47,7 +50,10 @@ public:
 	void CreateUserDomain();
 	
 private:
+	void RebuildUserNameIndex();
+
 	TMap<FString,FYogUserDomain> userMap;
+	TMap<FString,FString> userNameToId;
 	UserRepository repository;
 	FYogUserDomain currentUser;
 };

@@ -165,18 +165,25 @@ void UDeckManager::UpdateStatCurrentDeck(EDeckStatType StatType, float StatScore
 
 void UDeckManager::UpdateFieldCurrentDeck(EDeckFieldType FieldType, const FString& Field)
 {
+	FString Value = Field;
 	if (FieldType == EDeckFieldType::OWNERID)
 	{
 		if (UUserManager * UserMgr = GetGameInstance()->GetSubsystem<UUserManager>())
 		{
-			Field = UserMgr->GetUser(Field);
+			FString OwnerId;
+			if (!UserMgr->TryGetUserIdByName(Field, OwnerId))
+			{
+				UE_LOG(LogTemp,Warning,TEXT("Failed TryGetUserIdByName. UserName: %s"),*Field);
+				return;
+			}
+			
+			Value = OwnerId;
 		}
 	}
 	
-	if (!currentDeck.SetField(FieldType,Field))
+	if (!currentDeck.SetField(FieldType,Value))
 	{
-		UE_LOG(LogTemp,Error, 
-			TEXT("Failed to update Field. Type: %s"),*Field);
+		UE_LOG(LogTemp,Error, TEXT("Failed to update Field. Type: %s"),*Field);
 	}
 }
 

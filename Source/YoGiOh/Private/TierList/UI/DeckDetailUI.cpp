@@ -33,6 +33,10 @@ void UDeckDetailUI::NativeConstruct()
 		deckMgr->OnDeckInitialize.AddUObject(this, &UDeckDetailUI::InitializeUI);
 	}
 
+	if (UUserManager * userMgr = GetWorld()->GetGameInstance()->GetSubsystem<UUserManager>())
+	{
+		userMgr->OnUserUpdate.AddUObject(this, &UDeckDetailUI::InitializeDeckOwnerComboBox);
+	}
 	InitializeDeckOwnerComboBox();
 	InitializeUI();
 }
@@ -268,10 +272,6 @@ void UDeckDetailUI::BindUIEvents()
 	Editable_RelativeB->OnTextCommitted.AddDynamic(this, &UDeckDetailUI::OnRelativeBValueCommitted);
 }
 
-void UDeckDetailUI::OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type SelectionType)
-{
-	UpdateField(EDeckFieldType::OWNERID,SelectedItem);
-}
 
 
 // 이미지 변경
@@ -342,6 +342,10 @@ void UDeckDetailUI::OnClickedBackButton()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
 	}
+}
+void UDeckDetailUI::OnDeckOwnerSelected( FString SelectedItem, ESelectInfo::Type SelectionType)
+{
+	UpdateField(EDeckFieldType::OWNERID,SelectedItem);
 }
 
 void UDeckDetailUI::OnCommentCommitted(const FText& Text, ETextCommit::Type CommitMethod)
