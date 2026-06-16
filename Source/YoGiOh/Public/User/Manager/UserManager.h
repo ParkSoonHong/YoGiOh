@@ -30,8 +30,8 @@ public:
 	void UpdateUserName(const FString& UserName);
 	void UpdateUserImagePath(const FString& Path);
 
-	const FYogUserDomain* FindUser(const FString& UserId);
 	bool TryGetUserIdByName(const FString& UserName,FString& OutUserId) const;
+	bool TryGetUserNameById(const FString& UserId,FString& OutUserName) const;
 	
 	void LoadingCompleted(const FUserMap& UserMap);
 	void LoadingFailed();
@@ -52,6 +52,7 @@ public:
 private:
 	void RebuildUserNameIndex();
 
+	const FYogUserDomain* FindUser(const FString& UserId);
 	TMap<FString,FYogUserDomain> userMap;
 	TMap<FString,FString> userNameToId;
 	UserRepository repository;

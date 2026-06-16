@@ -138,7 +138,6 @@ void UDeckDetailUI::RefreshUI()
 		domain = deckMgr->GetCurrentDeck();
 	}
 	
-	// 버튼 이미지 초기화
 	if (Button_DeckImage == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Button_DeckImage is nullptr"));
@@ -153,10 +152,10 @@ void UDeckDetailUI::RefreshUI()
 	
 	if (UDeckImageImporter* ImageService = GetGameInstance()->GetSubsystem<UDeckImageImporter>())
 	{
-		FString DeckFileName = domain.GetImagePath();
-		if (!DeckFileName.IsEmpty())
+		FString deckFileName = domain.GetImagePath();
+		if (!deckFileName.IsEmpty())
 		{
-			UTexture2D * Thumbnail = ImageService->LoadDeckImage(DeckFileName);
+			UTexture2D * Thumbnail = ImageService->LoadDeckImage(deckFileName);
 			FButtonStyle btrStyle = Button_DeckImage->GetStyle();
 			btrStyle.Normal.SetResourceObject(Thumbnail);
 			btrStyle.Hovered.SetResourceObject(Thumbnail);
@@ -178,7 +177,15 @@ void UDeckDetailUI::RefreshUI()
 	Text_TotalScore->SetText(FText::FromString(formatted) );
 	
 	//콤보박스 초기화
-	ComboBox_DeckOwner->SetSelectedOption(domain.GetField(EDeckFieldType::OWNERID));
+	if (UUserManager * userMgr = GetWorld()->GetGameInstance()->GetSubsystem<UUserManager>())
+	{
+		FString OutUserName;
+		if (userMgr->TryGetUserNameById(domain.GetField(EDeckFieldType::OWNERID),OutUserName))
+		{
+			ComboBox_DeckOwner->SetSelectedOption(OutUserName);
+		}
+	}
+	
 	
 	Editable_DeckName->SetText(FText::FromString(domain.GetField(EDeckFieldType::DECKNAME)));
 	Editable_Comment->SetText(FText::FromString(domain.GetField(EDeckFieldType::COMMENT)));

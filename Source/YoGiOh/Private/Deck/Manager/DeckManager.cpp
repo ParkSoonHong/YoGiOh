@@ -105,7 +105,7 @@ bool UDeckManager::ServerSaveDeck()
 {
 	if (USupabaseManager* supabaseMgr = GetGameInstance()->GetSubsystem<USupabaseManager>())
 	{
-		supabaseMgr->InsertDeck(currentDeck);
+		supabaseMgr->UpsertDeck(currentDeck);
 	}
 	else
 	{

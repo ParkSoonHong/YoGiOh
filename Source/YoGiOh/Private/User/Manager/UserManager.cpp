@@ -137,6 +137,19 @@ bool UUserManager::TryGetUserIdByName(const FString& UserName, FString& OutUserI
 	return true;
 }
 
+bool UUserManager::TryGetUserNameById(const FString& UserId, FString& OutUserName) const
+{
+	const FYogUserDomain* User = userMap.Find(UserId);
+
+	if (User == nullptr)
+	{
+		return false;
+	}
+
+	OutUserName = User->GetUserName();
+	return true;
+}
+
 // 완료 델리게이트 등록 함수 
 void UUserManager::LoadingCompleted(const FUserMap& UserMap)
 {

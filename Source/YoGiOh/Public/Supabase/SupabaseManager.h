@@ -16,7 +16,7 @@ class YOGIOH_API USupabaseManager : public UGameInstanceSubsystem
 	public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
     
-    	void InsertDeck(const FDeckDomain& Domain);
+    	void UpsertDeck(const FDeckDomain& Domain);
     	void GetDecks();
 		void DeleteDeck();
 	

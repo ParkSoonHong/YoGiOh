@@ -16,9 +16,9 @@ void USupabaseManager::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 }
 
-void USupabaseManager::InsertDeck(const FDeckDomain& Domain)
+void USupabaseManager::UpsertDeck(const FDeckDomain& Domain)
 {
-	FString Url = baseUrl + TEXT("/rest/v1/") + table_Decks;
+	FString Url = baseUrl + TEXT("/rest/v1/") + table_Decks + TEXT("?on_conflict=deck_id");
 
 	FString json;
 	if (!FDeckJsonSerializer::TrySerialize(Domain,json))
@@ -32,7 +32,7 @@ void USupabaseManager::InsertDeck(const FDeckDomain& Domain)
 
 	Request->SetURL(Url);
 	Request->SetVerb(TEXT("POST"));
-
+	Request->SetHeader(TEXT("Prefer"), TEXT("resolution=merge-duplicates"));
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	Request->SetHeader(TEXT("apikey"), apiKey);
 	Request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + apiKey);
