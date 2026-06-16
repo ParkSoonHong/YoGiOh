@@ -22,6 +22,7 @@ void UTierListUI::NativeConstruct()
 	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
 	{
 		deckMgr->OnDeckListChanged.AddUObject(this, &UTierListUI::RefreshList);
+		RefreshList(deckMgr->GetDecks());
 	}
 	else
 	{
@@ -38,7 +39,7 @@ void UTierListUI::NativeConstruct()
 	{
 		Button_Back->OnClicked.AddDynamic(this,&UTierListUI::OnClickedBackButton);
 	}
-	RefreshList();
+	
 }
 
 
@@ -52,23 +53,17 @@ void UTierListUI::BuildTierMap(const TArray<FDeckDomain>& Decks)
 	}
 }
 // UI 초기화
-void UTierListUI::RefreshList()
+void UTierListUI::RefreshList(const TArray<FDeckDomain>& Decks)
 {
 	VerticalBox_Tier->ClearChildren();
 	
-	TArray<FDeckDomain> decks;
-	if (UDeckManager * deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
-	{
-		decks =	deckMgr->GetDecks();
-	}
-
-	if (decks.IsEmpty())
+	if (Decks.IsEmpty())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("DeckManager GetDecks Failed"));
 		return;
 	}
 	
-	BuildTierMap(decks);
+	BuildTierMap(Decks);
 	
 	for (EDeckRank Tier : FDeckRankRules::GetRankOrder())
 	{
@@ -86,12 +81,11 @@ void UTierListUI::RefreshList()
 
 		for (const FDeckDomain& domain : *TierDecks)
 		{
-			UE_LOG(LogTemp, Warning,
-	  TEXT("DeckName=%s ImagePath=[%s]"),
-	  *domain.GetField(EDeckFieldType::DECKNAME),
-	  *domain.GetImagePath());
-			UTierSlotUI* tierSlot =
-				CreateWidget<UTierSlotUI>(this, SlotClass);
+			UE_LOG(LogTemp, Warning,TEXT("DeckName=%s ImagePath=[%s]"),
+			*domain.GetField(EDeckFieldType::DECKNAME),
+			*domain.GetImagePath());
+			
+			UTierSlotUI* tierSlot = CreateWidget<UTierSlotUI>(this, SlotClass);
 	
 			tierSlot->SetDeckID(domain.GetDeckId()); 
 			tierSlot->Text_DeckName->SetText(FText::FromString(domain.GetField(EDeckFieldType::DECKNAME)));
@@ -99,6 +93,7 @@ void UTierListUI::RefreshList()
 			if (UDeckImageImporter* ImageService = GetGameInstance()->GetSubsystem<UDeckImageImporter>())
 			{
 				FString DeckFileName = domain.GetImagePath();
+				
 				if (!DeckFileName.IsEmpty())
 				{
 					UTexture2D * Thumbnail = ImageService->LoadDeckImage(DeckFileName);
@@ -109,7 +104,6 @@ void UTierListUI::RefreshList()
 			LineWidget->AddSlot(tierSlot);
 		}
 	}
-	
 }
 
 void UTierListUI::OnClickedDataAddButton()

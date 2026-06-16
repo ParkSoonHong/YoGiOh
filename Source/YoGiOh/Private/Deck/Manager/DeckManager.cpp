@@ -52,7 +52,7 @@ bool UDeckManager::LocalSaveDeck()
 		return false;
 	}
 	
-	OnDeckListChanged.Broadcast();
+	OnDeckListChanged.Broadcast(GetDecks());
 	
 	return true;
 }
@@ -84,7 +84,7 @@ bool UDeckManager::LocalLoadAllDecks()
 		return false;
 	}
 
-	OnDeckListChanged.Broadcast();
+	OnDeckListChanged.Broadcast(GetDecks());
 	return true;
 }
 
@@ -131,7 +131,7 @@ bool UDeckManager::DeleteDeck(FString& OutError)
 		return false;
 	}
 
-	OnDeckListChanged.Broadcast();
+	//OnDeckListChanged.Broadcast();
 	return true;
 }
 
@@ -209,6 +209,14 @@ void UDeckManager::UpdateDeck(const FString& DeckId)
 		Popupmgr->PushPopup(EUIPopUpType::TIERLISTDETAIL);
 	}
 	OnDeckUpdate.Broadcast();
+}
+
+void UDeckManager::ApplyFilter()
+{
+}
+
+void UDeckManager::ApplySort()
+{
 }
 
 bool UDeckManager::FindDeck(const FString& DeckID,FDeckDomain& OutDomain)

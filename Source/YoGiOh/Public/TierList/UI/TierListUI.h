@@ -45,7 +45,7 @@ protected:
 private:
 
 	void BuildTierMap(const TArray<FDeckDomain>& Decks);
-	void RefreshList();
+	void RefreshList(const TArray<FDeckDomain>& Decks);
 
 	TMap<EDeckRank,TArray<FDeckDomain>> tierMap;
 public:

@@ -3,14 +3,11 @@
 
 #include "TierList/UI/DeckDetailUI.h"
 
-#include <string>
-
-#include "Deck/Type//EDeckOwner.h"
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 #include "Components/EditableText.h"
-#include "Components/EditableTextBox.h"
 #include "Components/TextBlock.h"
+
 #include "Deck/Impoter/DeckImageImporter.h"
 #include "Deck/Manager/DeckManager.h"
 #include "Deck/Rules/FDeckRankRules.h"
