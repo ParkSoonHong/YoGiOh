@@ -61,7 +61,7 @@ public:
 	void CreateDeck();
 	void UpdateDeck(const FString& DeckId);
 
-	void ApplyFilter();
+	void ApplyFilter(const FString& FilterType);
 	void ApplySort();
 	
 private:

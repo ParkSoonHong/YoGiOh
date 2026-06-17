@@ -2,8 +2,9 @@
 
 
 #include "TierList/UI/TierListUI.h"
-//#include "System/Popup/UiPopUpManager.h"
 #include "Components/Button.h"
+#include "Components/ComboBoxString.h"
+#include "Components/EditableText.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Deck/Impoter/DeckImageImporter.h"
@@ -29,19 +30,30 @@ void UTierListUI::NativeConstruct()
 		UE_LOG(LogTemp, Warning, TEXT("DeckManager Null"));
 		return;
 	}
-
+// 버튼
 	if (Button_DataAdd)
 	{
 		Button_DataAdd->OnClicked.AddDynamic(this,&UTierListUI::OnClickedDataAddButton);
 	}
-	
 	if (Button_Back)
 	{
 		Button_Back->OnClicked.AddDynamic(this,&UTierListUI::OnClickedBackButton);
 	}
-	
+	if (Button_Search)
+	{
+		Button_Search->OnClicked.AddDynamic(this,&UTierListUI::OnClickedSearchButton);
+	}
+// 편집 박스	 
+	if (EditableText_InsertText)
+	{
+		EditableText_InsertText->OnTextCommitted.AddDynamic(this,&UTierListUI::OnInsertTextCommitted);
+	}
+// 콤보 박스	
+	if (ComboBoxString_Filter)
+	{
+		ComboBoxString_Filter->OnSelectionChanged.AddDynamic(this,&UTierListUI::OnFilterSelected);
+	}
 }
-
 
 void UTierListUI::BuildTierMap(const TArray<FDeckDomain>& Decks)
 {
@@ -128,5 +140,31 @@ void UTierListUI::OnClickedBackButton()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UDeckManager is nullptr"));
+	}
+}
+
+void UTierListUI::OnClickedSearchButton()
+{
+	const FText& Text =  EditableText_InsertText->GetText();
+	
+	if (UDeckManager* deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+	{
+		// 해당하는 이름이 들어간 덱 찾기
+	}
+}
+
+void UTierListUI::OnFilterSelected(FString SelectedItem, ESelectInfo::Type SelectionType)
+{
+	if (UDeckManager* deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+	{
+		deckMgr->ApplyFilter(SelectedItem);
+	}
+}
+
+void UTierListUI::OnInsertTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	if (UDeckManager* deckMgr = GetWorld()->GetGameInstance()->GetSubsystem<UDeckManager>())
+	{
+		// 해당하는 이름이 들어간 덱 찾기
 	}
 }

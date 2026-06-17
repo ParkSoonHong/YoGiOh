@@ -211,7 +211,7 @@ void UDeckManager::UpdateDeck(const FString& DeckId)
 	OnDeckUpdate.Broadcast();
 }
 
-void UDeckManager::ApplyFilter()
+void UDeckManager::ApplyFilter(const FString& FilterType)
 {
 }
 

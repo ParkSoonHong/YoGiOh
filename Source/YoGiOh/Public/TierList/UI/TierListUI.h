@@ -9,6 +9,8 @@
 #include "Deck/Type/EDeckRank.h"
 #include "TierListUI.generated.h"
 
+class UComboBoxString;
+class UEditableText;
 class UDeckManager;
 class UTierSlotUI;
 class UTierLineUI;
@@ -29,9 +31,16 @@ public:
 	
 	UPROPERTY(meta = (BindWidget))
 	UButton * Button_DataAdd;
-	
 	UPROPERTY(meta = (BindWidget))
 	UButton * Button_Back;
+	UPROPERTY(meta = (BindWidget))
+	UButton * Button_Search;
+	
+	UPROPERTY(meta = (BindWidget))
+	UEditableText * EditableText_InsertText;
+	UPROPERTY(meta = (BindWidget))
+	UComboBoxString * ComboBoxString_Filter;
+	
 protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category="UI")
@@ -55,4 +64,13 @@ public:
 	
 	UFUNCTION()
 	void OnClickedBackButton();
+	
+	UFUNCTION()
+	void OnClickedSearchButton();
+	
+	UFUNCTION()
+	void OnFilterSelected( FString SelectedItem, ESelectInfo::Type SelectionType);
+	
+	UFUNCTION()
+	void OnInsertTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 };

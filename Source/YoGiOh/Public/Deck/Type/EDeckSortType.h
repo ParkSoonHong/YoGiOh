@@ -36,8 +36,6 @@ enum class EDeckSortType : uint8
 	TOTALSCOREDESC,
 	TOTALSCOREASC,
 
-	OWNER,
 
-	THEMA,
 	
 };
